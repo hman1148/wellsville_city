@@ -1,0 +1,8 @@
+<% if (layerDependencies) { %>{
+  "name": "<%= projectName %>-dependencies",
+  "version": "1.0.0",
+  "description": "Shared dependencies layer for <%= projectName %> Lambda functions",
+  "dependencies": {
+  }
+}
+<% } %>

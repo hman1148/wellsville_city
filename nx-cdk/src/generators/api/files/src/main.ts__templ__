@@ -1,0 +1,16 @@
+import * as cdk from 'aws-cdk-lib/core'
+import { ApiStack } from './stacks/api-stack'
+
+const app = new cdk.App()
+
+const account = process.env.CDK_DEFAULT_ACCOUNT
+const defaultRegion = process.env.CDK_DEFAULT_REGION
+
+// Get sandbox from context to partition stacks
+const sandbox = app.node.tryGetContext('sandbox') || ''
+const stackSuffix = sandbox ? `-${sandbox}` : ''
+
+new ApiStack(app, `<%= projectName %>${stackSuffix}`, {
+  env: { region: defaultRegion, account },
+  description: sandbox ? `<%= projectName %> API Gateway (sandbox: ${sandbox})` : '<%= projectName %> API Gateway',
+})

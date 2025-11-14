@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "Api",
+  "title": "API Gateway Generator",
+  "type": "object",
+  "properties": {
+    "appSubDirectory": {
+      "type": "string",
+      "description": "The subdirectory path for the API application",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Specify the subdirectory for your API application (will be placed in the applications directory)"
+    },
+    "implicitDependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Projects this API depends on (optional)",
+      "x-dropdown": "projects"
+    },
+    "lambdaStack": {
+      "type": "string",
+      "description": "Project containing Lambda functions to import (optional). If not specified, Lambda functions will be created in this project.",
+      "x-dropdown": "projects",
+      "x-prompt": "Which project contains the Lambda functions for this API? (leave empty to create Lambdas in this project)"
+    },
+    "customDomainStack": {
+      "type": "string",
+      "description": "Project containing custom domain configuration (optional). If specified, the API will be configured with a custom domain.",
+      "x-dropdown": "projects",
+      "x-prompt": "Which project contains the custom domain configuration? (optional)"
+    }
+  },
+  "required": ["appSubDirectory"],
+  "additionalProperties": false
+}

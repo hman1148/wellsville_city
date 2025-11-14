@@ -1,0 +1,190 @@
+# AppSync VTL Resolvers
+
+This directory contains VTL (Velocity Template Language) templates for AppSync resolvers.
+
+## Directory Structure
+
+Organize VTL templates by GraphQL type:
+
+```
+resolvers/
+├── Query/
+│   ├── getUser.req.vtl        # Request mapping for Query.getUser
+│   ├── getUser.res.vtl        # Response mapping for Query.getUser
+│   ├── listUsers.req.vtl
+│   └── listUsers.res.vtl
+├── Mutation/
+│   ├── createUser.req.vtl
+│   ├── createUser.res.vtl
+│   ├── updateUser.req.vtl
+│   └── updateUser.res.vtl
+└── Subscription/
+    └── ...
+```
+
+## VTL Template Structure
+
+### Request Mapping Template (.req.vtl)
+
+Maps GraphQL arguments to HTTP requests for your REST API:
+
+```vtl
+## Request mapping for Query.getUser
+## Maps GraphQL args to REST API GET /users/{id}
+
+{
+  "version": "2018-05-29",
+  "method": "GET",
+  "resourcePath": "/users/$ctx.args.id",
+  "params": {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+```
+
+### Response Mapping Template (.res.vtl)
+
+Transforms REST API responses to match GraphQL schema:
+
+```vtl
+## Response mapping for Query.getUser
+## Returns the parsed JSON body from REST API
+
+#if($ctx.error)
+  $util.error($ctx.error.message, $ctx.error.type)
+#end
+
+#if($ctx.result.statusCode == 200)
+  $util.toJson($util.parseJson($ctx.result.body))
+#elseif($ctx.result.statusCode == 404)
+  $util.error("User not found", "NotFound")
+#else
+  $util.error("Error fetching user: $ctx.result.body", "ServerError")
+#end
+```
+
+## Common VTL Patterns
+
+### GET Request with Query Parameters
+
+```vtl
+{
+  "version": "2018-05-29",
+  "method": "GET",
+  "resourcePath": "/users",
+  "params": {
+    "query": {
+      "page": "$ctx.args.page",
+      "limit": "$ctx.args.limit"
+    }
+  }
+}
+```
+
+### POST Request with JSON Body
+
+```vtl
+{
+  "version": "2018-05-29",
+  "method": "POST",
+  "resourcePath": "/users",
+  "params": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": $util.toJson({
+      "name": $ctx.args.input.name,
+      "email": $ctx.args.input.email
+    })
+  }
+}
+```
+
+### PUT/PATCH Request
+
+```vtl
+{
+  "version": "2018-05-29",
+  "method": "PUT",
+  "resourcePath": "/users/$ctx.args.id",
+  "params": {
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": $util.toJson($ctx.args.input)
+  }
+}
+```
+
+### DELETE Request
+
+```vtl
+{
+  "version": "2018-05-29",
+  "method": "DELETE",
+  "resourcePath": "/users/$ctx.args.id"
+}
+```
+
+### Field-Level Resolver (Nested Data)
+
+For resolving nested fields, use parent context:
+
+```vtl
+## Request mapping for User.posts field
+{
+  "version": "2018-05-29",
+  "method": "GET",
+  "resourcePath": "/users/$ctx.source.id/posts"
+}
+```
+
+## Error Handling
+
+Always handle errors in response templates:
+
+```vtl
+#if($ctx.error)
+  $util.error($ctx.error.message, $ctx.error.type)
+#end
+
+#if($ctx.result.statusCode >= 200 && $ctx.result.statusCode < 300)
+  $util.toJson($util.parseJson($ctx.result.body))
+#elseif($ctx.result.statusCode == 404)
+  $util.error("Resource not found", "NotFound")
+#elseif($ctx.result.statusCode == 400)
+  $util.error("Bad request: $ctx.result.body", "BadRequest")
+#elseif($ctx.result.statusCode == 401 || $ctx.result.statusCode == 403)
+  $util.error("Unauthorized", "Unauthorized")
+#else
+  $util.error("Server error: $ctx.result.body", "ServerError")
+#end
+```
+
+## Testing VTL Templates
+
+Use the AppSync console's resolver testing feature:
+
+1. Navigate to your API in AWS AppSync Console
+2. Select a resolver
+3. Use the "Test resolver" feature with sample data
+4. Iterate on your VTL templates
+
+## Useful VTL Utilities
+
+- `$util.toJson(obj)` - Convert object to JSON string
+- `$util.parseJson(str)` - Parse JSON string to object
+- `$util.error(msg, type)` - Throw an error
+- `$util.qr(statement)` - Quiet reference (execute without output)
+- `$util.escapeJavaScript(str)` - Escape string for JavaScript
+- `$util.urlEncode(str)` - URL encode a string
+- `$util.base64Encode(str)` - Base64 encode
+- `$util.time.nowISO8601()` - Current timestamp in ISO format
+
+## Resources
+
+- [AWS AppSync Resolver Mapping Template Reference](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference.html)
+- [VTL Programming Guide](https://docs.aws.amazon.com/appsync/latest/devguide/resolver-mapping-template-reference-programming-guide.html)
+- [HTTP Resolver Reference](https://docs.aws.amazon.com/appsync/latest/devguide/tutorial-http-resolvers.html)

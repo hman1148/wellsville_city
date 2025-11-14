@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "LambdaHandlers",
+  "title": "Lambda Handlers Generator",
+  "type": "object",
+  "properties": {
+    "appSubDirectory": {
+      "type": "string",
+      "description": "The subdirectory path for the Lambda handlers project",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Specify the subdirectory for your Lambda handlers (will be placed in the applications directory)"
+    },
+    "implicitDependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Projects this Lambda stack depends on (optional)",
+      "x-dropdown": "projects"
+    },
+    "handlers": {
+      "type": "string",
+      "description": "Comma-separated list of handler names (e.g., getQuote,createQuote,updateQuote). Defaults to 'example'.",
+      "default": "example",
+      "x-prompt": "Enter comma-separated handler names (e.g., getUser,createUser) or leave empty for 'example'"
+    },
+    "layerDependencies": {
+      "type": "boolean",
+      "description": "Create a Lambda Layer for shared dependencies",
+      "default": false,
+      "x-prompt": "Create a Lambda Layer for shared node_modules?"
+    }
+  },
+  "required": ["appSubDirectory"],
+  "additionalProperties": false
+}

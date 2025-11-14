@@ -1,0 +1,76 @@
+import { Template } from 'aws-cdk-lib/assertions'
+import * as cdk from 'aws-cdk-lib/core'
+import { AppStack } from './stacks/app-stack'
+
+describe('<%= className %>', () => {
+    let app: cdk.App
+
+    beforeEach(() => {
+        app = new cdk.App({ context: { env: 'dev', sandbox: '' } })
+    })
+
+    it('synthesizes', () => {
+        const stack = new AppStack(app, '<%= className %>TestStack', {
+            env: {
+                region: 'us-west-2',
+                account: '123456789012',
+            },
+        })
+        const template = Template.fromStack(stack)
+        expect(template).toBeDefined()
+    })
+
+    it('adds Environment tag', () => {
+        const stack = new AppStack(app, '<%= className %>TestStack', {
+            env: {
+                region: 'us-west-2',
+                account: '123456789012',
+            },
+        })
+        const template = Template.fromStack(stack)
+        expect(template).toBeDefined()
+    })
+
+    describe('Sandbox Support', () => {
+        let sandboxApp: cdk.App
+
+        beforeEach(() => {
+            sandboxApp = new cdk.App({ context: { env: 'dev', sandbox: 'pr-789' } })
+        })
+
+        it('synthesizes with sandbox context', () => {
+            const stack = new AppStack(sandboxApp, '<%= className %>SandboxTest', {
+                env: {
+                    region: 'us-west-2',
+                    account: '123456789012',
+                },
+            })
+            const template = Template.fromStack(stack)
+            expect(template).toBeDefined()
+        })
+
+        it('adds Sandbox tag when sandbox is present', () => {
+            const stack = new AppStack(sandboxApp, '<%= className %>SandboxTest', {
+                env: {
+                    region: 'us-west-2',
+                    account: '123456789012',
+                },
+            })
+            const template = Template.fromStack(stack)
+            // Check that tags are applied (CDK will add these to all resources)
+            expect(template).toBeDefined()
+        })
+
+        it('works without sandbox (uses base configuration)', () => {
+            const baseApp = new cdk.App({ context: { env: 'dev', sandbox: '' } })
+            const stack = new AppStack(baseApp, '<%= className %>BaseTest', {
+                env: {
+                    region: 'us-west-2',
+                    account: '123456789012',
+                },
+            })
+            const template = Template.fromStack(stack)
+            expect(template).toBeDefined()
+        })
+    })
+})

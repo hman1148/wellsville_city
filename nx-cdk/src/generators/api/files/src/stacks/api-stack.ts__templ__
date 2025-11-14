@@ -1,0 +1,209 @@
+import { CfnOutput, Stack, StackProps, Tags<% if (hasDependencies) { %>, Fn<% } %> } from 'aws-cdk-lib/core'
+import { Construct } from 'constructs'
+import * as apigateway from 'aws-cdk-lib/aws-apigateway'
+import * as logs from 'aws-cdk-lib/aws-logs'
+<% if (!hasLambdaStack) { %>import * as lambda from 'aws-cdk-lib/aws-lambda'
+import * as path from 'path'
+<% } else { %>import * as lambda from 'aws-cdk-lib/aws-lambda'
+<% } %>
+
+export class ApiStack extends Stack {
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props)
+
+        // Get environment and sandbox from context
+        const env = this.node.tryGetContext('env') || 'dev'
+        const sandbox = this.node.tryGetContext('sandbox') || ''
+        const sandboxSuffix = sandbox ? `-${sandbox}` : ''
+        <% if (hasDependencies) { %>
+
+        // ============================================================================
+        // Cross-Stack References from Dependencies
+        // ============================================================================
+        <% if (dependencyExports && Object.keys(dependencyExports).length > 0) { %>
+        <% Object.entries(dependencyExports).forEach(([depProjectName, exports]) => { %>
+        // Imports from <%= depProjectName %>:
+        <% exports.forEach(exp => { %>
+        const <%= exp.variableName %> = Fn.importValue(`<%= exp.stackName %>${sandboxSuffix}-<%= exp.exportName %>`) // <%= exp.description || exp.exportName %>
+        <% }) %>
+
+        <% }) %>
+        <% } %>
+        // ============================================================================
+        <% } %>
+
+        // CloudWatch Log Group for API Gateway access logs
+        const apiLogGroup = new logs.LogGroup(this, 'ApiAccessLogs', {
+            logGroupName: `/aws/apigateway/${this.stackName}`,
+            retention: env === 'prod' ? logs.RetentionDays.ONE_MONTH : logs.RetentionDays.ONE_WEEK,
+        })
+        <% if (!hasLambdaStack) { %>
+
+        // ============================================================================
+        // Lambda Function
+        // ============================================================================
+        const exampleFunction = new lambda.Function(this, 'ExampleFunction', {
+            runtime: lambda.Runtime.NODEJS_20_X,
+            handler: 'example.handler',
+            code: lambda.Code.fromAsset(path.join(__dirname, '../handlers')),
+            environment: {
+                STAGE: env,
+            },
+            tracing: lambda.Tracing.ACTIVE,
+        })
+
+        const lambdaIntegration = new apigateway.LambdaIntegration(exampleFunction, {
+            proxy: true, // Lambda proxy integration
+        })
+        <% } else { %>
+
+        // ============================================================================
+        // Lambda Integration (using imported Lambda from <%= lambdaStack %>)
+        // ============================================================================
+        // TODO: Update the variable name below to match one of the imported Lambda ARNs above
+        // Example: If you imported 'quoteFunctionArn', use that instead of the placeholder
+        <% const firstLambdaArn = dependencyExports[lambdaStack]?.find(exp => exp.exportName.toLowerCase().includes('arn') || exp.exportName.toLowerCase().includes('function')) %>
+        <% if (firstLambdaArn) { %>
+        const importedFunction = lambda.Function.fromFunctionArn(
+            this,
+            'ImportedFunction',
+            <%= firstLambdaArn.variableName %> // Using discovered Lambda ARN
+        )
+        <% } else { %>
+        // No Lambda ARN found in <%= lambdaStack %> exports
+        // Please manually specify the Lambda function ARN or name
+        // const importedFunction = lambda.Function.fromFunctionArn(this, 'ImportedFunction', 'YOUR_LAMBDA_ARN')
+        <% } %>
+
+        const lambdaIntegration = new apigateway.LambdaIntegration(<% if (firstLambdaArn) { %>importedFunction<% } else { %>/* your lambda function */<% } %>, {
+            proxy: true, // Lambda proxy integration
+        })
+        <% } %>
+
+        // ============================================================================
+        // API Gateway REST API
+        // ============================================================================
+        const api = new apigateway.RestApi(this, 'Api', {
+            restApiName: `<%= projectName %>-api`,
+            description: 'REST API with Lambda proxy integration',
+            deployOptions: {
+                stageName: env,
+                loggingLevel: apigateway.MethodLoggingLevel.INFO,
+                dataTraceEnabled: true,
+                tracingEnabled: true,
+                throttlingRateLimit: 100,
+                throttlingBurstLimit: 200,
+                accessLogDestination: new apigateway.LogGroupLogDestination(apiLogGroup),
+                accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields({
+                    caller: true,
+                    httpMethod: true,
+                    ip: true,
+                    protocol: true,
+                    requestTime: true,
+                    resourcePath: true,
+                    responseLength: true,
+                    status: true,
+                    user: true,
+                }),
+            },
+        })
+
+        // ============================================================================
+        // Mock OPTIONS Integration for CORS Preflight
+        // ============================================================================
+        const mockIntegration = new apigateway.MockIntegration({
+            integrationResponses: [{
+                statusCode: '200',
+                responseParameters: {
+                    'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                    'method.response.header.Access-Control-Allow-Methods': "'GET,POST,PUT,DELETE,OPTIONS'",
+                    'method.response.header.Access-Control-Allow-Origin': "'*'",
+                },
+            }],
+            requestTemplates: {
+                'application/json': '{"statusCode": 200}',
+            },
+        })
+
+        // ============================================================================
+        // API Routes
+        // ============================================================================
+        // Example resource: /example
+        const exampleResource = api.root.addResource('example')
+
+        // Add Lambda integration for GET and POST
+        exampleResource.addMethod('GET', lambdaIntegration)
+        exampleResource.addMethod('POST', lambdaIntegration)
+
+        // Add mock OPTIONS for CORS preflight
+        exampleResource.addMethod('OPTIONS', mockIntegration, {
+            methodResponses: [{
+                statusCode: '200',
+                responseParameters: {
+                    'method.response.header.Access-Control-Allow-Headers': true,
+                    'method.response.header.Access-Control-Allow-Methods': true,
+                    'method.response.header.Access-Control-Allow-Origin': true,
+                },
+            }],
+        })
+
+        // TODO: Add more resources and methods as needed
+        // const anotherResource = api.root.addResource('another')
+        // anotherResource.addMethod('GET', lambdaIntegration)
+        // anotherResource.addMethod('OPTIONS', mockIntegration, { ... })
+        <% if (hasCustomDomain) { %>
+
+        // ============================================================================
+        // Custom Domain Configuration
+        // ============================================================================
+        // TODO: Use the imported custom domain values above to configure:
+        // - apigateway.DomainName.fromDomainNameAttributes()
+        // - new apigateway.BasePathMapping() with your desired base path
+        // Example:
+        // const domainName = apigateway.DomainName.fromDomainNameAttributes(this, 'Domain', {
+        //   domainName: /* use imported domain name */,
+        //   domainNameAliasHostedZoneId: /* use imported hosted zone */,
+        //   domainNameAliasTarget: /* use imported target */,
+        // })
+        // new apigateway.BasePathMapping(this, 'BasePathMapping', {
+        //   domainName,
+        //   restApi: api,
+        //   basePath: 'api/v1',
+        // })
+        <% } %>
+
+        Tags.of(this).add('Environment', env)
+        if (sandbox) {
+            Tags.of(this).add('Sandbox', sandbox)
+        }
+
+        // ============================================================================
+        // Exports
+        // ============================================================================
+        new CfnOutput(this, 'ApiUrl', {
+            value: api.url,
+            exportName: `${this.stackName}-ApiUrl`,
+            description: 'API Gateway URL',
+        })
+
+        new CfnOutput(this, 'ApiId', {
+            value: api.restApiId,
+            exportName: `${this.stackName}-ApiId`,
+            description: 'API Gateway REST API ID',
+        })
+        <% if (!hasLambdaStack) { %>
+
+        new CfnOutput(this, 'ExampleFunctionArn', {
+            value: exampleFunction.functionArn,
+            exportName: `${this.stackName}-ExampleFunctionArn`,
+            description: 'Example Lambda Function ARN',
+        })
+
+        new CfnOutput(this, 'ExampleFunctionName', {
+            value: exampleFunction.functionName,
+            exportName: `${this.stackName}-ExampleFunctionName`,
+            description: 'Example Lambda Function Name',
+        })
+        <% } %>
+    }
+}

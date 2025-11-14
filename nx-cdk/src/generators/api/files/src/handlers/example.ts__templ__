@@ -1,0 +1,77 @@
+<% if (!hasLambdaStack) { %>import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+
+export const handler = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  console.log('Event:', JSON.stringify(event, null, 2))
+
+  // Lambda handles CORS headers in the response
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*', // Configure as needed for your domain
+    'Access-Control-Allow-Credentials': 'true',
+  }
+
+  try {
+    // Different logic per HTTP method
+    switch (event.httpMethod) {
+      case 'GET':
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            message: 'GET request successful',
+            path: event.path,
+            queryParams: event.queryStringParameters,
+          }),
+        }
+
+      case 'POST':
+        const body = event.body ? JSON.parse(event.body) : {}
+        return {
+          statusCode: 201,
+          headers,
+          body: JSON.stringify({
+            message: 'POST request successful',
+            data: body,
+          }),
+        }
+
+      case 'PUT':
+        const updateBody = event.body ? JSON.parse(event.body) : {}
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            message: 'PUT request successful',
+            data: updateBody,
+          }),
+        }
+
+      case 'DELETE':
+        return {
+          statusCode: 204,
+          headers,
+          body: '',
+        }
+
+      default:
+        return {
+          statusCode: 405,
+          headers,
+          body: JSON.stringify({ error: 'Method not allowed' }),
+        }
+    }
+  } catch (error) {
+    console.error('Error:', error)
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      }),
+    }
+  }
+}
+<% } %>

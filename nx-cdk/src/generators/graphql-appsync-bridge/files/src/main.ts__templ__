@@ -1,0 +1,18 @@
+import * as cdk from 'aws-cdk-lib/core'
+import { AppSyncBridgeStack } from './stacks/appsync-bridge-stack'
+
+const app = new cdk.App()
+
+// Get sandbox from context to partition stacks
+const sandbox = app.node.tryGetContext('sandbox') || ''
+const stackSuffix = sandbox ? `-${sandbox}` : ''
+
+new AppSyncBridgeStack(app, `<%= projectName %>${stackSuffix}`, {
+  env: {
+    region: process.env.CDK_DEFAULT_REGION,
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+  },
+  description: sandbox
+    ? `<%= className %> AppSync GraphQL Bridge (sandbox: ${sandbox})`
+    : '<%= className %> AppSync GraphQL Bridge',
+});

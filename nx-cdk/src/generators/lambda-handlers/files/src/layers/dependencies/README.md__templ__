@@ -1,0 +1,48 @@
+<% if (layerDependencies) { %># Lambda Layer: Dependencies
+
+This directory contains a Lambda Layer for shared dependencies across all Lambda functions in this stack.
+
+## Structure
+
+```
+dependencies/
+├── nodejs/
+│   └── package.json    # Shared npm dependencies
+└── README.md
+```
+
+## Usage
+
+1. Add dependencies to `nodejs/package.json`
+2. Run `npm install` inside `nodejs/` directory
+3. Deploy the stack - CDK will package this directory as a Lambda Layer
+4. All Lambda functions in this stack will have access to these dependencies
+
+## Benefits
+
+- **Smaller deployment packages**: Functions don't need to bundle common dependencies
+- **Faster cold starts**: Shared layer is cached by Lambda
+- **Easier updates**: Update dependencies once, redeploy layer
+- **Code reuse**: Share utilities and common code across functions
+
+## Example Dependencies
+
+```json
+{
+  "dependencies": {
+    "aws-sdk": "^2.1000.0",
+    "axios": "^1.0.0",
+    "lodash": "^4.17.21"
+  }
+}
+```
+
+## Building the Layer
+
+```bash
+cd src/layers/dependencies/nodejs
+npm install
+cd ../../../..
+nx deploy <%= projectName %>
+```
+<% } %>

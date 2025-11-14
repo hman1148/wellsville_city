@@ -1,0 +1,46 @@
+import * as cdk from 'aws-cdk-lib/core'
+import { Template } from 'aws-cdk-lib/assertions'
+import { ApiStack } from './stacks/api-stack'
+
+describe('ApiStack', () => {
+  it('should create an API Gateway REST API', () => {
+    const app = new cdk.App()
+    const stack = new ApiStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify API Gateway REST API is created
+    template.resourceCountIs('AWS::ApiGateway::RestApi', 1)
+  })
+
+  it('should create CloudWatch log group for access logs', () => {
+    const app = new cdk.App()
+    const stack = new ApiStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify CloudWatch log group is created
+    template.hasResourceProperties('AWS::Logs::LogGroup', {
+      LogGroupName: '/aws/apigateway/TestStack',
+    })
+  })
+  <% if (!hasLambdaStack) { %>
+
+  it('should create Lambda function', () => {
+    const app = new cdk.App()
+    const stack = new ApiStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify Lambda function is created
+    template.resourceCountIs('AWS::Lambda::Function', 1)
+  })
+  <% } %>
+
+  it('should create API Gateway deployment and stage', () => {
+    const app = new cdk.App()
+    const stack = new ApiStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify deployment and stage are created
+    template.resourceCountIs('AWS::ApiGateway::Deployment', 1)
+    template.resourceCountIs('AWS::ApiGateway::Stage', 1)
+  })
+})

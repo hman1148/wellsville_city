@@ -1,0 +1,24 @@
+{
+  "generators": {
+    "blank-app": {
+      "factory": "./src/generators/blank-app/blank-app",
+      "schema": "./src/generators/blank-app/schema.json",
+      "description": "Generate blank CDK application"
+    },
+    "api": {
+      "factory": "./src/generators/api/api",
+      "schema": "./src/generators/api/schema.json",
+      "description": "Generate API Gateway with Lambda proxy integration"
+    },
+    "lambda-handlers": {
+      "factory": "./src/generators/lambda-handlers/lambda-handlers",
+      "schema": "./src/generators/lambda-handlers/schema.json",
+      "description": "Generate Lambda functions stack for API Gateway integration"
+    },
+    "graphql-appsync-bridge": {
+      "factory": "./src/generators/graphql-appsync-bridge/graphql-appsync-bridge",
+      "schema": "./src/generators/graphql-appsync-bridge/schema.json",
+      "description": "Generate AppSync GraphQL API bridge to REST APIs with VTL resolvers"
+    }
+  }
+}

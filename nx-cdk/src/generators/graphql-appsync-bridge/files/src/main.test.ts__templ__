@@ -1,0 +1,51 @@
+import { App } from 'aws-cdk-lib/core'
+import { Template } from 'aws-cdk-lib/assertions'
+import { AppSyncBridgeStack } from './stacks/appsync-bridge-stack'
+
+describe('<%= className %> AppSync Bridge Stack', () => {
+  let app: App
+  let template: Template
+
+  beforeEach(() => {
+    app = new App({
+      context: {
+        env: 'test',
+        sandbox: 'test',
+      },
+    })
+
+    const stack = new AppSyncBridgeStack(app, 'TestStack', {
+      env: {
+        region: 'us-east-1',
+        account: '123456789012',
+      },
+    })
+
+    template = Template.fromStack(stack)
+  })
+
+  it('should create an AppSync GraphQL API', () => {
+    template.resourceCountIs('AWS::AppSync::GraphQLApi', 1)
+  })
+
+  it('should create an HTTP data source', () => {
+    template.resourceCountIs('AWS::AppSync::DataSource', 1)
+  })
+
+  it('should have X-Ray tracing enabled', () => {
+    template.hasResourceProperties('AWS::AppSync::GraphQLApi', {
+      XrayEnabled: true,
+    })
+  })
+
+  it('should have CloudWatch logging configured', () => {
+    template.hasResourceProperties('AWS::AppSync::GraphQLApi', {
+      LogConfig: {
+        CloudWatchLogsRoleArn: {
+          'Fn::GetAtt': [expect.any(String), 'Arn'],
+        },
+        FieldLogLevel: 'ERROR',
+      },
+    })
+  })
+})

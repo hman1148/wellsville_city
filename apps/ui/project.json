@@ -1,29 +1,29 @@
 {
-  "name": "wellsville_city",
-  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "name": "ui",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "includedScripts": [],
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "./src",
+  "sourceRoot": "apps/ui/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/wellsville_city",
-        "index": "./src/index.html",
-        "main": "./src/main.ts",
+        "outputPath": "dist/apps/ui",
+        "index": "apps/ui/src/index.html",
+        "main": "apps/ui/src/main.ts",
         "polyfills": ["zone.js"],
-        "tsConfig": "tsconfig.app.json",
+        "tsConfig": "apps/ui/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "public"
+            "input": "apps/ui/public"
           }
         ],
-        "styles": ["./src/styles.scss"]
+        "styles": ["apps/ui/src/styles.scss"]
       },
       "configurations": {
         "production": {
@@ -57,10 +57,10 @@
       "executor": "@angular-devkit/build-angular:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "wellsville_city:build:production"
+          "buildTarget": "ui:build:production"
         },
         "development": {
-          "buildTarget": "wellsville_city:build:development"
+          "buildTarget": "ui:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -68,28 +68,28 @@
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {
-        "buildTarget": "wellsville_city:build"
+        "buildTarget": "ui:build"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": ["./src"]
+        "lintFilePatterns": ["apps/ui/src"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectName}"],
       "options": {
-        "jestConfig": "jest.config.app.ts",
-        "tsConfig": "tsconfig.spec.json"
+        "jestConfig": "apps/ui/jest.config.ts",
+        "tsConfig": "apps/ui/tsconfig.spec.json"
       }
     },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "wellsville_city:build",
+        "buildTarget": "ui:build",
         "port": 4200,
         "spa": true
       }

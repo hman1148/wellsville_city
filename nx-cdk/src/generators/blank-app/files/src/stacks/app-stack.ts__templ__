@@ -1,0 +1,68 @@
+import { CfnMapping, Stack, StackProps, Tags<% if (hasDependencies) { %>, Fn<% } %> } from 'aws-cdk-lib/core'
+import { Construct } from 'constructs'
+
+export class AppStack extends Stack {
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props)
+
+        // Get environment and sandbox from context
+        const env = this.node.tryGetContext('env') || 'dev'
+        const sandbox = this.node.tryGetContext('sandbox') || ''
+        const sandboxSuffix = sandbox ? `-${sandbox}` : ''
+        <% if (hasDependencies) { %>
+
+        // ============================================================================
+        // Cross-Stack References from Dependencies
+        // ============================================================================
+        <% if (dependencyExports && Object.keys(dependencyExports).length > 0) { %>
+        <% Object.entries(dependencyExports).forEach(([depProjectName, exports]) => { %>
+        // Imports from <%= depProjectName %>:
+        <% exports.forEach(exp => { %>
+        const <%= exp.variableName %> = Fn.importValue(`<%= exp.stackName %>${sandboxSuffix}-<%= exp.exportName %>`) // <%= exp.description || exp.exportName %>
+        <% }) %>
+
+        <% }) %>
+        <% } else { %>
+        // This stack depends on: <%= dependencyNames.join(', ') %>
+        //
+        // No CfnOutput exports were discovered from the dependency stacks.
+        // If your dependencies export values, add them manually using Fn.importValue:
+        //
+        // Example:
+        // const domainName = Fn.importValue(`<%= primaryDependency %>${sandboxSuffix}-DomainName`)
+        //
+        // Alternative: Use SSM Parameter Store (more flexible, no circular dependency risk)
+        // import * as ssm from 'aws-cdk-lib/aws-ssm'
+        // const domainName = ssm.StringParameter.valueForStringParameter(
+        //   this,
+        //   `/<%= primaryDependency %>${sandboxSuffix}/domain-name`
+        // )
+        <% } %>
+        // ============================================================================
+        <% } %>
+
+        new CfnMapping(this, 'EnvironmentMapping', {
+            mapping: {
+                dev: {
+                    exampleMapping: 'dev-example',
+                },
+                stage: {
+                    exampleMapping: 'stage-example',
+                },
+                uat: {
+                    exampleMapping: 'uat-example',
+                },
+                prod: {
+                    exampleMapping: 'prod-example',
+                },
+            },
+        })
+
+        Tags.of(this).add('Environment', env)
+        if (sandbox) {
+            Tags.of(this).add('Sandbox', sandbox)
+        }
+
+        // Add AWS resources here...
+    }
+}

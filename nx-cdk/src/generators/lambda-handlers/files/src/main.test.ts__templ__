@@ -1,0 +1,54 @@
+import * as cdk from 'aws-cdk-lib/core'
+import { Template } from 'aws-cdk-lib/assertions'
+import { LambdaStack } from './stacks/lambda-stack'
+
+describe('LambdaStack', () => {
+  it('should create Lambda functions', () => {
+    const app = new cdk.App()
+    const stack = new LambdaStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify Lambda functions are created
+    template.resourceCountIs('AWS::Lambda::Function', <%= handlers.length %>)
+  })
+
+  it('should enable X-Ray tracing', () => {
+    const app = new cdk.App()
+    const stack = new LambdaStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify tracing is enabled
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      TracingConfig: {
+        Mode: 'Active',
+      },
+    })
+  })
+
+  it('should configure environment variables', () => {
+    const app = new cdk.App()
+    const stack = new LambdaStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify environment variables are set
+    template.hasResourceProperties('AWS::Lambda::Function', {
+      Environment: {
+        Variables: {
+          STAGE: 'dev',
+          LOG_LEVEL: 'debug',
+        },
+      },
+    })
+  })
+  <% if (layerDependencies) { %>
+
+  it('should create Lambda layer', () => {
+    const app = new cdk.App()
+    const stack = new LambdaStack(app, 'TestStack')
+    const template = Template.fromStack(stack)
+
+    // Verify Lambda layer is created
+    template.resourceCountIs('AWS::Lambda::LayerVersion', 1)
+  })
+  <% } %>
+})

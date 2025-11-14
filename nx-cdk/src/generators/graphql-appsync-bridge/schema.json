@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "GraphQLAppSyncBridge",
+  "title": "GraphQL AppSync Bridge Generator",
+  "type": "object",
+  "properties": {
+    "appSubDirectory": {
+      "type": "string",
+      "description": "The subdirectory path for the AppSync bridge application",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "Specify the subdirectory for your AppSync bridge (will be placed in the applications directory)"
+    },
+    "graphqlSchemaLibrary": {
+      "type": "string",
+      "description": "Library project containing the GraphQL schema (.graphql or .gql file)",
+      "x-dropdown": "projects",
+      "x-prompt": "Which library contains the GraphQL schema?"
+    },
+    "authMode": {
+      "type": "string",
+      "description": "Primary authentication mode for AppSync API",
+      "enum": ["API_KEY", "COGNITO_USER_POOLS", "AWS_IAM", "OIDC", "AWS_LAMBDA"],
+      "default": "API_KEY",
+      "x-prompt": "Select primary authentication mode"
+    },
+    "cognitoUserPoolStack": {
+      "type": "string",
+      "description": "Project containing Cognito User Pool (required if authMode is COGNITO_USER_POOLS)",
+      "x-dropdown": "projects",
+      "x-prompt": "Which project contains the Cognito User Pool? (required for Cognito auth)"
+    },
+    "enableCaching": {
+      "type": "boolean",
+      "description": "Enable AppSync caching for improved performance",
+      "default": false,
+      "x-prompt": "Enable AppSync caching?"
+    },
+    "cacheTtl": {
+      "type": "number",
+      "description": "Cache TTL in seconds (only used if caching is enabled)",
+      "default": 3600
+    },
+    "enableXray": {
+      "type": "boolean",
+      "description": "Enable AWS X-Ray tracing for the AppSync API",
+      "default": true,
+      "x-prompt": "Enable X-Ray tracing?"
+    },
+    "enableCloudWatchLogs": {
+      "type": "boolean",
+      "description": "Enable CloudWatch logging for field-level resolver execution",
+      "default": true,
+      "x-prompt": "Enable CloudWatch logging?"
+    },
+    "logLevel": {
+      "type": "string",
+      "description": "CloudWatch log level",
+      "enum": ["NONE", "ERROR", "ALL"],
+      "default": "ERROR"
+    },
+    "implicitDependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional projects this AppSync stack depends on (optional)",
+      "x-dropdown": "projects"
+    }
+  },
+  "required": ["appSubDirectory", "graphqlSchemaLibrary"],
+  "additionalProperties": false
+}

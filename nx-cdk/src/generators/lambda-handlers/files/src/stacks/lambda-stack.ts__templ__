@@ -1,0 +1,92 @@
+import { CfnOutput, Stack, StackProps, Tags, Duration<% if (hasDependencies) { %>, Fn<% } %> } from 'aws-cdk-lib/core'
+import { Construct } from 'constructs'
+import * as lambda from 'aws-cdk-lib/aws-lambda'
+import * as logs from 'aws-cdk-lib/aws-logs'
+import * as path from 'path'
+
+export class LambdaStack extends Stack {
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props)
+
+        // Get environment and sandbox from context
+        const env = this.node.tryGetContext('env') || 'dev'
+        const sandbox = this.node.tryGetContext('sandbox') || ''
+        const sandboxSuffix = sandbox ? `-${sandbox}` : ''
+        <% if (hasDependencies) { %>
+
+        // ============================================================================
+        // Cross-Stack References from Dependencies
+        // ============================================================================
+        <% if (dependencyExports && Object.keys(dependencyExports).length > 0) { %>
+        <% Object.entries(dependencyExports).forEach(([depProjectName, exports]) => { %>
+        // Imports from <%= depProjectName %>:
+        <% exports.forEach(exp => { %>
+        const <%= exp.variableName %> = Fn.importValue(`<%= exp.stackName %>${sandboxSuffix}-<%= exp.exportName %>`) // <%= exp.description || exp.exportName %>
+        <% }) %>
+
+        <% }) %>
+        <% } %>
+        // ============================================================================
+        <% } %>
+        <% if (layerDependencies) { %>
+
+        // ============================================================================
+        // Lambda Layer for Shared Dependencies
+        // ============================================================================
+        const dependenciesLayer = new lambda.LayerVersion(this, 'DependenciesLayer', {
+            code: lambda.Code.fromAsset(path.join(__dirname, '../layers/dependencies')),
+            compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
+            description: 'Shared node_modules dependencies for Lambda functions',
+            layerVersionName: `${this.stackName}-dependencies`,
+        })
+        <% } %>
+
+        // Environment-based configuration
+        const lambdaTimeout = env === 'prod' ? Duration.seconds(30) : Duration.seconds(10)
+        const lambdaMemory = env === 'prod' ? 512 : 256
+        const logLevel = env === 'prod' ? 'info' : 'debug'
+        const logRetention = env === 'prod' ? logs.RetentionDays.ONE_MONTH : logs.RetentionDays.ONE_WEEK
+        <% handlers.forEach(handler => { %>
+
+        // ============================================================================
+        // Lambda Function: <%= handler.name %>
+        // ============================================================================
+        const <%= handler.propertyName %>Function = new lambda.Function(this, '<%= handler.className %>Function', {
+            functionName: `${this.stackName}-<%= handler.name %>`,
+            runtime: lambda.Runtime.NODEJS_20_X,
+            handler: '<%= handler.fileName %>.handler',
+            code: lambda.Code.fromAsset(path.join(__dirname, '../handlers')),
+            environment: {
+                STAGE: env,
+                LOG_LEVEL: logLevel,
+                FUNCTION_NAME: '<%= handler.name %>',
+            },
+            timeout: lambdaTimeout,
+            memorySize: lambdaMemory,
+            tracing: lambda.Tracing.ACTIVE,<% if (layerDependencies) { %>
+            layers: [dependenciesLayer],<% } %>
+            logRetention,
+            description: 'Lambda function for <%= handler.name %> handler',
+        })
+
+        // Export Lambda ARN for API Gateway integration
+        new CfnOutput(this, '<%= handler.className %>FunctionArn', {
+            value: <%= handler.propertyName %>Function.functionArn,
+            exportName: `${this.stackName}-<%= handler.className %>FunctionArn`,
+            description: '<%= handler.className %> Lambda Function ARN',
+        })
+
+        // Export Lambda Name for permissions and references
+        new CfnOutput(this, '<%= handler.className %>FunctionName', {
+            value: <%= handler.propertyName %>Function.functionName,
+            exportName: `${this.stackName}-<%= handler.className %>FunctionName`,
+            description: '<%= handler.className %> Lambda Function Name',
+        })
+        <% }) %>
+
+        Tags.of(this).add('Environment', env)
+        if (sandbox) {
+            Tags.of(this).add('Sandbox', sandbox)
+        }
+    }
+}

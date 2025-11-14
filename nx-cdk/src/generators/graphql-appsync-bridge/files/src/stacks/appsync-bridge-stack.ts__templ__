@@ -1,0 +1,222 @@
+<%
+// Define variables for template logic
+const cognitoExports = hasCognito && cognitoUserPoolStack ? (dependencyExports[cognitoUserPoolStack] || []) : [];
+const cognitoUserPoolId = cognitoExports.find(exp => exp.exportName.toLowerCase().includes('userpoolid') || exp.exportName.toLowerCase().includes('poolid'));
+%>import { CfnOutput, Stack, StackProps, Tags<% if (hasDependencies) { %>, Fn<% } %> } from 'aws-cdk-lib/core'
+import { Construct} from 'constructs'
+import * as appsync from 'aws-cdk-lib/aws-appsync'
+import * as logs from 'aws-cdk-lib/aws-logs'
+import * as iam from 'aws-cdk-lib/aws-iam'
+import * as path from 'path'
+<% if (hasCognito) { %>import * as cognito from 'aws-cdk-lib/aws-cognito'
+<% } %>
+export class AppSyncBridgeStack extends Stack {
+    constructor(scope: Construct, id: string, props?: StackProps) {
+        super(scope, id, props)
+
+        // Get environment and sandbox from context
+        const env = this.node.tryGetContext('env') || 'dev'
+        const sandbox = this.node.tryGetContext('sandbox') || ''
+        const sandboxSuffix = sandbox ? `-${sandbox}` : ''
+        <% if (hasDependencies) { %>
+
+        // ============================================================================
+        // Cross-Stack References from Dependencies
+        // ============================================================================
+        <% if (dependencyExports && Object.keys(dependencyExports).length > 0) { %>
+        <% Object.entries(dependencyExports).forEach(([depProjectName, exports]) => { %>
+        // Imports from <%= depProjectName %>:
+        <% exports.forEach(exp => { %>
+        const <%= exp.variableName %> = Fn.importValue(`<%= exp.stackName %>${sandboxSuffix}-<%= exp.exportName %>`) // <%= exp.description || exp.exportName %>
+        <% }) %>
+
+        <% }) %>
+        <% } %>
+        // ============================================================================
+        <% } %>
+        <% if (hasCognito) { %>
+
+        // ============================================================================
+        // Cognito User Pool Configuration
+        // ============================================================================
+        <% if (cognitoUserPoolId) { %>
+        const userPool = cognito.UserPool.fromUserPoolId(
+            this,
+            'UserPool',
+            <%= cognitoUserPoolId.variableName %>
+        )
+        <% } else { %>
+        // TODO: Import Cognito User Pool from <%= cognitoUserPoolStack %>
+        // Example: const userPool = cognito.UserPool.fromUserPoolId(this, 'UserPool', importedUserPoolId)
+        <% } %>
+        // ============================================================================
+        <% } %>
+
+        // ============================================================================
+        // CloudWatch Log Group for AppSync
+        // ============================================================================
+        const apiLogGroup = new logs.LogGroup(this, 'AppSyncApiLogs', {
+            logGroupName: `/aws/appsync/${this.stackName}`,
+            retention: env === 'prod' ? logs.RetentionDays.ONE_MONTH : logs.RetentionDays.ONE_WEEK,
+        })
+
+        // IAM role for AppSync CloudWatch logging
+        const apiLogsRole = new iam.Role(this, 'AppSyncLogsRole', {
+            assumedBy: new iam.ServicePrincipal('appsync.amazonaws.com'),
+            managedPolicies: [
+                iam.ManagedPolicy.fromAwsManagedPolicyName('service-role/AWSAppSyncPushToCloudWatchLogs'),
+            ],
+        })
+
+        // ============================================================================
+        // AppSync GraphQL API
+        // ============================================================================
+        const api = new appsync.GraphqlApi(this, 'GraphQLApi', {
+            name: `<%= projectName %>-api`,
+            definition: appsync.Definition.fromFile(path.join(__dirname, '../../<%= schemaFilePath %>')),
+            authorizationConfig: {
+                defaultAuthorization: {<% if (authMode === 'API_KEY') { %>
+                    authorizationType: appsync.AuthorizationType.API_KEY,
+                    apiKeyConfig: {
+                        expires: env === 'prod' ? undefined : appsync.Expiration.after(cdk.Duration.days(365)),
+                    },<% } else if (authMode === 'COGNITO_USER_POOLS') { %>
+                    authorizationType: appsync.AuthorizationType.USER_POOL,
+                    userPoolConfig: {<% if (hasCognito && cognitoUserPoolId) { %>
+                        userPool,<% } else { %>
+                        // TODO: Configure userPool from imported Cognito User Pool
+                        userPool: undefined as any,<% } %>
+                    },<% } else if (authMode === 'AWS_IAM') { %>
+                    authorizationType: appsync.AuthorizationType.IAM,<% } else if (authMode === 'OIDC') { %>
+                    authorizationType: appsync.AuthorizationType.OIDC,
+                    openIdConnectConfig: {
+                        // TODO: Configure OIDC provider
+                        oidcProvider: 'https://your-oidc-provider.com',
+                    },<% } else if (authMode === 'AWS_LAMBDA') { %>
+                    authorizationType: appsync.AuthorizationType.LAMBDA,
+                    lambdaAuthorizerConfig: {
+                        // TODO: Configure Lambda authorizer
+                        handler: undefined as any,
+                    },<% } %>
+                },
+            },<% if (enableXray) { %>
+            xrayEnabled: true,<% } %><% if (enableCloudWatchLogs) { %>
+            logConfig: {
+                fieldLogLevel: appsync.FieldLogLevel.<%= logLevel %>,
+                role: apiLogsRole,
+            },<% } %>
+        })
+<% if (enableCaching) { %>
+
+        // ============================================================================
+        // API Caching Configuration
+        // ============================================================================
+        new appsync.CfnApiCache(this, 'ApiCache', {
+            apiCachingBehavior: 'FULL_REQUEST_CACHING',
+            apiId: api.apiId,
+            ttl: <%= cacheTtl %>,
+            type: env === 'prod' ? 'R4_LARGE' : 'T2_SMALL',
+        })
+<% } %>
+
+        // ============================================================================
+        // HTTP Data Source (for REST API integration)
+        // ============================================================================
+        // TODO (Agent): Update the endpoint URL below to point to your REST API
+        // If importing from another stack, use the imported value from above
+        const httpDataSource = api.addHttpDataSource(
+            'RestApiDataSource',
+            // TODO: Replace with actual REST API endpoint
+            // Example using imported value: Fn.importValue(`rest-api${sandboxSuffix}-ApiUrl`)
+            'https://api.example.com',
+            {
+                name: 'RestAPI',
+                description: 'HTTP data source for REST API integration',
+                authorizationConfig: {
+                    signingRegion: this.region,
+                    signingServiceName: 'execute-api',
+                },
+            }
+        )
+
+        // ============================================================================
+        // Resolvers
+        // ============================================================================
+        // TODO (Agent): Implement resolvers for GraphQL schema
+        //
+        // For each field in your GraphQL schema, create a resolver:
+        //
+        // 1. Create VTL template files:
+        //    - resolvers/{TypeName}/{fieldName}.req.vtl (request mapping)
+        //    - resolvers/{TypeName}/{fieldName}.res.vtl (response mapping)
+        //
+        // 2. Add resolver definition:
+        //    new appsync.Resolver(this, '{TypeName}{FieldName}Resolver', {
+        //        api,
+        //        typeName: '{TypeName}',
+        //        fieldName: '{fieldName}',
+        //        dataSource: httpDataSource,
+        //        requestMappingTemplate: appsync.MappingTemplate.fromFile(
+        //            path.join(__dirname, '../resolvers/{TypeName}/{fieldName}.req.vtl')
+        //        ),
+        //        responseMappingTemplate: appsync.MappingTemplate.fromFile(
+        //            path.join(__dirname, '../resolvers/{TypeName}/{fieldName}.res.vtl')
+        //        ),
+        //    })
+        //
+        // Example resolver structure:
+        // new appsync.Resolver(this, 'QueryGetUserResolver', {
+        //     api,
+        //     typeName: 'Query',
+        //     fieldName: 'getUser',
+        //     dataSource: httpDataSource,
+        //     requestMappingTemplate: appsync.MappingTemplate.fromFile(
+        //         path.join(__dirname, '../resolvers/Query/getUser.req.vtl')
+        //     ),
+        //     responseMappingTemplate: appsync.MappingTemplate.fromFile(
+        //         path.join(__dirname, '../resolvers/Query/getUser.res.vtl')
+        //     ),
+        // })
+        //
+        // For complex transformations requiring pipeline resolvers:
+        //
+        // 1. Create Lambda functions for each pipeline function
+        // 2. Add them as Lambda data sources
+        // 3. Create pipeline resolver:
+        //    new appsync.Resolver(this, 'ComplexResolver', {
+        //        api,
+        //        typeName: 'Mutation',
+        //        fieldName: 'complexOperation',
+        //        pipelineConfig: [function1, function2, function3],
+        //        requestMappingTemplate: appsync.MappingTemplate.fromString('{}'),
+        //        responseMappingTemplate: appsync.MappingTemplate.fromString('$util.toJson($ctx.result)'),
+        //    })
+
+        Tags.of(this).add('Environment', env)
+        if (sandbox) {
+            Tags.of(this).add('Sandbox', sandbox)
+        }
+
+        // ============================================================================
+        // Exports
+        // ============================================================================
+        new CfnOutput(this, 'GraphQLApiUrl', {
+            value: api.graphqlUrl,
+            exportName: `${this.stackName}-GraphQLApiUrl`,
+            description: 'AppSync GraphQL API URL',
+        })
+
+        new CfnOutput(this, 'GraphQLApiId', {
+            value: api.apiId,
+            exportName: `${this.stackName}-GraphQLApiId`,
+            description: 'AppSync GraphQL API ID',
+        })
+<% if (authMode === 'API_KEY') { %>
+
+        new CfnOutput(this, 'GraphQLApiKey', {
+            value: api.apiKey || '',
+            exportName: `${this.stackName}-GraphQLApiKey`,
+            description: 'AppSync GraphQL API Key',
+        })
+<% } %>
+    }
+}
