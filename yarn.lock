@@ -297,6 +297,13 @@
   dependencies:
     "@angular-eslint/bundled-angular-compiler" "20.6.0"
 
+"@angular/animations@^21.0.0":
+  version "21.0.0"
+  resolved "https://registry.yarnpkg.com/@angular/animations/-/animations-21.0.0.tgz#83256a179e43495379d3d0f2b8e678af2cc739ed"
+  integrity sha512-9AX4HFJmSP8SFNiweKNxasBzn3zbL3xRtwaUxw1I+x/WAzubm4ZziLnXqb+tai7C4UmwV+9XDlRVPfw5WxJ9zg==
+  dependencies:
+    tslib "^2.3.0"
+
 "@angular/build@20.3.10":
   version "20.3.10"
   resolved "https://registry.yarnpkg.com/@angular/build/-/build-20.3.10.tgz#cbf6da726f92678000eff964224e4a2ce007f07e"
@@ -330,6 +337,14 @@
     watchpack "2.4.4"
   optionalDependencies:
     lmdb "3.4.2"
+
+"@angular/cdk@^21.0.0":
+  version "21.0.0"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-21.0.0.tgz#2188e656221d36b5c4d8299f283b69efd776733c"
+  integrity sha512-wCr5D3mEC+p69IMDC7vf8bWx18mfUNNRdsiK3XD0m1PqfeNfnCJb+Bnkks37MC/SU01uCNrAokRaTbWL6pk1Wg==
+  dependencies:
+    parse5 "^8.0.0"
+    tslib "^2.3.0"
 
 "@angular/cli@~20.3.0":
   version "20.3.10"
@@ -3305,6 +3320,13 @@
     "@emnapi/runtime" "^1.4.3"
     "@tybys/wasm-util" "^0.10.0"
 
+"@ngrx/signals@^20.1.0":
+  version "20.1.0"
+  resolved "https://registry.yarnpkg.com/@ngrx/signals/-/signals-20.1.0.tgz#2bd40de7aab321aab85471b18d43174531e1adec"
+  integrity sha512-ARAHp5yA131Sw6FEtY8XtYcdGcwW5lgpZaJoDIRxc6i12VO3ZDZYp3M/FQhpIDMDXkXHR+pDqoitrqvzI69aQA==
+  dependencies:
+    tslib "^2.3.0"
+
 "@ngtools/webpack@20.3.10":
   version "20.3.10"
   resolved "https://registry.yarnpkg.com/@ngtools/webpack/-/webpack-20.3.10.tgz#d06be5e197b2bc39ba811fef59d60f03217244ca"
@@ -3823,6 +3845,25 @@
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.9.tgz#d229a7b7f9dac167a156992ef23c7f023653f53b"
   integrity sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==
+
+"@primeuix/styled@^0.7.3", "@primeuix/styled@^0.7.4":
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/@primeuix/styled/-/styled-0.7.4.tgz#d2108a7fad297dea60d549b2c10ed744dc0cbc0e"
+  integrity sha512-QSO/NpOQg8e9BONWRBx9y8VGMCMYz0J/uKfNJEya/RGEu7ARx0oYW0ugI1N3/KB1AAvyGxzKBzGImbwg0KUiOQ==
+  dependencies:
+    "@primeuix/utils" "^0.6.1"
+
+"@primeuix/styles@^1.2.5":
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/@primeuix/styles/-/styles-1.2.5.tgz#97fe5b53d141f0dbd35c4f417f6a76db3eb1e244"
+  integrity sha512-nypFRct/oaaBZqP4jinT0puW8ZIfs4u+l/vqUFmJEPU332fl5ePj6DoOpQgTLzo3OfmvSmz5a5/5b4OJJmmi7Q==
+  dependencies:
+    "@primeuix/styled" "^0.7.3"
+
+"@primeuix/utils@^0.6.1", "@primeuix/utils@^0.6.2":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@primeuix/utils/-/utils-0.6.3.tgz#0d31e41c530fb64dd487ce768f8c244ca1d0872e"
+  integrity sha512-/SLNQSKQ73WbBIsflKVqbpVjCfFYvQO3Sf1LMheXyxh8JqxO4M63dzP56wwm9OPGuCQ6MYOd2AHgZXz+g7PZcg==
 
 "@rollup/rollup-android-arm-eabi@4.52.3":
   version "4.52.3"
@@ -11394,6 +11435,21 @@ pretty-format@^29.0.0, pretty-format@^29.7.0:
     "@jest/schemas" "^29.6.3"
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
+
+primeicons@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/primeicons/-/primeicons-7.0.0.tgz#6b25c3fdcb29bb745a3035bdc1ed5902f4a419cf"
+  integrity sha512-jK3Et9UzwzTsd6tzl2RmwrVY/b8raJ3QZLzoDACj+oTJ0oX7L9Hy+XnVwgo4QVKlKpnP/Ur13SXV/pVh4LzaDw==
+
+primeng@^20.3.0:
+  version "20.3.0"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-20.3.0.tgz#90f974fd9ec4d24c6a2eb638a7736c4c509e2182"
+  integrity sha512-ljRRundjAfhR6PC75T3uDpg+v3IpBdbAyAlM0kMCHP5H0gtWUang68dd0ibO67/6CAKEcXVxwUnbqy2D6et4jA==
+  dependencies:
+    "@primeuix/styled" "^0.7.4"
+    "@primeuix/styles" "^1.2.5"
+    "@primeuix/utils" "^0.6.2"
+    tslib "^2.3.0"
 
 proc-log@^5.0.0:
   version "5.0.0"

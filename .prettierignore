@@ -3,4 +3,9 @@
 /coverage
 /.nx/cache
 /.nx/workspace-data
-.angular
+/tmp
+/out-tsc
+
+dist
+tmp
+out-tsc

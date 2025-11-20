@@ -23,7 +23,12 @@
             "input": "apps/ui/public"
           }
         ],
-        "styles": ["apps/ui/src/styles.scss"]
+        "styles": [
+          "../../node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+          "../../node_modules/primeng/resources/primeng.css",
+          "../../node_modules/primeicons/primeicons.css",
+          "apps/ui/src/styles.scss"
+        ]
       },
       "configurations": {
         "production": {

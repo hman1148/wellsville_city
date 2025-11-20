@@ -1,0 +1,21 @@
+<header class="header">
+  <div class="header-top">
+    <div class="logo-section">
+      <h1 routerLink="/home" class="city-title">Wellsville City</h1>
+      <p class="city-tagline">Welcome to Our Community</p>
+    </div>
+  </div>
+
+  <nav class="navigation">
+    <p-menubar [model]="menuItems" styleClass="custom-menubar">
+      <ng-template pTemplate="end">
+        <p-button
+          label="Pay Utilities"
+          icon="pi pi-dollar"
+          styleClass="p-button-success"
+          [rounded]="true">
+        </p-button>
+      </ng-template>
+    </p-menubar>
+  </nav>
+</header>
