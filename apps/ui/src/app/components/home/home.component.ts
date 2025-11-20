@@ -6,6 +6,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
+import { DialogModule } from 'primeng/dialog';
 import { type CarouselSlide, type Announcement } from '../../models';
 
 @Component({
@@ -19,32 +20,56 @@ import { type CarouselSlide, type Announcement } from '../../models';
     ButtonModule,
     DividerModule,
     TagModule,
+    DialogModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent {
+  selectedAnnouncement = signal<Announcement | null>(null);
+  displayAnnouncementDialog = signal(false);
   carouselSlides = signal<CarouselSlide[]>([
     {
       id: '1',
-      imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&h=600&fit=crop',
+      imageUrl: '/Wellsvilles-HDR-Pano-1-1500x630.jpg',
       title: 'Welcome to Wellsville',
       description: 'A beautiful community in Cache Valley',
-      altText: 'Wellsville scenic view',
+      altText: 'Wellsville panoramic view',
     },
     {
       id: '2',
-      imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop',
-      title: 'Community Events',
-      description: 'Join us for local activities and celebrations',
-      altText: 'Community gathering',
+      imageUrl: '/JennCraw-Barn-1-1500x630.jpg',
+      title: 'Historic Landmarks',
+      description: 'Preserving our heritage and community character',
+      altText: 'Historic barn in Wellsville',
     },
     {
       id: '3',
-      imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&h=600&fit=crop',
-      title: 'Natural Beauty',
-      description: 'Explore our parks and outdoor spaces',
-      altText: 'Nature and wildlife',
+      imageUrl: '/Wellsville-Resevoir-2-1500x630.jpg',
+      title: 'Natural Resources',
+      description: 'Wellsville Reservoir and surrounding beauty',
+      altText: 'Wellsville Reservoir',
+    },
+    {
+      id: '4',
+      imageUrl: '/FoundersDayRun-1500x630.jpg',
+      title: 'Community Events',
+      description: 'Join us for Founders Day and local celebrations',
+      altText: 'Founders Day Run event',
+    },
+    {
+      id: '5',
+      imageUrl: '/Fisherman-1500x630.jpg',
+      title: 'Recreation & Outdoor Activities',
+      description: 'Enjoy fishing and outdoor adventures',
+      altText: 'Fishing in Wellsville',
+    },
+    {
+      id: '6',
+      imageUrl: '/Turtle-1500x630.jpg',
+      title: 'Wildlife & Nature',
+      description: 'Experience the local wildlife and natural habitat',
+      altText: 'Local wildlife',
     },
   ]);
 
@@ -119,5 +144,15 @@ export class HomeComponent {
       default:
         return 'info';
     }
+  }
+
+  viewAnnouncement(announcement: Announcement) {
+    this.selectedAnnouncement.set(announcement);
+    this.displayAnnouncementDialog.set(true);
+  }
+
+  closeAnnouncementDialog() {
+    this.displayAnnouncementDialog.set(false);
+    this.selectedAnnouncement.set(null);
   }
 }

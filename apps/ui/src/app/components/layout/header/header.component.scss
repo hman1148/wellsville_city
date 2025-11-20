@@ -97,13 +97,10 @@
       flex: 1;
       justify-content: center;
 
-      @media (max-width: 968px) {
-        width: 100%;
-        order: 3;
-        justify-content: flex-start;
-        overflow-x: auto;
-        padding-bottom: 0.5rem;
-        margin-top: 0.5rem;
+      &.desktop-nav {
+        @media (max-width: 968px) {
+          display: none !important;
+        }
       }
 
       .nav-link {
@@ -203,13 +200,6 @@
             background: #5a9367;
           }
         }
-      }
-    }
-
-    // Hide desktop nav on mobile
-    @media (max-width: 968px) {
-      .desktop-nav {
-        display: none !important;
       }
     }
   }

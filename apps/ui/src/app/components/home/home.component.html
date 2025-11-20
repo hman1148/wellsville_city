@@ -29,23 +29,23 @@
   <section class="quick-links-section" aria-label="Quick access links">
     <h2>Quick Access</h2>
     <div class="quick-links-grid">
-      <p-card
-        *ngFor="let link of quickLinks()"
-        [styleClass]="'quick-link-card'">
-        <div class="quick-link-content">
-          <i [class]="link.icon + ' quick-link-icon'" [attr.aria-hidden]="true"></i>
-          <h3>{{ link.label }}</h3>
-          <p>{{ link.description }}</p>
-          <a [routerLink]="link.route" style="display: inline-block; width: 100%;">
-            <p-button
-              [label]="'Learn More'"
-              [icon]="'pi pi-arrow-right'"
-              styleClass="p-button-sm"
-              [style]="{'width': '100%'}">
-            </p-button>
-          </a>
-        </div>
-      </p-card>
+      @for (link of quickLinks(); track link.label) {
+        <p-card [styleClass]="'quick-link-card'">
+          <div class="quick-link-content">
+            <i [class]="link.icon + ' quick-link-icon'" [attr.aria-hidden]="true"></i>
+            <h3>{{ link.label }}</h3>
+            <p>{{ link.description }}</p>
+            <a [routerLink]="link.route" style="display: inline-block; width: 100%;">
+              <p-button
+                [label]="'Learn More'"
+                [icon]="'pi pi-arrow-right'"
+                styleClass="p-button-sm"
+                [style]="{'width': '100%'}">
+              </p-button>
+            </a>
+          </div>
+        </p-card>
+      }
     </div>
   </section>
 
@@ -58,29 +58,35 @@
       Announcements
     </h2>
     <div class="announcements-grid">
-      <p-card
-        *ngFor="let announcement of announcements()"
-        [header]="announcement.title"
-        [styleClass]="'announcement-card'">
-        <ng-template pTemplate="header">
-          <div class="announcement-header">
-            <h3>{{ announcement.title }}</h3>
-            <p-tag
-              [value]="announcement.priority.toUpperCase()"
-              [severity]="getPrioritySeverity(announcement.priority)">
-            </p-tag>
-          </div>
-        </ng-template>
-        <p>{{ announcement.content }}</p>
-        <ng-template pTemplate="footer">
-          <div class="announcement-footer">
-            <span class="announcement-date">
-              <i class="pi pi-calendar" aria-hidden="true"></i>
-              {{ announcement.date | date: 'mediumDate' }}
-            </span>
-          </div>
-        </ng-template>
-      </p-card>
+      @for (announcement of announcements(); track announcement.id) {
+        <p-card [styleClass]="'announcement-card'">
+          <ng-template pTemplate="header">
+            <div class="announcement-header">
+              <h3>{{ announcement.title }}</h3>
+              <p-tag
+                [value]="announcement.priority.toUpperCase()"
+                [severity]="getPrioritySeverity(announcement.priority)">
+              </p-tag>
+            </div>
+          </ng-template>
+          <p class="announcement-content-preview">{{ announcement.content }}</p>
+          <ng-template pTemplate="footer">
+            <div class="announcement-footer">
+              <span class="announcement-date">
+                <i class="pi pi-calendar" aria-hidden="true"></i>
+                {{ announcement.date | date: 'mediumDate' }}
+              </span>
+              <p-button
+                label="Read More"
+                icon="pi pi-external-link"
+                [text]="true"
+                size="small"
+                (onClick)="viewAnnouncement(announcement)">
+              </p-button>
+            </div>
+          </ng-template>
+        </p-card>
+      }
     </div>
   </section>
 
@@ -117,4 +123,45 @@
       </div>
     </p-card>
   </section>
+
+  <!-- Announcement Detail Dialog -->
+  <p-dialog
+    [(visible)]="displayAnnouncementDialog"
+    [modal]="true"
+    [style]="{ width: '50vw' }"
+    [breakpoints]="{ '960px': '75vw', '640px': '95vw' }"
+    [draggable]="false"
+    [resizable]="false">
+    @if (selectedAnnouncement(); as announcement) {
+      <ng-template pTemplate="header">
+        <div class="dialog-header">
+          <h2>{{ announcement.title }}</h2>
+          <p-tag
+            [value]="announcement.priority.toUpperCase()"
+            [severity]="getPrioritySeverity(announcement.priority)">
+          </p-tag>
+        </div>
+      </ng-template>
+
+      <div class="announcement-dialog-content">
+        <p>{{ announcement.content }}</p>
+        <div class="announcement-meta">
+          <span class="announcement-date">
+            <i class="pi pi-calendar"></i>
+            {{ announcement.date | date: 'full' }}
+          </span>
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <p-button
+          label="Close"
+          icon="pi pi-times"
+          (onClick)="closeAnnouncementDialog()"
+          severity="secondary"
+          [text]="true">
+        </p-button>
+      </ng-template>
+    }
+  </p-dialog>
 </div>
