@@ -1,314 +1,324 @@
-.home-container {
-  margin-top: 0.5rem;
-  padding: 2rem;
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-
-  .hero-section {
-    margin: -2rem -2rem 2rem;
-    border-radius: 0;
-
-    @media (max-width: 768px) {
-      margin: -1rem -1rem 1rem;
-    }
-
-    .carousel-item {
-      border-radius: 5px;
-      position: relative;
-      height: 500px;
-      overflow: hidden;
-
-      @media (max-width: 768px) {
-        height: 300px;
-      }
-
-      .carousel-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .carousel-content {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-        color: white;
-        padding: 3rem 2rem 2rem;
-
-        h2 {
-          margin: 0 0 0.5rem 0;
-          font-size: 2.5rem;
-          font-weight: 700;
-
-          @media (max-width: 768px) {
-            font-size: 1.5rem;
-          }
-        }
-
-        p {
-          margin: 0;
-          font-size: 1.2rem;
-          opacity: 0.9;
-
-          @media (max-width: 768px) {
-            font-size: 1rem;
-          }
-        }
-      }
-    }
-  }
-
-  .quick-links-section,
-  .announcements-section,
-  .welcome-section {
-    margin: 3rem 0;
-
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      color: #2c3e50;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-  }
-
-  .quick-links-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-
-    .quick-link-card {
-      height: 100%;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-      }
-
-      .quick-link-content {
-        text-align: center;
-        padding: 1rem;
-
-        .quick-link-icon {
-          font-size: 3rem;
-          color: #4a7c59;
-          margin-bottom: 1rem;
-        }
-
-        h3 {
-          margin: 0 0 0.5rem 0;
-          color: #2c3e50;
-          font-size: 1.3rem;
-        }
-
-        p {
-          margin: 0 0 1rem 0;
-          color: #7f8c8d;
-          min-height: 3rem;
-        }
-      }
-    }
-  }
-
-  .announcements-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-
-    .announcement-card {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-
-      .announcement-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: start;
-        gap: 1rem;
-        padding: 1rem;
-
-        h3 {
-          margin: 0;
-          font-size: 1.2rem;
-          flex: 1;
-          color: #2c3e50;
-          font-weight: 600;
-        }
-      }
-
-      .announcement-content-preview {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.6;
-        color: #555;
-        margin-bottom: 1rem;
-        min-height: 4.8rem;
-      }
-
-      .announcement-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: auto;
-        padding-top: 0.5rem;
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
-
-        .announcement-date {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: #7f8c8d;
-          font-size: 0.9rem;
-
-          i {
-            font-size: 0.85rem;
-          }
-        }
-      }
-    }
-  }
-
-  .welcome-section {
-    p-card {
-      text-align: center;
-
-      h2 {
-        justify-content: center;
-      }
-
-      p {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        color: #555;
-        max-width: 800px;
-        margin: 1rem auto;
-      }
-
-      .welcome-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        margin-top: 2rem;
-        flex-wrap: wrap;
-      }
-    }
-  }
-
-  // Announcement Dialog
-  .dialog-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-
-    h2 {
-      margin: 0;
-      font-size: 1.5rem;
-      color: #2c3e50;
-      flex: 1;
-    }
-  }
-
-  .announcement-dialog-content {
-    p {
-      font-size: 1.05rem;
-      line-height: 1.8;
-      color: #555;
-      margin-bottom: 1.5rem;
-    }
-
-    .announcement-meta {
-      padding-top: 1rem;
-      border-top: 1px solid rgba(0, 0, 0, 0.08);
-
-      .announcement-date {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #7f8c8d;
-        font-size: 0.95rem;
-
-        i {
-          font-size: 0.9rem;
-        }
-      }
-    }
-  }
-}
-
 :host ::ng-deep {
-  // Announcement cards - ensure equal heights
-  .announcements-grid {
-    .announcement-card {
-      .p-card-body {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-      }
+	/* Grey page overlay behind dialog */
+	.announcement-mask {
+		background: rgba(0, 0, 0, 0.55) !important; // semi-transparent grey
+		backdrop-filter: blur(3px); // modern blur effect
+	}
 
-      .p-card-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-    }
-  }
+	.home-container {
+		margin-top: 0.5rem;
+		padding: 2rem;
+		max-width: 1400px;
+		margin-left: auto;
+		margin-right: auto;
 
-  // Dialog styling
-  .p-dialog {
-    .p-dialog-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    }
+		@media (max-width: 768px) {
+			padding: 1rem;
+		}
 
-    .p-dialog-content {
-      padding: 1.5rem;
-    }
+		.hero-section {
+			margin: -2rem -2rem 2rem;
+			border-radius: 0;
 
-    .p-dialog-footer {
-      padding: 1rem 1.5rem;
-      border-top: 1px solid rgba(0, 0, 0, 0.08);
-    }
-  }
+			@media (max-width: 768px) {
+				margin: -1rem -1rem 1rem;
+			}
 
-  // Carousel styling
-  .p-carousel {
-    .p-carousel-indicators {
-      padding: 1rem;
+			.carousel-item {
+				border-radius: 5px;
+				position: relative;
+				height: 500px;
+				overflow: hidden;
 
-      button {
-        width: 1rem;
-        height: 1rem;
-        border-radius: 50%;
-        background-color: rgba(255, 255, 255, 0.5);
+				@media (max-width: 768px) {
+					height: 300px;
+				}
 
-        &.p-highlight {
-          background-color: white;
-        }
-      }
-    }
+				.carousel-image {
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+				}
 
-    .p-carousel-prev,
-    .p-carousel-next {
-      color: white;
-      background: rgba(0, 0, 0, 0.3);
+				.carousel-content {
+					position: absolute;
+					bottom: 0;
+					left: 0;
+					right: 0;
+					background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+					color: white;
+					padding: 3rem 2rem 2rem;
 
-      &:hover {
-        background: rgba(0, 0, 0, 0.5);
-      }
-    }
-  }
+					h2 {
+						margin: 0 0 0.5rem 0;
+						font-size: 2.5rem;
+						font-weight: 700;
+
+						@media (max-width: 768px) {
+							font-size: 1.5rem;
+						}
+					}
+
+					p {
+						margin: 0;
+						font-size: 1.2rem;
+						opacity: 0.9;
+
+						@media (max-width: 768px) {
+							font-size: 1rem;
+						}
+					}
+				}
+			}
+		}
+
+		.quick-links-section,
+		.announcements-section,
+		.welcome-section {
+			margin: 3rem 0;
+
+			h2 {
+				font-size: 2rem;
+				margin-bottom: 1.5rem;
+				color: #2c3e50;
+				display: flex;
+				align-items: center;
+				gap: 0.75rem;
+			}
+		}
+
+		.quick-links-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 1.5rem;
+
+			.quick-link-card {
+				height: 100%;
+				transition:
+					transform 0.3s ease,
+					box-shadow 0.3s ease;
+
+				&:hover {
+					transform: translateY(-5px);
+					box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+				}
+
+				.quick-link-content {
+					text-align: center;
+					padding: 1rem;
+
+					.quick-link-icon {
+						font-size: 3rem;
+						color: #4a7c59;
+						margin-bottom: 1rem;
+					}
+
+					h3 {
+						margin: 0 0 0.5rem 0;
+						color: #2c3e50;
+						font-size: 1.3rem;
+					}
+
+					p {
+						margin: 0 0 1rem 0;
+						color: #7f8c8d;
+						min-height: 3rem;
+					}
+				}
+			}
+		}
+
+		.announcements-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+			gap: 1.5rem;
+
+			.announcement-card {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+
+				.announcement-header {
+					display: flex;
+					justify-content: space-between;
+					align-items: start;
+					gap: 1rem;
+					padding: 1rem;
+
+					h3 {
+						margin: 0;
+						font-size: 1.2rem;
+						flex: 1;
+						color: #2c3e50;
+						font-weight: 600;
+					}
+				}
+
+				.announcement-content-preview {
+					display: -webkit-box;
+					-webkit-line-clamp: 3;
+					-webkit-box-orient: vertical;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					line-height: 1.6;
+					color: #555;
+					margin-bottom: 1rem;
+					min-height: 4.8rem;
+				}
+
+				.announcement-footer {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					margin-top: auto;
+					padding-top: 0.5rem;
+					border-top: 1px solid rgba(0, 0, 0, 0.06);
+
+					.announcement-date {
+						display: flex;
+						align-items: center;
+						gap: 0.5rem;
+						color: #7f8c8d;
+						font-size: 0.9rem;
+
+						i {
+							font-size: 0.85rem;
+						}
+					}
+				}
+			}
+		}
+
+		.welcome-section {
+			p-card {
+				text-align: center;
+
+				h2 {
+					justify-content: center;
+				}
+
+				p {
+					font-size: 1.1rem;
+					line-height: 1.8;
+					color: #555;
+					max-width: 800px;
+					margin: 1rem auto;
+				}
+
+				.welcome-actions {
+					display: flex;
+					gap: 1rem;
+					justify-content: center;
+					margin-top: 2rem;
+					flex-wrap: wrap;
+				}
+			}
+		}
+
+		// Announcement Dialog
+		.dialog-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			width: 100%;
+
+			h2 {
+				margin: 0;
+				font-size: 1.5rem;
+				color: #2c3e50;
+				flex: 1;
+			}
+		}
+
+		.announcement-dialog-content {
+			p {
+				font-size: 1.05rem;
+				line-height: 1.8;
+				color: #555;
+				margin-bottom: 1.5rem;
+			}
+
+			.announcement-meta {
+				padding-top: 1rem;
+				border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+				.announcement-date {
+					display: flex;
+					align-items: center;
+					gap: 0.5rem;
+					color: #7f8c8d;
+					font-size: 0.95rem;
+
+					i {
+						font-size: 0.9rem;
+					}
+				}
+			}
+		}
+	}
+
+	:host ::ng-deep {
+		// Announcement cards - ensure equal heights
+		.announcements-grid {
+			.announcement-card {
+				.p-card-body {
+					display: flex;
+					flex-direction: column;
+					height: 100%;
+				}
+
+				.p-card-content {
+					flex: 1;
+					display: flex;
+					flex-direction: column;
+				}
+			}
+		}
+
+		// Dialog styling
+		.p-dialog {
+			.p-dialog-header {
+				padding: 1.5rem;
+				border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+			}
+
+			.p-dialog-content {
+				padding: 1.5rem;
+			}
+
+			.p-dialog-footer {
+				padding: 1rem 1.5rem;
+				border-top: 1px solid rgba(0, 0, 0, 0.08);
+			}
+		}
+
+		// Carousel styling
+		.p-carousel {
+			.p-carousel-indicators {
+				padding: 1rem;
+
+				button {
+					width: 1rem;
+					height: 1rem;
+					border-radius: 50%;
+					background-color: rgba(255, 255, 255, 0.5);
+
+					&.p-highlight {
+						background-color: white;
+					}
+				}
+			}
+
+			.p-carousel-prev,
+			.p-carousel-next {
+				color: white;
+				background: rgba(0, 0, 0, 0.3);
+
+				&:hover {
+					background: rgba(0, 0, 0, 0.5);
+				}
+			}
+		}
+	}
 }

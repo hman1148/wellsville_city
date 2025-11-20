@@ -1,12 +1,14 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+
 import { CarouselModule } from 'primeng/carousel';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
+
 import { type CarouselSlide, type Announcement } from '../../models';
 
 @Component({
