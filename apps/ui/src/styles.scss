@@ -18,9 +18,11 @@ body {
 
 body {
   margin: 0;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 25%, #ffffff 50%, #e8f5e9 75%, #d4e9d7 100%);
+  background-attachment: fixed;
   color: #2c3e50;
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 /* Accessibility improvements */
@@ -90,8 +92,49 @@ img {
 
 /* PrimeNG customizations */
 :root {
-  --primary-color: #667eea;
+  --primary-color: #4a7c59;
   --primary-color-text: #ffffff;
+  --primary-color-dark: #2d5016;
+  --accent-color: #6b8e23;
+}
+
+/* Icon spacing utilities */
+.p-button-icon {
+  margin-right: 0.5rem !important;
+}
+
+.pi {
+  margin-right: 0.5rem;
+  color: #5a9367;
+}
+
+/* Improve icon-text spacing in cards and components */
+.quick-link-icon,
+.announcement-date i,
+h2 i {
+  margin-right: 0.75rem;
+}
+
+/* Override icon colors for better visibility and consistent theming */
+.p-menuitem-icon {
+  color: inherit !important;
+}
+
+i.pi {
+  color: #5a9367;
+}
+
+/* Modern card styling with shadows */
+.p-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+  transition: all 0.3s ease !important;
+
+  &:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+  }
 }
 
 /* Responsive utilities */

@@ -1,1 +1,1 @@
-export { FooterComponent } from './footer.component.ts';
+export { FooterComponent } from './footer.component';

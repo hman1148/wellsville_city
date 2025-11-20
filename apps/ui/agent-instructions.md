@@ -532,6 +532,99 @@ export class StockListComponent implements OnInit {
 
 ## Routing and State Management
 
+### Component-Level Routing Architecture
+
+**IMPORTANT**: Each component that has sub-routes must manage them in its own `component.routes.ts` file within the component folder.
+
+#### Routing Structure Pattern
+
+```
+components/
+├── government/
+│   ├── government.component.ts
+│   ├── government.component.html
+│   ├── government.component.scss
+│   ├── government.routes.ts  ← Component manages its own routes
+│   └── children/            ← Sub-components if needed
+├── information/
+│   ├── information.component.ts
+│   ├── information.routes.ts  ← Component manages its own routes
+│   └── ...
+```
+
+#### Component Routes File Pattern
+
+```typescript
+// government.routes.ts
+import { Route } from '@angular/router';
+import { GovernmentComponent } from './government.component';
+
+export const GOVERNMENT_ROUTES: Route = {
+  path: 'government',
+  component: GovernmentComponent,
+  children: [
+    // Child routes managed by this component
+    {
+      path: 'mayor',
+      loadComponent: () =>
+        import('./mayor/mayor.component').then((m) => m.MayorComponent),
+    },
+    {
+      path: 'city-council',
+      loadComponent: () =>
+        import('./city-council/city-council.component').then(
+          (m) => m.CityCouncilComponent
+        ),
+    },
+    // Add more child routes as needed
+  ],
+};
+```
+
+#### Main App Routes Integration
+
+```typescript
+// app.routes.ts
+import { Route } from '@angular/router';
+import { HOME_ROUTES } from './components/home/home.routes';
+import { GOVERNMENT_ROUTES } from './components/government/government.routes';
+import { CITIZENS_ROUTES } from './components/citizens/citizens.routes';
+
+export const appRoutes: Route[] = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./components/layout/layout.component').then(
+        (m) => m.LayoutComponent
+      ),
+    children: [
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full',
+      },
+      HOME_ROUTES,
+      GOVERNMENT_ROUTES,
+      CITIZENS_ROUTES,
+      // Other component routes...
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: 'home',
+  },
+];
+```
+
+#### Component-Level Routing Rules
+
+1. **Modular Organization**: Each component manages its own route configuration
+2. **Scalability**: Easy to add child routes without modifying main app.routes.ts
+3. **Encapsulation**: Routes are co-located with their components
+4. **Export Pattern**: Export a single Route object (singular) from component routes files
+5. **Naming Convention**: Use `COMPONENT_ROUTES` as the export name (e.g., `GOVERNMENT_ROUTES`)
+6. **Import Pattern**: Import and spread component routes into main app routes children array
+
 ### Route Configuration
 
 Routes trigger store methods to load data via resolvers or component initialization.
@@ -756,6 +849,9 @@ export * from './user';
    - Components: `*.component.ts`, `*.component.html`, `*.component.scss`
 
 ---
+
+## Syntax
+In the .html files, if condition and logic are needed use the Angular 2 @if @else @for @switch rather than ng-if ng-for. These are deprecated and very hard to read. Use the newer @ symbols instead.
 
 ## Code Examples
 

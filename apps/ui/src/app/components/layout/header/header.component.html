@@ -1,21 +1,67 @@
-<header class="header">
-  <div class="header-top">
-    <div class="logo-section">
-      <h1 routerLink="/home" class="city-title">Wellsville City</h1>
-      <p class="city-tagline">Welcome to Our Community</p>
+<header class="header" [class.scrolled]="isScrolled()">
+  <div class="header-container">
+    <div class="logo-section" routerLink="/home" (click)="closeMobileMenu()">
+      <div class="logo-text">
+        <h1 class="city-title">Wellsville</h1>
+        <span class="city-tagline">Gateway to Cache Valley</span>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="nav-links desktop-nav">
+      @for (item of menuItems; track item.label) {
+        <a [routerLink]="item.routerLink"
+           routerLinkActive="active"
+           class="nav-link">
+          <i [class]="item.icon"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="header-actions">
+      <p-button
+        label="Pay Utilities"
+        icon="pi pi-dollar"
+        styleClass="p-button-success"
+        [rounded]="true"
+        size="small">
+      </p-button>
+
+      <!-- Hamburger Button (Mobile Only) -->
+      <button class="hamburger-btn"
+              [class.open]="mobileMenuOpen()"
+              (click)="toggleMobileMenu()"
+              aria-label="Toggle mobile menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
     </div>
   </div>
-
-  <nav class="navigation">
-    <p-menubar [model]="menuItems" styleClass="custom-menubar">
-      <ng-template pTemplate="end">
-        <p-button
-          label="Pay Utilities"
-          icon="pi pi-dollar"
-          styleClass="p-button-success"
-          [rounded]="true">
-        </p-button>
-      </ng-template>
-    </p-menubar>
-  </nav>
 </header>
+
+<!-- Mobile Menu Overlay -->
+@if (mobileMenuOpen()) {
+  <div class="mobile-menu-overlay" (click)="closeMobileMenu()">
+    <nav class="mobile-menu" (click)="$event.stopPropagation()">
+      <div class="mobile-menu-header">
+        <h2>Menu</h2>
+        <button class="close-btn" (click)="closeMobileMenu()" aria-label="Close menu">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+      <div class="mobile-menu-items">
+        @for (item of menuItems; track item.label) {
+          <a [routerLink]="item.routerLink"
+             routerLinkActive="active"
+             class="mobile-nav-link"
+             (click)="closeMobileMenu()">
+            <i [class]="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      </div>
+    </nav>
+  </div>
+}

@@ -1,4 +1,9 @@
 import { Route } from '@angular/router';
+import { HOME_ROUTES } from './components/home/home.routes';
+import { CITIZENS_ROUTES } from './components/citizens/citizens.routes';
+import { GOVERNMENT_ROUTES } from './components/government/government.routes';
+import { DEPARTMENTS_ROUTES } from './components/departments/departments.routes';
+import { INFORMATION_ROUTES } from './components/information/information.routes';
 
 export const appRoutes: Route[] = [
   {
@@ -13,39 +18,11 @@ export const appRoutes: Route[] = [
         redirectTo: 'home',
         pathMatch: 'full',
       },
-      {
-        path: 'home',
-        loadComponent: () =>
-          import('./routes/home/home.component').then((m) => m.HomeComponent),
-      },
-      {
-        path: 'citizens',
-        loadComponent: () =>
-          import('./routes/citizens/citizens.component').then(
-            (m) => m.CitizensComponent
-          ),
-      },
-      {
-        path: 'government',
-        loadComponent: () =>
-          import('./routes/government/government.component').then(
-            (m) => m.GovernmentComponent
-          ),
-      },
-      {
-        path: 'departments',
-        loadComponent: () =>
-          import('./routes/departments/departments.component').then(
-            (m) => m.DepartmentsComponent
-          ),
-      },
-      {
-        path: 'information',
-        loadComponent: () =>
-          import('./routes/information/information.component').then(
-            (m) => m.InformationComponent
-          ),
-      },
+      HOME_ROUTES,
+      CITIZENS_ROUTES,
+      GOVERNMENT_ROUTES,
+      DEPARTMENTS_ROUTES,
+      INFORMATION_ROUTES,
     ],
   },
   {

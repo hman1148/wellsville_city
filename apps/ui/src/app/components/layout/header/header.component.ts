@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 
@@ -12,6 +13,9 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+  isScrolled = signal(false);
+  mobileMenuOpen = signal(false);
+
   menuItems = [
     {
       label: 'Home',
@@ -39,4 +43,18 @@ export class HeaderComponent {
       routerLink: '/information',
     },
   ];
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    this.isScrolled.set(scrollPosition > 50);
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen.set(!this.mobileMenuOpen());
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen.set(false);
+  }
 }
