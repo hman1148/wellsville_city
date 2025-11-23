@@ -1,0 +1,307 @@
+.citizen-reports-container {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+
+  .header-content {
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin: 0 0 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      i {
+        color: var(--primary-color);
+      }
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-color-secondary);
+    }
+  }
+}
+
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+:host ::ng-deep .stat-card {
+  .p-card-body {
+    padding: 1rem;
+  }
+
+  &.total .stat-icon { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
+  &.new .stat-icon { background: linear-gradient(135deg, #EF4444, #B91C1C); }
+  &.in-progress .stat-icon { background: linear-gradient(135deg, #F59E0B, #D97706); }
+  &.resolved .stat-icon { background: linear-gradient(135deg, #10B981, #059669); }
+  &.recent .stat-icon { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+  &.avg-time .stat-icon { background: linear-gradient(135deg, #EC4899, #BE185D); }
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 1.5rem;
+    color: white;
+  }
+}
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-color);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+  margin-top: 0.25rem;
+}
+
+// Charts Grid
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-container {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Table Filters
+.table-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+// Table Styling
+.description-cell {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.issue-type-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--surface-200);
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-color-secondary);
+
+  i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.125rem;
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+// Report Detail Dialog
+.report-detail {
+  .detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--surface-border);
+
+    .report-id {
+      font-family: monospace;
+      font-size: 0.875rem;
+      color: var(--text-color-secondary);
+    }
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .detail-item {
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.25rem;
+    }
+
+    span {
+      font-size: 1rem;
+      color: var(--text-color);
+    }
+  }
+
+  .detail-description,
+  .detail-photos,
+  .detail-notes {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-color-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--text-color);
+    }
+  }
+
+  .detail-photos {
+    .gallery-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .gallery-thumbnail {
+      width: 80px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+  }
+
+  .detail-notes {
+    .note-item {
+      background: var(--surface-100);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+
+      .note-time {
+        font-size: 0.75rem;
+        color: var(--text-color-secondary);
+      }
+
+      p {
+        margin-top: 0.25rem;
+      }
+    }
+  }
+
+  .detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--surface-border);
+  }
+}
+
+// Status Form
+.status-form {
+  .form-field {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-color);
+    }
+  }
+}
+
+// PrimeNG Overrides
+:host ::ng-deep {
+  .status-tag-large {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .p-tabview-nav {
+    justify-content: flex-start;
+  }
+
+  .p-badge {
+    margin-left: 0.5rem;
+  }
+
+  .ml-2 {
+    margin-left: 0.5rem;
+  }
+}

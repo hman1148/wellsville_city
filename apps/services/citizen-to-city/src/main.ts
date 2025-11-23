@@ -1,0 +1,63 @@
+import * as cdk from 'aws-cdk-lib/core';
+import { StorageStack } from './stacks/storage-stack';
+import { DatabaseStack } from './stacks/database-stack';
+import { PinpointStack } from './stacks/pinpoint-stack';
+import { NotificationStack } from './stacks/notification-stack';
+import { ApiStack } from './stacks/api-stack';
+import { LambdaStack } from './stacks/lambda-stack';
+
+const app = new cdk.App();
+
+// Get sandbox from context to partition stacks
+const sandbox = app.node.tryGetContext('sandbox') || '';
+const stackSuffix = sandbox ? `-${sandbox}` : '';
+
+const env = {
+  region: process.env.CDK_DEFAULT_REGION,
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+};
+
+const description = (name: string) =>
+  sandbox ? `${name} (sandbox: ${sandbox})` : name;
+
+// Storage Stack - S3 bucket for citizen photos
+const storageStack = new StorageStack(app, `citizen-to-city-storage${stackSuffix}`, {
+  env,
+  description: description('CitizenToCity-Storage'),
+});
+
+// Database Stack - DynamoDB for reports
+const databaseStack = new DatabaseStack(app, `citizen-to-city-database${stackSuffix}`, {
+  env,
+  description: description('CitizenToCity-Database'),
+});
+
+// Notification Stack - SNS/SES for admin alerts
+const notificationStack = new NotificationStack(app, `citizen-to-city-notification${stackSuffix}`, {
+  env,
+  description: description('CitizenToCity-Notification'),
+});
+
+// Lambda Stack - All Lambda functions
+const lambdaStack = new LambdaStack(app, `citizen-to-city-lambda${stackSuffix}`, {
+  env,
+  description: description('CitizenToCity-Lambda'),
+  photoBucket: storageStack.photoBucket,
+  reportsTable: databaseStack.reportsTable,
+  adminNotificationTopic: notificationStack.adminNotificationTopic,
+});
+
+// Pinpoint Stack - SMS messaging
+const pinpointStack = new PinpointStack(app, `citizen-to-city-pinpoint${stackSuffix}`, {
+  env,
+  description: description('CitizenToCity-Pinpoint'),
+  incomingSmsHandler: lambdaStack.incomingSmsHandler,
+});
+
+// API Stack - REST API for dashboard
+new ApiStack(app, `citizen-to-city-api${stackSuffix}`, {
+  env,
+  description: description('CitizenToCity-API'),
+  reportsTable: databaseStack.reportsTable,
+  photoBucket: storageStack.photoBucket,
+});

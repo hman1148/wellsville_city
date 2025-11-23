@@ -152,6 +152,39 @@
         margin-left: auto;
       }
 
+      .admin-link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(90, 147, 103, 0.1);
+        color: #5a9367;
+        text-decoration: none;
+        transition: all 0.2s ease;
+
+        i {
+          font-size: 1.25rem;
+        }
+
+        &:hover {
+          background: rgba(90, 147, 103, 0.2);
+          color: #2d5016;
+          transform: translateY(-1px);
+        }
+
+        :host ::ng-deep .reports-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          min-width: 18px;
+          height: 18px;
+          font-size: 0.7rem;
+        }
+      }
+
       .hamburger-btn {
         display: none;
         flex-direction: column;

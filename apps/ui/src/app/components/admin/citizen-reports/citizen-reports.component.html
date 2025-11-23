@@ -1,0 +1,398 @@
+<p-toast></p-toast>
+
+<div class="citizen-reports-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="pi pi-inbox"></i>
+        Citizen Reports Dashboard
+      </h1>
+      <p>Monitor and manage citizen-reported issues across Wellsville City</p>
+    </div>
+    <div class="header-actions">
+      <p-button
+        icon="pi pi-refresh"
+        label="Refresh"
+        [outlined]="true"
+        (onClick)="refresh()"
+        [loading]="loading()"
+      ></p-button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  @if (stats(); as statsData) {
+    <div class="stats-grid">
+      <p-card styleClass="stat-card total">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <i class="pi pi-file"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ statsData.total }}</span>
+            <span class="stat-label">Total Reports</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card new">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <i class="pi pi-exclamation-circle"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ statsData.byStatus.new }}</span>
+            <span class="stat-label">New Reports</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card in-progress">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <i class="pi pi-spin pi-spinner"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ statsData.byStatus.in_progress }}</span>
+            <span class="stat-label">In Progress</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card resolved">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ statsData.byStatus.resolved }}</span>
+            <span class="stat-label">Resolved</span>
+          </div>
+        </div>
+      </p-card>
+
+      <p-card styleClass="stat-card recent">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <i class="pi pi-clock"></i>
+          </div>
+          <div class="stat-info">
+            <span class="stat-value">{{ statsData.recentReports }}</span>
+            <span class="stat-label">Last 24 Hours</span>
+          </div>
+        </div>
+      </p-card>
+
+      @if (statsData.averageResolutionTime) {
+        <p-card styleClass="stat-card avg-time">
+          <div class="stat-content">
+            <div class="stat-icon">
+              <i class="pi pi-stopwatch"></i>
+            </div>
+            <div class="stat-info">
+              <span class="stat-value">{{ statsData.averageResolutionTime }}h</span>
+              <span class="stat-label">Avg Resolution Time</span>
+            </div>
+          </div>
+        </p-card>
+      }
+    </div>
+  }
+
+  <!-- Charts Section -->
+  @if (stats()) {
+    <div class="charts-grid">
+      <p-card header="Reports by Status">
+        <div class="chart-container">
+          @if (statusChartData(); as chartData) {
+            <p-chart
+              type="doughnut"
+              [data]="chartData"
+              [options]="chartOptions"
+            ></p-chart>
+          }
+        </div>
+      </p-card>
+
+      <p-card header="Reports by Issue Type">
+        <div class="chart-container">
+          @if (issueTypeChartData(); as chartData) {
+            <p-chart
+              type="bar"
+              [data]="chartData"
+              [options]="chartOptions"
+            ></p-chart>
+          }
+        </div>
+      </p-card>
+    </div>
+  }
+
+  <!-- Reports Table with Tabs -->
+  <p-card>
+    <p-tabView [activeIndex]="activeTabIndex()" (activeIndexChange)="onTabChange($event)">
+      <p-tabPanel header="All Reports">
+        <ng-container *ngTemplateOutlet="reportsTable"></ng-container>
+      </p-tabPanel>
+      <p-tabPanel>
+        <ng-template pTemplate="header">
+          <span>New</span>
+          @if (stats()?.byStatus?.new; as count) {
+            <p-badge [value]="count.toString()" severity="danger" class="ml-2"></p-badge>
+          }
+        </ng-template>
+        <ng-container *ngTemplateOutlet="reportsTable"></ng-container>
+      </p-tabPanel>
+      <p-tabPanel header="In Progress">
+        <ng-container *ngTemplateOutlet="reportsTable"></ng-container>
+      </p-tabPanel>
+      <p-tabPanel header="Resolved">
+        <ng-container *ngTemplateOutlet="reportsTable"></ng-container>
+      </p-tabPanel>
+    </p-tabView>
+  </p-card>
+</div>
+
+<!-- Reports Table Template -->
+<ng-template #reportsTable>
+  <div class="table-filters">
+    <p-dropdown
+      [options]="issueTypeOptions"
+      placeholder="Filter by Issue Type"
+      (onChange)="onIssueTypeFilterChange($event.value)"
+      [showClear]="true"
+    ></p-dropdown>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  } @else {
+    <p-table
+      [value]="filteredReports()"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} reports"
+      [globalFilterFields]="['issueAddress', 'description', 'citizenName']"
+      styleClass="p-datatable-striped"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="createdAt">Date <p-sortIcon field="createdAt"></p-sortIcon></th>
+          <th pSortableColumn="issueType">Type <p-sortIcon field="issueType"></p-sortIcon></th>
+          <th>Location</th>
+          <th>Description</th>
+          <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-report>
+        <tr>
+          <td>{{ formatDate(report.createdAt) }}</td>
+          <td>
+            <span class="issue-type-badge">
+              {{ getIssueTypeLabel(report.issueType) }}
+            </span>
+          </td>
+          <td>{{ report.issueAddress }}</td>
+          <td class="description-cell">
+            <span [pTooltip]="report.description" tooltipPosition="top">
+              {{ report.description | slice:0:50 }}{{ report.description.length > 50 ? '...' : '' }}
+            </span>
+          </td>
+          <td>
+            <p-tag
+              [value]="getStatusLabel(report.status)"
+              [severity]="getStatusSeverity(report.status)"
+            ></p-tag>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <p-button
+                icon="pi pi-eye"
+                [rounded]="true"
+                [text]="true"
+                pTooltip="View Details"
+                (onClick)="viewReport(report)"
+              ></p-button>
+              <p-button
+                icon="pi pi-pencil"
+                [rounded]="true"
+                [text]="true"
+                pTooltip="Update Status"
+                (onClick)="openStatusDialog(report)"
+              ></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-message">
+            <i class="pi pi-inbox"></i>
+            <p>No reports found</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  }
+</ng-template>
+
+<!-- Report Detail Dialog -->
+<p-dialog
+  header="Report Details"
+  [(visible)]="displayDetailDialog"
+  [modal]="true"
+  [style]="{ width: '700px' }"
+  [closable]="true"
+  (onHide)="closeDetailDialog()"
+>
+  @if (selectedReport(); as report) {
+    <div class="report-detail">
+      <div class="detail-header">
+        <p-tag
+          [value]="getStatusLabel(report.status)"
+          [severity]="getStatusSeverity(report.status)"
+          styleClass="status-tag-large"
+        ></p-tag>
+        <span class="report-id">ID: {{ report.reportId }}</span>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Issue Type</label>
+          <span>{{ getIssueTypeLabel(report.issueType) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Location</label>
+          <span>{{ report.issueAddress }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Reported</label>
+          <span>{{ formatDate(report.createdAt) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Last Updated</label>
+          <span>{{ formatDate(report.updatedAt) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Reporter Phone</label>
+          <span>{{ report.phoneNumber }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Reporter Name</label>
+          <span>{{ report.citizenName || 'Unknown' }}</span>
+        </div>
+      </div>
+
+      <div class="detail-description">
+        <label>Description</label>
+        <p>{{ report.description }}</p>
+      </div>
+
+      @if (report.photos && report.photos.length > 0) {
+        <div class="detail-photos">
+          <label>Photos ({{ report.photos.length }})</label>
+          <p-galleria
+            [value]="report.photos"
+            [numVisible]="3"
+            [circular]="true"
+            [showItemNavigators]="true"
+            [showThumbnails]="true"
+            [responsiveOptions]="[
+              { breakpoint: '1024px', numVisible: 3 },
+              { breakpoint: '768px', numVisible: 2 },
+              { breakpoint: '560px', numVisible: 1 }
+            ]"
+          >
+            <ng-template pTemplate="item" let-photo>
+              <img [src]="photo.url" [alt]="'Photo ' + photo.key" class="gallery-image" />
+            </ng-template>
+            <ng-template pTemplate="thumbnail" let-photo>
+              <img [src]="photo.url" [alt]="'Thumbnail ' + photo.key" class="gallery-thumbnail" />
+            </ng-template>
+          </p-galleria>
+        </div>
+      }
+
+      @if (report.adminNotes && report.adminNotes.length > 0) {
+        <div class="detail-notes">
+          <label>Admin Notes</label>
+          @for (note of report.adminNotes; track note.timestamp) {
+            <div class="note-item">
+              <span class="note-time">{{ formatDate(note.timestamp) }}</span>
+              <p>{{ note.text }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="detail-actions">
+        <p-button
+          label="Update Status"
+          icon="pi pi-pencil"
+          (onClick)="openStatusDialog(report)"
+        ></p-button>
+        <p-button
+          label="Close"
+          icon="pi pi-times"
+          [outlined]="true"
+          (onClick)="closeDetailDialog()"
+        ></p-button>
+      </div>
+    </div>
+  }
+</p-dialog>
+
+<!-- Status Update Dialog -->
+<p-dialog
+  header="Update Report Status"
+  [(visible)]="displayStatusDialog"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="true"
+>
+  <div class="status-form">
+    <div class="form-field">
+      <label for="status">New Status</label>
+      <p-dropdown
+        id="status"
+        [options]="statusOptions.slice(1)"
+        [(ngModel)]="selectedStatus"
+        placeholder="Select Status"
+        [style]="{ width: '100%' }"
+      ></p-dropdown>
+    </div>
+
+    <div class="form-field">
+      <label for="notes">Notes (optional)</label>
+      <textarea
+        pInputTextarea
+        id="notes"
+        [(ngModel)]="statusNotes"
+        rows="3"
+        placeholder="Add notes about this status change..."
+        [style]="{ width: '100%' }"
+      ></textarea>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Cancel"
+      icon="pi pi-times"
+      [text]="true"
+      (onClick)="displayStatusDialog.set(false)"
+    ></p-button>
+    <p-button
+      label="Update"
+      icon="pi pi-check"
+      (onClick)="updateStatus()"
+      [disabled]="!selectedStatus()"
+    ></p-button>
+  </ng-template>
+</p-dialog>

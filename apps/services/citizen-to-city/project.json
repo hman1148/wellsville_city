@@ -1,0 +1,96 @@
+{
+  "name": "services-citizen-to-city",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services/citizen-to-city/src",
+  "projectType": "application",
+  "tags": ["cdk"],
+  "targets": {
+    "tsc": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": ["tsc -p tsconfig.json --noEmit"]
+      }
+    },
+    "diff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "NX_ENV={args.env} NX_SANDBOX={args.sandbox} bash -c 'cdk diff --context env=${NX_ENV:-dev} --context sandbox=${NX_SANDBOX:-}'"
+        ]
+      }
+    },
+    "synth": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "NX_ENV={args.env} NX_SANDBOX={args.sandbox} bash -c 'cdk synth --context env=${NX_ENV:-dev} --context sandbox=${NX_SANDBOX:-}'"
+        ]
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "NX_ENV={args.env} NX_SANDBOX={args.sandbox} bash -c 'cdk deploy --require-approval=never --context env=${NX_ENV:-dev} --context sandbox=${NX_SANDBOX:-}'"
+        ]
+      }
+    },
+    "destroy": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["destroy^"],
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "NX_ENV={args.env} NX_SANDBOX={args.sandbox} NX_STACK={args.stack} bash -c 'if [ -n \"${NX_STACK}\" ]; then cdk destroy -f ${NX_STACK} --context env=${NX_ENV:-dev} --context sandbox=${NX_SANDBOX:-}; else cdk destroy -f --context env=${NX_ENV:-dev} --context sandbox=${NX_SANDBOX:-}; fi'"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/services/citizen-to-city/jest.config.ts"
+      }
+    },
+    "deploy:local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "cdk deploy --require-approval=never --context env=local --context sandbox=local --context localMode=true"
+        ]
+      }
+    },
+    "synth:local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "cdk synth --context env=local --context sandbox=local --context localMode=true"
+        ]
+      }
+    },
+    "diff:local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "cdk diff --context env=local --context sandbox=local --context localMode=true"
+        ]
+      }
+    },
+    "destroy:local": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "apps/services/citizen-to-city",
+        "commands": [
+          "cdk destroy -f --context env=local --context sandbox=local --context localMode=true"
+        ]
+      }
+    }
+  }
+}

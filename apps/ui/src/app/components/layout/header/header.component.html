@@ -20,6 +20,14 @@
     </nav>
 
     <div class="header-actions">
+      <!-- Admin Reports Link -->
+      <a routerLink="/admin/reports" class="admin-link" title="Citizen Reports">
+        <i class="pi pi-inbox"></i>
+        @if (newReportsCount() > 0) {
+          <p-badge [value]="newReportsCount().toString()" severity="danger" styleClass="reports-badge"></p-badge>
+        }
+      </a>
+
       <p-button
         label="Pay Utilities"
         icon="pi pi-dollar"
