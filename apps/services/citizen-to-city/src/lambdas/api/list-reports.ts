@@ -14,8 +14,6 @@ const corsHeaders = {
 };
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('List Reports Event:', JSON.stringify(event, null, 2));
-
   try {
     const queryParams = event.queryStringParameters || {};
     const status = queryParams.status;

@@ -32,6 +32,8 @@ export class LambdaStack extends Stack {
         REPORTS_TABLE_NAME: props.reportsTable.tableName,
         PHOTO_BUCKET_NAME: props.photoBucket.bucketName,
         ADMIN_TOPIC_ARN: props.adminNotificationTopic.topicArn,
+        SENDER_EMAIL: props.senderEmail,
+        COGNITO_USER_POOL_ARN: props.cognitoUserPoolArn || '',
       },
     };
 
@@ -74,21 +76,23 @@ export class LambdaStack extends Stack {
     props.adminNotificationTopic.grantPublish(this.incomingSmsHandler);
     props.adminNotificationTopic.grantPublish(this.notifyAdminHandler);
 
-    // Grant SES permissions for sending emails
+    // Grant SES permissions for sending emails (scoped to verified identity)
     const sesPolicy = new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
       actions: ['ses:SendEmail', 'ses:SendRawEmail'],
-      resources: ['*'],
+      resources: [props.sesEmailIdentityArn],
     });
     this.notifyAdminHandler.addToRolePolicy(sesPolicy);
 
-    // Grant Cognito permissions to list users for admin emails
-    const cognitoPolicy = new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      actions: ['cognito-idp:ListUsers'],
-      resources: ['*'], // Will be scoped to specific user pool in production
-    });
-    this.notifyAdminHandler.addToRolePolicy(cognitoPolicy);
+    // Grant Cognito permissions to list users for admin emails (scoped to user pool)
+    if (props.cognitoUserPoolArn) {
+      const cognitoPolicy = new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ['cognito-idp:ListUsers'],
+        resources: [props.cognitoUserPoolArn],
+      });
+      this.notifyAdminHandler.addToRolePolicy(cognitoPolicy);
+    }
 
     Tags.of(this).add('Environment', env);
     Tags.of(this).add('Service', 'citizen-to-city');

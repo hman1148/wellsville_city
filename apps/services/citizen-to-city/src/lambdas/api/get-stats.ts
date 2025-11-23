@@ -26,8 +26,6 @@ interface ReportStats {
 }
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('Get Stats Event:', JSON.stringify(event, null, 2));
-
   try {
     // Get counts for each status using GSI
     const [newCount, inProgressCount, resolvedCount] = await Promise.all([
@@ -85,7 +83,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     reports.forEach(report => {
       const dateKey = report.createdAt.split('T')[0];
-      if (last7Days.hasOwnProperty(dateKey)) {
+      if (Object.prototype.hasOwnProperty.call(last7Days, dateKey)) {
         last7Days[dateKey]++;
       }
     });

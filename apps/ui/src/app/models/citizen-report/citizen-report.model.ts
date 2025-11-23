@@ -1,4 +1,4 @@
-export interface CitizenReport {
+export type CitizenReport = {
   reportId: string;
   createdAt: string;
   updatedAt: string;
@@ -14,12 +14,12 @@ export interface CitizenReport {
   adminNotes?: AdminNote[];
 }
 
-export interface PhotoInfo {
+export type PhotoInfo = {
   key: string;
   url: string;
 }
 
-export interface AdminNote {
+export type AdminNote = {
   text: string;
   timestamp: string;
   adminName?: string;
@@ -37,7 +37,7 @@ export type IssueType =
   | 'sign'
   | 'other';
 
-export interface ReportsListResponse {
+export type ReportsListResponse = {
   reports: CitizenReport[];
   pagination: {
     count: number;
@@ -46,13 +46,15 @@ export interface ReportsListResponse {
   };
 }
 
-export interface ReportStats {
+export type ByStatus = {
+  new: number;
+  in_process: number;
+  resolved: number;
+}
+
+export type ReportStats = {
   total: number;
-  byStatus: {
-    new: number;
-    in_progress: number;
-    resolved: number;
-  };
+  byStatus: ByStatus,
   byIssueType: Record<string, number>;
   recentReports: number;
   averageResolutionTime?: number;

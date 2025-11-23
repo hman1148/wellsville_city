@@ -1,0 +1,63 @@
+{
+  "name": "services",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/services",
+  "projectType": "application",
+  "tags": ["orchestrator"],
+  "targets": {
+    "deploy": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "deploy", "params": "forward" }
+      ]
+    },
+    "deploy:local": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "deploy:local", "params": "forward" }
+      ]
+    },
+    "synth": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "synth", "params": "forward" }
+      ]
+    },
+    "synth:local": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "synth:local", "params": "forward" }
+      ]
+    },
+    "diff": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "diff", "params": "forward" }
+      ]
+    },
+    "diff:local": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "diff:local", "params": "forward" }
+      ]
+    },
+    "destroy": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "destroy", "params": "forward" }
+      ]
+    },
+    "destroy:local": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "destroy:local", "params": "forward" }
+      ]
+    },
+    "tsc": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        { "projects": ["tag:cdk"], "target": "tsc" }
+      ]
+    }
+  }
+}

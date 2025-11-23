@@ -18,8 +18,6 @@ const corsHeaders = {
 };
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('Get Report Event:', JSON.stringify(event, null, 2));
-
   try {
     const reportId = event.pathParameters?.reportId;
 

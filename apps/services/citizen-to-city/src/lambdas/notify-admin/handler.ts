@@ -13,82 +13,87 @@ const snsClient = new SNSClient({});
 
 const REPORTS_TABLE_NAME = process.env.REPORTS_TABLE_NAME ?? '';
 const ADMIN_TOPIC_ARN = process.env.ADMIN_TOPIC_ARN ?? '';
+const SENDER_EMAIL = process.env.SENDER_EMAIL ?? '';
+const COGNITO_USER_POOL_ARN = process.env.COGNITO_USER_POOL_ARN ?? '';
 
 const generateEmailHtml = (report: CitizenReport, notificationType: string): string => {
   const issueLabel = ISSUE_TYPE_LABELS[report.issueType] || report.issueType;
   const statusColor = report.status === 'new' ? '#dc3545' : report.status === 'in_progress' ? '#ffc107' : '#28a745';
 
   return `
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: #1e3a5f; color: white; padding: 20px; text-align: center; }
-    .content { padding: 20px; background: #f9f9f9; }
-    .detail { margin: 10px 0; padding: 10px; background: white; border-left: 4px solid #1e3a5f; }
-    .label { font-weight: bold; color: #666; }
-    .status { display: inline-block; padding: 5px 15px; border-radius: 20px; color: white; background: ${statusColor}; }
-    .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
-    .button { display: inline-block; padding: 12px 24px; background: #1e3a5f; color: white; text-decoration: none; border-radius: 5px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>Wellsville City</h1>
-      <p>Citizen Report Notification</p>
-    </div>
-    <div class="content">
-      <h2>${notificationType === 'new_report' ? 'New Report Received' : 'Report Update'}</h2>
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #1e3a5f; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .detail { margin: 10px 0; padding: 10px; background: white; border-left: 4px solid #1e3a5f; }
+        .label { font-weight: bold; color: #666; }
+        .status { display: inline-block; padding: 5px 15px; border-radius: 20px; color: white; background: ${statusColor}; }
+        .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
+        .button { display: inline-block; padding: 12px 24px; background: #1e3a5f; color: white; text-decoration: none; border-radius: 5px; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>Wellsville City</h1>
+          <p>Citizen Report Notification</p>
+        </div>
+        <div class="content">
+          <h2>${notificationType === 'new_report' ? 'New Report Received' : 'Report Update'}</h2>
 
-      <div class="detail">
-        <span class="label">Report ID:</span> ${report.reportId}
-      </div>
+          <div class="detail">
+            <span class="label">Report ID:</span> ${report.reportId}
+          </div>
 
-      <div class="detail">
-        <span class="label">Issue Type:</span> ${issueLabel}
-      </div>
+          <div class="detail">
+            <span class="label">Issue Type:</span> ${issueLabel}
+          </div>
 
-      <div class="detail">
-        <span class="label">Location:</span> ${report.issueAddress}
-      </div>
+          <div class="detail">
+            <span class="label">Location:</span> ${report.issueAddress}
+          </div>
 
-      <div class="detail">
-        <span class="label">Description:</span><br>
-        ${report.description}
-      </div>
+          <div class="detail">
+            <span class="label">Description:</span><br>
+            ${report.description}
+          </div>
 
-      <div class="detail">
-        <span class="label">Status:</span> <span class="status">${report.status.toUpperCase().replace('_', ' ')}</span>
-      </div>
+          <div class="detail">
+            <span class="label">Status:</span> <span class="status">${report.status.toUpperCase().replace('_', ' ')}</span>
+          </div>
 
-      <div class="detail">
-        <span class="label">Reported:</span> ${new Date(report.createdAt).toLocaleString()}
-      </div>
+          <div class="detail">
+            <span class="label">Reported:</span> ${new Date(report.createdAt).toLocaleString()}
+          </div>
 
-      ${report.photoUrls.length > 0 ? `
-      <div class="detail">
-        <span class="label">Photos:</span> ${report.photoUrls.length} attached
+          ${report.photoUrls.length > 0 ? `
+          <div class="detail">
+            <span class="label">Photos:</span> ${report.photoUrls.length} attached
+          </div>
+          ` : ''}
+        </div>
+        <div class="footer">
+          <p>This is an automated notification from the Wellsville City Citizen Reporting System.</p>
+          <p>Please do not reply to this email.</p>
+        </div>
       </div>
-      ` : ''}
-    </div>
-    <div class="footer">
-      <p>This is an automated notification from the Wellsville City Citizen Reporting System.</p>
-      <p>Please do not reply to this email.</p>
-    </div>
-  </div>
-</body>
-</html>
-  `;
+    </body>
+    </html>
+      `;
 };
 
 export const handler = async (event: NotifyAdminEvent): Promise<{ statusCode: number; body: string }> => {
-  console.log('Notify Admin Event:', JSON.stringify(event, null, 2));
-
   try {
-    const { reportId, createdAt, notificationType, userPoolId, senderEmail } = event;
+    const { reportId, createdAt, notificationType } = event;
+
+    // Use environment variables for sender email and user pool
+    // These are set from the CDK stack configuration
+    const senderEmail = SENDER_EMAIL;
+    const userPoolId = COGNITO_USER_POOL_ARN ? COGNITO_USER_POOL_ARN.split('/').pop() : undefined;
 
     // Get the report details
     const reportResult = await docClient.send(new GetCommand({
@@ -152,24 +157,22 @@ export const handler = async (event: NotifyAdminEvent): Promise<{ statusCode: nu
                   },
                   Text: {
                     Data: `
-Wellsville City - Citizen Report Notification
+                        Wellsville City - Citizen Report Notification
 
-Report ID: ${report.reportId}
-Issue Type: ${issueLabel}
-Location: ${report.issueAddress}
-Status: ${report.status}
-Description: ${report.description}
-Reported: ${new Date(report.createdAt).toLocaleString()}
+                        Report ID: ${report.reportId}
+                        Issue Type: ${issueLabel}
+                        Location: ${report.issueAddress}
+                        Status: ${report.status}
+                        Description: ${report.description}
+                        Reported: ${new Date(report.createdAt).toLocaleString()}
 
-View this report in the admin dashboard.
+                        View this report in the admin dashboard.
                     `.trim(),
                   },
                 },
               },
             }));
           }
-
-          console.log(`Emails sent to ${adminEmails.length} admins`);
         }
       } catch (emailError) {
         console.error('Error sending emails:', emailError);

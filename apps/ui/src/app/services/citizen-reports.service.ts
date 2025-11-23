@@ -13,8 +13,8 @@ import {
   providedIn: 'root',
 })
 export class CitizenReportsService {
-  private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api'; // Will be configured via environment
+  readonly http = inject(HttpClient);
+  readonly apiUrl = '/api'; // Will be configured via environment
 
   /**
    * Get list of reports with optional filtering

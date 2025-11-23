@@ -102,8 +102,6 @@ export const handler = async (event: ProcessReportEvent): Promise<{ statusCode: 
       ReturnValues: 'ALL_NEW',
     }));
 
-    console.log('Report updated:', result.Attributes);
-
     return {
       statusCode: 200,
       body: JSON.stringify({
