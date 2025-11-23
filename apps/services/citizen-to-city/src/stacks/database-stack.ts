@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 
 export class DatabaseStack extends Stack {
-  public readonly reportsTable: dynamodb.Table;
+  readonly reportsTable: dynamodb.Table;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);

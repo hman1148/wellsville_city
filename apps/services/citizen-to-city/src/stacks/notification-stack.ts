@@ -1,9 +1,6 @@
-import { CfnOutput, RemovalPolicy, Stack, StackProps, Tags } from 'aws-cdk-lib/core';
+import { CfnOutput, Stack, StackProps, Tags } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
 import * as sns from 'aws-cdk-lib/aws-sns';
-import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
-import * as ses from 'aws-cdk-lib/aws-ses';
-import * as iam from 'aws-cdk-lib/aws-iam';
 
 export class NotificationStack extends Stack {
   readonly adminNotificationTopic: sns.Topic;

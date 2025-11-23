@@ -8,8 +8,8 @@ const dynamoClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
 const s3Client = new S3Client({});
 
-const REPORTS_TABLE_NAME = process.env.REPORTS_TABLE_NAME!;
-const PHOTO_BUCKET_NAME = process.env.PHOTO_BUCKET_NAME!;
+const REPORTS_TABLE_NAME = process.env.REPORTS_TABLE_NAME ?? '';
+const PHOTO_BUCKET_NAME = process.env.PHOTO_BUCKET_NAME ?? '';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

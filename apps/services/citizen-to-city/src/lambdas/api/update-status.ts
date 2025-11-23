@@ -5,7 +5,7 @@ import { DynamoDBDocumentClient, QueryCommand, UpdateCommand } from '@aws-sdk/li
 const dynamoClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
 
-const REPORTS_TABLE_NAME = process.env.REPORTS_TABLE_NAME!;
+const REPORTS_TABLE_NAME = process.env.REPORTS_TABLE_NAME ?? '';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -75,7 +75,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       '#status': 'status',
       '#updatedAt': 'updatedAt',
     };
-    const expressionAttributeValues: Record<string, any> = {
+    const expressionAttributeValues: Record<string, string | { text: string; timestamp: string }[]> = {
       ':status': status,
       ':updatedAt': new Date().toISOString(),
     };

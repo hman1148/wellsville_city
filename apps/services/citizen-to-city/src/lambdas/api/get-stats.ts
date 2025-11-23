@@ -5,7 +5,7 @@ import { DynamoDBDocumentClient, ScanCommand, QueryCommand } from '@aws-sdk/lib-
 const dynamoClient = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
 
-const REPORTS_TABLE_NAME = process.env.REPORTS_TABLE_NAME!;
+const REPORTS_TABLE_NAME = process.env.REPORTS_TABLE_NAME ?? '';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -120,7 +120,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
 async function getStatusCount(status: string): Promise<number> {
   let count = 0;
-  let lastKey: Record<string, any> | undefined;
+  let lastKey: Record<string, unknown> | undefined;
 
   do {
     const result = await docClient.send(new QueryCommand({

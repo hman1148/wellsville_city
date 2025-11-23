@@ -4,7 +4,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const s3Client = new S3Client({});
 
-const PHOTO_BUCKET_NAME = process.env.PHOTO_BUCKET_NAME!;
+const PHOTO_BUCKET_NAME = process.env.PHOTO_BUCKET_NAME ?? '';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
