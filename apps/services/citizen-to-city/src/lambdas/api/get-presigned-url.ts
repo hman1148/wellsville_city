@@ -13,8 +13,6 @@ const corsHeaders = {
 };
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('Get Presigned URL Event:', JSON.stringify(event, null, 2));
-
   try {
     const queryParams = event.queryStringParameters || {};
     const key = queryParams.key;

@@ -1,9 +1,9 @@
 import { CfnOutput, Stack, Tags } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
+import { SesStackProps } from '../models';
 import * as ses from 'aws-cdk-lib/aws-ses';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as route53 from 'aws-cdk-lib/aws-route53';
-import { SesStackProps } from '../models';
 
 export class SesStack extends Stack {
   readonly emailIdentityArn: string;

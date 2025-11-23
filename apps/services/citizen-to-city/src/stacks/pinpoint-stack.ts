@@ -1,9 +1,9 @@
 import { CfnOutput, Stack, Tags } from 'aws-cdk-lib/core';
 import { Construct } from 'constructs';
+import { PinpointStackProps } from '../models/pinpoint-stack-props.model';
 import * as pinpoint from 'aws-cdk-lib/aws-pinpoint';
 import * as iam from 'aws-cdk-lib/aws-iam';
 
-import { PinpointStackProps } from '../models/pinpoint-stack-props.model';
 
 export class PinpointStack extends Stack {
   readonly pinpointApp: pinpoint.CfnApp;
