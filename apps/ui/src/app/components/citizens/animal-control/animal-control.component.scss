@@ -1,0 +1,251 @@
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-header {
+  margin-bottom: 2rem;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    i {
+      font-size: 2.5rem;
+    }
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--text-color-secondary);
+    margin: 0;
+  }
+}
+
+.content-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.info-card {
+  width: 100%;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.image-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .service-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 300px;
+    background: var(--surface-100);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color-secondary);
+
+    i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.125rem;
+      opacity: 0.7;
+    }
+  }
+}
+
+.info-section {
+  .section-title {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    i {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+.contact-box {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: var(--surface-50);
+  border-left: 4px solid var(--primary-color);
+
+  &.primary-contact {
+    border-left-color: var(--primary-color);
+  }
+
+  &.secondary-contact {
+    border-left-color: var(--blue-500);
+  }
+
+  .contact-label {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .organization-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+
+  .phone-link {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-decoration: none;
+    display: block;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--primary-color-text);
+      text-decoration: underline;
+    }
+  }
+
+  p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+  }
+}
+
+.notice-box {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: var(--yellow-50);
+  border: 2px solid var(--yellow-200);
+
+  p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+    color: var(--text-color);
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    strong {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+  }
+}
+
+.ordinance-box {
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: var(--blue-50);
+  border: 2px solid var(--blue-200);
+
+  p {
+    margin: 0.75rem 0;
+    line-height: 1.6;
+    color: var(--text-color);
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    strong {
+      color: var(--blue-700);
+      font-weight: 600;
+    }
+  }
+
+  .warning-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--red-700);
+    font-weight: 600;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--red-50);
+    border-radius: 6px;
+    border: 1px solid var(--red-200);
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .page-header {
+    h1 {
+      font-size: 2rem;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      i {
+        font-size: 2rem;
+      }
+    }
+
+    .page-description {
+      font-size: 1rem;
+    }
+  }
+
+  .info-section {
+    .section-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  .contact-box {
+    .phone-link {
+      font-size: 1.25rem;
+    }
+  }
+}

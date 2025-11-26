@@ -5,6 +5,13 @@ export const CITIZENS_ROUTES: Route = {
   path: 'citizens',
   component: CitizensComponent,
   children: [
+    {
+      path: 'animal-control',
+      loadComponent: () =>
+        import('./animal-control/animal-control.component').then(
+          (m) => m.AnimalControlComponent
+        ),
+    },
     // Add child routes here as the section expands
     // Example:
     // {
@@ -16,13 +23,6 @@ export const CITIZENS_ROUTES: Route = {
     //   path: 'library',
     //   loadComponent: () =>
     //     import('./library/library.component').then((m) => m.LibraryComponent),
-    // },
-    // {
-    //   path: 'animal-control',
-    //   loadComponent: () =>
-    //     import('./animal-control/animal-control.component').then(
-    //       (m) => m.AnimalControlComponent
-    //     ),
     // },
   ],
 };

@@ -1,0 +1,103 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-shield" aria-hidden="true"></i>
+      Animal Control
+    </h1>
+    <p class="page-description">
+      Information about animal control services and regulations in Wellsville
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <!-- Main Information Card -->
+    <p-card styleClass="info-card">
+      <div class="card-content">
+        <!-- Photo Placeholder -->
+        <div class="image-container">
+          <img
+            src="/assets/images/animal-control-placeholder.jpg"
+            alt="Animal Control Services"
+            class="service-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="image-placeholder" style="display: none;">
+            <i class="pi pi-image" aria-hidden="true"></i>
+            <p>Animal Control Photo</p>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-phone" aria-hidden="true"></i>
+            Contact Information
+          </h2>
+          <div class="contact-box primary-contact">
+            <p class="contact-label">For Animal Control Concerns:</p>
+            <a href="tel:{{ animalControlPhone }}" class="phone-link">
+              {{ animalControlPhone }}
+            </a>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Wildlife Information -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+            Important Notice
+          </h2>
+          <div class="notice-box">
+            <p>
+              <strong>Please note:</strong> The city animal control officer does not handle
+              problems with wildlife (raccoons, skunks, deer, etc.).
+            </p>
+            <p>
+              For extreme wildlife problems, try contacting the state
+              <strong>Department of Wildlife Resources</strong>.
+            </p>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Humane Society Information -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-heart" aria-hidden="true"></i>
+            Cats and Dogs
+          </h2>
+          <div class="contact-box secondary-contact">
+            <p>For issues with cats and dogs, you can also contact:</p>
+            <p class="organization-name">Cache Humane Society</p>
+            <a href="tel:{{ humaineSocietyPhone }}" class="phone-link">
+              {{ humaineSocietyPhone }}
+            </a>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- City Ordinance -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-book" aria-hidden="true"></i>
+            City Ordinance
+          </h2>
+          <div class="ordinance-box">
+            <p>
+              City ordinance requires that <strong>dogs must be kept on the owner's property</strong>
+              or <strong>kept on a leash when off the owner's property</strong>.
+            </p>
+            <p class="warning-text">
+              <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+              Failure to maintain such control is a violation of city ordinances and is subject to a fine.
+            </p>
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
