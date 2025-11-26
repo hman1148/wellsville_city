@@ -49,8 +49,6 @@ const parseMessage = (message: string): ParsedMessage => {
 };
 
 export const handler = async (event: PinpointEvent): Promise<{ statusCode: number; body: string }> => {
-  console.log('Incoming SMS Event:', JSON.stringify(event, null, 2));
-
   try {
     // Handle different event structures
     let phoneNumber: string;
@@ -66,7 +64,6 @@ export const handler = async (event: PinpointEvent): Promise<{ statusCode: numbe
     }
 
     if (!messageBody) {
-      console.log('No message body found');
       return { statusCode: 400, body: 'No message body' };
     }
 
@@ -94,8 +91,6 @@ export const handler = async (event: PinpointEvent): Promise<{ statusCode: numbe
       TableName: REPORTS_TABLE_NAME,
       Item: report,
     }));
-
-    console.log('Report saved:', reportId);
 
     // Send notification to admins
     await snsClient.send(new PublishCommand({

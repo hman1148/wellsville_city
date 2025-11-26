@@ -4,6 +4,7 @@ import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 
 export class DatabaseStack extends Stack {
   readonly reportsTable: dynamodb.Table;
+  readonly citizensTable: dynamodb.Table;
 
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
@@ -85,6 +86,53 @@ export class DatabaseStack extends Stack {
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
+    // DynamoDB Table for Citizens/Subscribers
+    // Schema:
+    // - PK: citizenId (UUID)
+    // - phoneNumber: citizen's phone number (for SMS)
+    // - name: citizen's name
+    // - email: citizen's email (optional)
+    // - subscribed: boolean flag for active subscription
+    // - subscribedAt: ISO timestamp when subscribed
+    // - unsubscribedAt: ISO timestamp when unsubscribed (if applicable)
+    // - createdAt: ISO timestamp
+    // - updatedAt: ISO timestamp
+    this.citizensTable = new dynamodb.Table(this, 'CitizensTable', {
+      tableName: `${resourcePrefix}-citizens`,
+      partitionKey: {
+        name: 'citizenId',
+        type: dynamodb.AttributeType.STRING,
+      },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: env === 'prod' ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
+      pointInTimeRecovery: env === 'prod',
+      encryption: dynamodb.TableEncryption.AWS_MANAGED,
+    });
+
+    // GSI for querying by phone number (lookup by phone)
+    this.citizensTable.addGlobalSecondaryIndex({
+      indexName: 'phoneNumber-index',
+      partitionKey: {
+        name: 'phoneNumber',
+        type: dynamodb.AttributeType.STRING,
+      },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // GSI for querying subscribed citizens
+    this.citizensTable.addGlobalSecondaryIndex({
+      indexName: 'subscribed-index',
+      partitionKey: {
+        name: 'subscribed',
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'subscribedAt',
+        type: dynamodb.AttributeType.STRING,
+      },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
     Tags.of(this).add('Environment', env);
     Tags.of(this).add('Service', 'citizen-to-city');
     if (sandbox) {
@@ -108,6 +156,18 @@ export class DatabaseStack extends Stack {
       value: this.reportsTable.tableStreamArn || '',
       exportName: `${resourcePrefix}-ReportsTableStreamArn`,
       description: 'DynamoDB table stream ARN for citizen reports',
+    });
+
+    new CfnOutput(this, 'CitizensTableName', {
+      value: this.citizensTable.tableName,
+      exportName: `${resourcePrefix}-CitizensTableName`,
+      description: 'DynamoDB table name for citizens/subscribers',
+    });
+
+    new CfnOutput(this, 'CitizensTableArn', {
+      value: this.citizensTable.tableArn,
+      exportName: `${resourcePrefix}-CitizensTableArn`,
+      description: 'DynamoDB table ARN for citizens/subscribers',
     });
   }
 }

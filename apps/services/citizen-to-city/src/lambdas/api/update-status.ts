@@ -16,8 +16,6 @@ const corsHeaders = {
 const VALID_STATUSES = ['new', 'in_progress', 'resolved'];
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('Update Status Event:', JSON.stringify(event, null, 2));
-
   try {
     const reportId = event.pathParameters?.reportId;
 

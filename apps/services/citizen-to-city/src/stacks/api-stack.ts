@@ -169,6 +169,57 @@ export class ApiStack extends Stack {
       authOptions
     );
 
+    // === Messaging Endpoints ===
+    const messagesResource = this.api.root.addResource('messages');
+    const broadcastResource = messagesResource.addResource('broadcast');
+    const targetedResource = messagesResource.addResource('targeted');
+
+    // POST /messages/broadcast - Send mass SMS to all subscribed citizens
+    broadcastResource.addMethod(
+      'POST',
+      new apigateway.LambdaIntegration(props.sendMassSmsHandler),
+      authOptions
+    );
+
+    // POST /messages/targeted - Send SMS to specific citizens
+    targetedResource.addMethod(
+      'POST',
+      new apigateway.LambdaIntegration(props.sendTargetedSmsHandler),
+      authOptions
+    );
+
+    // === Citizen Management Endpoints ===
+    const citizensResource = this.api.root.addResource('citizens');
+    const citizenResource = citizensResource.addResource('{citizenId}');
+
+    // GET /citizens - List all citizens
+    citizensResource.addMethod(
+      'GET',
+      new apigateway.LambdaIntegration(props.listCitizensHandler),
+      authOptions
+    );
+
+    // POST /citizens - Add a new citizen
+    citizensResource.addMethod(
+      'POST',
+      new apigateway.LambdaIntegration(props.addCitizenHandler),
+      authOptions
+    );
+
+    // GET /citizens/{citizenId} - Get a single citizen
+    citizenResource.addMethod(
+      'GET',
+      new apigateway.LambdaIntegration(props.getCitizenHandler),
+      authOptions
+    );
+
+    // DELETE /citizens/{citizenId} - Remove/unsubscribe a citizen
+    citizenResource.addMethod(
+      'DELETE',
+      new apigateway.LambdaIntegration(props.removeCitizenHandler),
+      authOptions
+    );
+
     Tags.of(this).add('Environment', env);
     Tags.of(this).add('Service', 'citizen-to-city');
     if (sandbox) {

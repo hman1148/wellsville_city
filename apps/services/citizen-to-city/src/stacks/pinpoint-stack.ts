@@ -29,23 +29,26 @@ export class PinpointStack extends Stack {
       enabled: true,
     });
 
-    // Create IAM role for Pinpoint to invoke Lambda
-    const pinpointLambdaRole = new iam.Role(this, 'PinpointLambdaRole', {
-      roleName: `${resourcePrefix}-pinpoint-lambda-role`,
-      assumedBy: new iam.ServicePrincipal('pinpoint.amazonaws.com'),
-      description: 'Role for Pinpoint to invoke Lambda functions',
-    });
+    // Only set up event stream if incoming SMS handler is provided
+    if (props.incomingSmsHandler) {
+      // Create IAM role for Pinpoint to invoke Lambda
+      const pinpointLambdaRole = new iam.Role(this, 'PinpointLambdaRole', {
+        roleName: `${resourcePrefix}-pinpoint-lambda-role`,
+        assumedBy: new iam.ServicePrincipal('pinpoint.amazonaws.com'),
+        description: 'Role for Pinpoint to invoke Lambda functions',
+      });
 
-    // Grant Pinpoint permission to invoke the Lambda
-    props.incomingSmsHandler.grantInvoke(pinpointLambdaRole);
+      // Grant Pinpoint permission to invoke the Lambda
+      props.incomingSmsHandler.grantInvoke(pinpointLambdaRole);
 
-    // Event Stream to route incoming messages to Lambda
-    // This uses CloudWatch Events / EventBridge to trigger Lambda on SMS events
-    new pinpoint.CfnEventStream(this, 'SmsEventStream', {
-      applicationId: this.pinpointApp.ref,
-      destinationStreamArn: `arn:aws:lambda:${this.region}:${this.account}:function:${props.incomingSmsHandler.functionName}`,
-      roleArn: pinpointLambdaRole.roleArn,
-    });
+      // Event Stream to route incoming messages to Lambda
+      // This uses CloudWatch Events / EventBridge to trigger Lambda on SMS events
+      new pinpoint.CfnEventStream(this, 'SmsEventStream', {
+        applicationId: this.pinpointApp.ref,
+        destinationStreamArn: `arn:aws:lambda:${this.region}:${this.account}:function:${props.incomingSmsHandler.functionName}`,
+        roleArn: pinpointLambdaRole.roleArn,
+      });
+    }
 
     Tags.of(this).add('Environment', env);
     Tags.of(this).add('Service', 'citizen-to-city');

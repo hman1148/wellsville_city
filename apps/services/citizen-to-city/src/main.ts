@@ -1,5 +1,6 @@
 import * as cdk from 'aws-cdk-lib/core';
 import { Fn } from 'aws-cdk-lib/core';
+import * as iam from 'aws-cdk-lib/aws-iam';
 import { StorageStack } from './stacks/storage-stack';
 import { DatabaseStack } from './stacks/database-stack';
 import { PinpointStack } from './stacks/pinpoint-stack';
@@ -69,15 +70,18 @@ const cognitoUserPoolArn = localMode
   : `arn:aws:cognito-idp:${env.region}:${env.account}:userpool/${Fn.importValue(`portal${sandboxSuffix}-CityAdminUserPoolId`)}`;
 
 // Lambda Stack - All Lambda functions
+// Note: Pinpoint App ID will be passed from Pinpoint stack (CDK handles circular dependency)
 const lambdaStack = new LambdaStack(app, `citizen-to-city-lambda${stackSuffix}`, {
   env,
   description: description('CitizenToCity-Lambda'),
   photoBucket: storageStack.photoBucket,
   reportsTable: databaseStack.reportsTable,
+  citizensTable: databaseStack.citizensTable,
   adminNotificationTopic: notificationStack.adminNotificationTopic,
   sesEmailIdentityArn: sesStack.emailIdentityArn,
   senderEmail: sesStack.senderEmail,
   cognitoUserPoolArn,
+  // Pinpoint App ID will be set via environment variable or passed dynamically
 });
 
 // Pinpoint Stack - SMS messaging
@@ -87,10 +91,36 @@ const pinpointStack = new PinpointStack(app, `citizen-to-city-pinpoint${stackSuf
   incomingSmsHandler: lambdaStack.incomingSmsHandler,
 });
 
+// Update Lambda environment variables with Pinpoint App ID
+lambdaStack.sendMassSmsHandler.addEnvironment('PINPOINT_APP_ID', pinpointStack.pinpointApp.ref);
+lambdaStack.sendTargetedSmsHandler.addEnvironment('PINPOINT_APP_ID', pinpointStack.pinpointApp.ref);
+
+// Grant Pinpoint SMS permissions to messaging handlers
+const pinpointSmsPolicy = new iam.PolicyStatement({
+  effect: iam.Effect.ALLOW,
+  actions: [
+    'mobiletargeting:SendMessages',
+    'mobiletargeting:SendUsersMessages',
+  ],
+  resources: [
+    `arn:aws:mobiletargeting:${env.region}:${env.account}:apps/${pinpointStack.pinpointApp.ref}`,
+    `arn:aws:mobiletargeting:${env.region}:${env.account}:apps/${pinpointStack.pinpointApp.ref}/*`,
+  ],
+});
+lambdaStack.sendMassSmsHandler.addToRolePolicy(pinpointSmsPolicy);
+lambdaStack.sendTargetedSmsHandler.addToRolePolicy(pinpointSmsPolicy);
+
 // API Stack - REST API for dashboard
 new ApiStack(app, `citizen-to-city-api${stackSuffix}`, {
   env,
   description: description('CitizenToCity-API'),
   reportsTable: databaseStack.reportsTable,
+  citizensTable: databaseStack.citizensTable,
   photoBucket: storageStack.photoBucket,
+  sendMassSmsHandler: lambdaStack.sendMassSmsHandler,
+  sendTargetedSmsHandler: lambdaStack.sendTargetedSmsHandler,
+  addCitizenHandler: lambdaStack.addCitizenHandler,
+  listCitizensHandler: lambdaStack.listCitizensHandler,
+  removeCitizenHandler: lambdaStack.removeCitizenHandler,
+  getCitizenHandler: lambdaStack.getCitizenHandler,
 });
