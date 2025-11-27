@@ -1,0 +1,152 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-book" aria-hidden="true"></i>
+      Library Services
+    </h1>
+    <p class="page-description">
+      Access library resources, hours, and upcoming events
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <!-- Main Information Card -->
+    <p-card styleClass="info-card">
+      <div class="card-content">
+        <!-- Library Image -->
+        <div class="image-container">
+          <img
+            [src]="imagePath"
+            [alt]="libraryName"
+            class="library-image"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+          />
+          <div class="image-placeholder" style="display: none;">
+            <i class="pi pi-image" aria-hidden="true"></i>
+            <p>Library Photo</p>
+          </div>
+        </div>
+
+        <!-- Library Title -->
+        <div class="info-section">
+          <h2 class="library-title">
+            <i class="pi pi-building" aria-hidden="true"></i>
+            {{ libraryName }}
+          </h2>
+        </div>
+
+        <!-- Introduction -->
+        <div class="info-section">
+          <div class="intro-box">
+            <p>
+              <strong>Wellsville City pays a fee every year</strong> so our citizens can have
+              access and use of the Hyrum Library at no additional charge.
+            </p>
+            <p>
+              To obtain a Hyrum City Library card, simply take a copy of your
+              <strong>Wellsville City Utility bill</strong> into the Hyrum Library as proof of
+              residency.
+            </p>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Location & Contact Information -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-map-marker" aria-hidden="true"></i>
+            Location & Contact
+          </h2>
+          <div class="location-box">
+            <div class="location-item">
+              <i class="pi pi-home" aria-hidden="true"></i>
+              <div class="location-details">
+                <p class="detail-label">Address</p>
+                <p class="detail-value">{{ address }}</p>
+                <p class="detail-value">{{ city }}, {{ state }} {{ zipCode }}</p>
+              </div>
+            </div>
+
+            <div class="location-item">
+              <i class="pi pi-phone" aria-hidden="true"></i>
+              <div class="location-details">
+                <p class="detail-label">Phone</p>
+                <a href="tel:{{ phone }}" class="phone-link">{{ phone }}</a>
+              </div>
+            </div>
+
+            <div class="location-item">
+              <i class="pi pi-clock" aria-hidden="true"></i>
+              <div class="location-details">
+                <p class="detail-label">Hours</p>
+                <p class="detail-value hours-text">{{ hours }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Online Resources -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-globe" aria-hidden="true"></i>
+            Online Resources
+          </h2>
+          <div class="resources-box">
+            <div class="resource-card">
+              <div class="resource-icon">
+                <i class="pi pi-external-link" aria-hidden="true"></i>
+              </div>
+              <div class="resource-content">
+                <h3>Hyrum Library Website</h3>
+                <p>Visit the official library website for more information and resources.</p>
+                <p-button
+                  label="Visit Website"
+                  icon="pi pi-external-link"
+                  styleClass="p-button-outlined"
+                  (onClick)="onVisitWebsite()"
+                  ariaLabel="Visit Hyrum Library Website">
+                </p-button>
+              </div>
+            </div>
+
+            <div class="resource-card">
+              <div class="resource-icon online">
+                <i class="pi pi-cloud" aria-hidden="true"></i>
+              </div>
+              <div class="resource-content">
+                <h3>Utah's Online Library</h3>
+                <p>
+                  Access digital resources, e-books, audiobooks, and more through Utah's online
+                  library system.
+                </p>
+                <p-button
+                  label="Access Online Library"
+                  icon="pi pi-external-link"
+                  styleClass="p-button-outlined p-button-success"
+                  (onClick)="onVisitOnlineLibrary()"
+                  ariaLabel="Visit Utah's Online Library">
+                </p-button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="info-section">
+          <div class="note-box">
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
+            <div>
+              <p>
+                <strong>Need a library card?</strong> Bring your Wellsville City Utility bill to
+                the Hyrum Library to get your free library card today!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

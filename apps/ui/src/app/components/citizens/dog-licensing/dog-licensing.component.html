@@ -1,0 +1,183 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-id-card" aria-hidden="true"></i>
+      Dog Licensing
+    </h1>
+    <p class="page-description">
+      License your dog and learn about pet regulations in Wellsville
+    </p>
+  </div>
+
+  <div class="content-grid">
+    <!-- Main Information Card -->
+    <p-card styleClass="info-card">
+      <div class="card-content">
+        <!-- Introduction -->
+        <div class="info-section">
+          <div class="intro-box">
+            <p>
+              <strong>The City of Wellsville appreciates responsible pet owners!</strong>
+              We depend on pet owners to keep their dogs properly vaccinated and licensed.
+            </p>
+            <p class="note-text">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              Licensing for cats is currently not necessary.
+            </p>
+          </div>
+        </div>
+
+        <div class="warning-banner">
+          <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+          <div>
+            <strong>Dog licensing is required by law</strong>
+            <p>Citations may be issued for non-compliance.</p>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Registration Requirements -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-calendar" aria-hidden="true"></i>
+            Registration Requirements
+          </h2>
+          <div class="requirements-box">
+            <p>
+              <strong>All dogs weaned or 6 months of age or older must be registered.</strong>
+            </p>
+            <p>
+              Licensing for the year occurs from <strong>January through March</strong>.
+            </p>
+            <p class="highlight-text">
+              <i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+              After March 31st, dog licensing fees <strong>triple</strong>, unless it is a newly
+              acquired dog or you are new to the area.
+            </p>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Required Documents -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-file" aria-hidden="true"></i>
+            Required Documents
+          </h2>
+          <div class="documents-box">
+            <p class="intro-text">To receive a dog license, please provide the following:</p>
+            <ol class="requirements-list">
+              <li>
+                A copy of a <strong>current rabies vaccination certificate</strong> from your
+                veterinarian, showing that your dog is current on its vaccine.
+              </li>
+              <li>
+                <strong>Proof that the animal has been spayed or neutered</strong>, to receive the
+                discounted fee.
+              </li>
+              <li>
+                The appropriate fee:
+                <ul class="fee-list">
+                  <li>
+                    <strong>${{ spayedNeuteredFee }}/year</strong> for spayed/neutered animals
+                  </li>
+                  <li><strong>${{ unalteredFee }}/year</strong> for unaltered animals</li>
+                  <li class="fee-note">This fee is per animal.</li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- License Tag Information -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-tag" aria-hidden="true"></i>
+            License Tag
+          </h2>
+          <div class="tag-info-box">
+            <p>
+              The dog owner is then given an <strong>identification tag</strong>, which is
+              maintained in an animal identification report to assist the animal control officer in
+              quickly returning lost pets to their owners.
+            </p>
+            <div class="important-note">
+              <i class="pi pi-info-circle" aria-hidden="true"></i>
+              <div>
+                <p>
+                  <strong>Important:</strong> The rabies tag that you received from your vet is
+                  <strong>not</strong> a license.
+                </p>
+                <p>
+                  City ordinance requires that all dogs be licensed. This also allows your pet to
+                  be returned safely to you in the event that it is lost.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Contact Information -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-phone" aria-hidden="true"></i>
+            Contact Information
+          </h2>
+          <div class="contact-box">
+            <p class="contact-label">For animal control concerns:</p>
+            <a href="tel:{{ animalControlPhone }}" class="phone-link">
+              {{ animalControlPhone }}
+            </a>
+          </div>
+        </div>
+
+        <p-divider></p-divider>
+
+        <!-- Kennel Permit Section -->
+        <div class="info-section">
+          <h2 class="section-title">
+            <i class="pi pi-home" aria-hidden="true"></i>
+            Kennel Permit
+          </h2>
+          <div class="kennel-box">
+            <p class="kennel-intro">
+              <strong>If you have three or more dogs you need a kennel license.</strong>
+            </p>
+            <p>
+              This requires approval of the Planning and Zoning Commission and involves a public
+              hearing.
+            </p>
+            <p>
+              Contact the City Office at
+              <a href="tel:{{ cityOfficePhone }}" class="inline-phone-link">{{
+                cityOfficePhone
+              }}</a>
+              about getting on the Planning Commission agenda.
+            </p>
+            <div class="kennel-fee">
+              <i class="pi pi-dollar" aria-hidden="true"></i>
+              <span>The cost of a Kennel license is <strong>${{ kennelPermitFee }}</strong>.</span>
+            </div>
+
+            <!-- Download Permit Button -->
+            <div class="download-section">
+              <p-button
+                label="Download Kennel Permit Application"
+                icon="pi pi-download"
+                styleClass="p-button-raised p-button-primary"
+                (onClick)="onDownloadPermit()"
+                ariaLabel="Download Kennel Permit Application">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>
