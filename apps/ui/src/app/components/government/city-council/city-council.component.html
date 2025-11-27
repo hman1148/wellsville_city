@@ -1,0 +1,260 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-users" aria-hidden="true"></i>
+      City Council
+    </h1>
+    <p class="page-description">
+      Meet your city council members and contact them with questions or concerns
+    </p>
+  </div>
+
+  <div class="council-grid">
+    @for (member of state.councilMembers(); track member.id) {
+      <p-card styleClass="council-card" (click)="onContactMember(member)">
+        <div class="card-content">
+          <!-- Photo -->
+          <div class="photo-container">
+            <img
+              [src]="member.photoPath"
+              [alt]="member.name"
+              class="council-photo"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="photo-placeholder" style="display: none;">
+              <i class="pi pi-user" aria-hidden="true"></i>
+            </div>
+          </div>
+
+          <!-- Member Info -->
+          <div class="member-info">
+            <h2 class="member-name">{{ member.name }}</h2>
+            <p class="member-role">{{ member.role }}</p>
+
+            <p-divider></p-divider>
+
+            <!-- Contact Info -->
+            <div class="contact-info">
+              <div class="contact-item">
+                <i class="pi pi-envelope" aria-hidden="true"></i>
+                <a
+                  [href]="'mailto:' + member.email"
+                  class="contact-link"
+                  (click)="$event.stopPropagation()">
+                  {{ member.email }}
+                </a>
+              </div>
+              <div class="contact-item">
+                <i class="pi pi-phone" aria-hidden="true"></i>
+                <a
+                  [href]="'tel:' + member.phone"
+                  class="contact-link"
+                  (click)="$event.stopPropagation()">
+                  {{ member.phone }}
+                </a>
+              </div>
+              <div class="contact-item">
+                <i class="pi pi-calendar" aria-hidden="true"></i>
+                <span class="term-text">Term expires: {{ member.termExpires }}</span>
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Assignments -->
+            <div class="assignments-section">
+              <h3 class="section-title">
+                <i class="pi pi-briefcase" aria-hidden="true"></i>
+                City Council Assignments
+              </h3>
+              <ul class="assignments-list">
+                @for (assignment of member.assignments; track assignment) {
+                  <li>{{ assignment }}</li>
+                }
+              </ul>
+            </div>
+
+            <!-- Founders' Day Duties -->
+            @if (member.foundersDayDuties.length > 0) {
+              <div class="founders-day-section">
+                <h3 class="section-title">
+                  <i class="pi pi-flag" aria-hidden="true"></i>
+                  Founders' Day Duties
+                </h3>
+                <ul class="assignments-list">
+                  @for (duty of member.foundersDayDuties; track duty) {
+                    <li>{{ duty }}</li>
+                  }
+                </ul>
+              </div>
+            }
+
+            <!-- Contact Button -->
+            <div class="action-section">
+              <p-button
+                label="Contact {{ member.name }}"
+                icon="pi pi-send"
+                styleClass="p-button-raised p-button-primary w-full"
+                (onClick)="onContactMember(member); $event.stopPropagation()"
+                [ariaLabel]="'Contact ' + member.name">
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </p-card>
+    }
+  </div>
+</div>
+
+<!-- Contact Dialog -->
+<p-dialog
+  [header]="'Contact ' + (state.selectedMember()?.name || '')"
+  [visible]="state.showContactDialog()"
+  (visibleChange)="state.showContactDialog() ? null : onCloseDialog()"
+  [modal]="true"
+  [style]="{ width: '90vw', maxWidth: '600px' }"
+  [dismissableMask]="true"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onCloseDialog()">
+  <form (ngSubmit)="onSubmitContactForm()">
+    <div class="form-container">
+      <p class="dialog-description">
+        Fill out the form below to send a message to
+        <strong>{{ state.selectedMember()?.name }}</strong>.
+      </p>
+
+      <!-- Subject -->
+      <div class="form-field">
+        <label for="subject" class="form-label">
+          Subject <span class="required">*</span>
+        </label>
+        <input
+          pInputText
+          id="subject"
+          [(ngModel)]="state.formData().subject"
+          name="subject"
+          (ngModelChange)="onFieldChange('subject', $event)"
+          (blur)="onFieldBlur('subject')"
+          placeholder="Enter subject"
+          class="w-full"
+          aria-required="true"
+        />
+        @if (hasError('subject')) {
+          <small class="error-text">{{ getErrorMessage('subject') }}</small>
+        }
+      </div>
+
+      <!-- From Name -->
+      <div class="form-field">
+        <label for="fromName" class="form-label">
+          Your Name <span class="required">*</span>
+        </label>
+        <input
+          pInputText
+          id="fromName"
+          [(ngModel)]="state.formData().fromName"
+          name="fromName"
+          (ngModelChange)="onFieldChange('fromName', $event)"
+          (blur)="onFieldBlur('fromName')"
+          placeholder="Enter your name"
+          class="w-full"
+          aria-required="true"
+        />
+        @if (hasError('fromName')) {
+          <small class="error-text">{{ getErrorMessage('fromName') }}</small>
+        }
+      </div>
+
+      <!-- From Email -->
+      <div class="form-field">
+        <label for="fromEmail" class="form-label">
+          Your Email <span class="required">*</span>
+        </label>
+        <input
+          pInputText
+          id="fromEmail"
+          type="email"
+          [(ngModel)]="state.formData().fromEmail"
+          name="fromEmail"
+          (ngModelChange)="onFieldChange('fromEmail', $event)"
+          (blur)="onFieldBlur('fromEmail')"
+          placeholder="Enter your email"
+          class="w-full"
+          aria-required="true"
+        />
+        @if (hasError('fromEmail')) {
+          <small class="error-text">{{ getErrorMessage('fromEmail') }}</small>
+        }
+      </div>
+
+      <!-- From Phone -->
+      <div class="form-field">
+        <label for="fromPhone" class="form-label">
+          Your Phone <span class="required">*</span>
+        </label>
+        <input
+          pInputText
+          id="fromPhone"
+          type="tel"
+          [(ngModel)]="state.formData().fromPhone"
+          name="fromPhone"
+          (ngModelChange)="onFieldChange('fromPhone', $event)"
+          (blur)="onFieldBlur('fromPhone')"
+          placeholder="Enter your phone number"
+          class="w-full"
+          aria-required="true"
+        />
+        @if (hasError('fromPhone')) {
+          <small class="error-text">{{ getErrorMessage('fromPhone') }}</small>
+        }
+      </div>
+
+      <!-- Message -->
+      <div class="form-field">
+        <label for="message" class="form-label">
+          Message <span class="required">*</span>
+        </label>
+        <textarea
+          pInputTextarea
+          id="message"
+          [(ngModel)]="state.formData().message"
+          name="message"
+          (ngModelChange)="onFieldChange('message', $event)"
+          (blur)="onFieldBlur('message')"
+          rows="6"
+          placeholder="Enter your message"
+          class="w-full"
+          aria-required="true">
+        </textarea>
+        @if (hasError('message')) {
+          <small class="error-text">{{ getErrorMessage('message') }}</small>
+        }
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <p-button
+          label="Cancel"
+          icon="pi pi-times"
+          styleClass="p-button-text"
+          type="button"
+          (onClick)="onCloseDialog()"
+          ariaLabel="Cancel and close dialog">
+        </p-button>
+        <p-button
+          label="Send Message"
+          icon="pi pi-send"
+          styleClass="p-button-raised p-button-primary"
+          type="submit"
+          [disabled]="!isFormValid() || state.isSubmitting()"
+          [loading]="state.isSubmitting()"
+          ariaLabel="Send message to council member">
+        </p-button>
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Toast for success/error messages -->
+<p-toast position="top-right"></p-toast>

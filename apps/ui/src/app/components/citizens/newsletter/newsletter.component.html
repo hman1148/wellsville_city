@@ -1,0 +1,136 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-book" aria-hidden="true"></i>
+      City Newsletter
+    </h1>
+    <p class="page-description">
+      View and download the latest newsletters from Wellsville City
+    </p>
+  </div>
+
+  <div class="content-grid">
+    @if (isLoading) {
+      <div class="loading-container">
+        <p-progressSpinner ariaLabel="Loading newsletters"></p-progressSpinner>
+        <p>Loading newsletters...</p>
+      </div>
+    }
+
+    @if (!isLoading && newsletters.length === 0) {
+      <p-card styleClass="info-card">
+        <div class="empty-state">
+          <i class="pi pi-inbox" aria-hidden="true"></i>
+          <h2>No Newsletters Available</h2>
+          <p>There are currently no newsletters to display. Please check back later.</p>
+        </div>
+      </p-card>
+    }
+
+    @if (!isLoading && newsletters.length > 0) {
+      <div class="newsletters-grid">
+        @for (newsletter of newsletters; track newsletter.id) {
+          <p-card styleClass="newsletter-card">
+            <div class="newsletter-content">
+              <!-- Thumbnail or Icon -->
+              <div class="newsletter-thumbnail">
+                @if (newsletter.thumbnailUrl) {
+                  <img
+                    [src]="newsletter.thumbnailUrl"
+                    [alt]="newsletter.title"
+                    class="thumbnail-image"
+                  />
+                } @else {
+                  <i class="pi pi-file-pdf thumbnail-icon" aria-hidden="true"></i>
+                }
+              </div>
+
+              <!-- Newsletter Information -->
+              <div class="newsletter-info">
+                <h2 class="newsletter-title">{{ newsletter.title }}</h2>
+                <p class="newsletter-date">
+                  <i class="pi pi-calendar" aria-hidden="true"></i>
+                  {{ formatDate(newsletter.publishDate) }}
+                </p>
+                <p class="newsletter-description">{{ newsletter.description }}</p>
+
+                <div class="newsletter-meta">
+                  <span class="meta-item">
+                    <i class="pi pi-file" aria-hidden="true"></i>
+                    {{ newsletter.fileType.toUpperCase() }}
+                  </span>
+                  @if (newsletter.fileSize) {
+                    <span class="meta-item">
+                      <i class="pi pi-database" aria-hidden="true"></i>
+                      {{ formatFileSize(newsletter.fileSize) }}
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="newsletter-actions">
+                <p-button
+                  label="View"
+                  icon="pi pi-eye"
+                  styleClass="p-button-outlined p-button-primary"
+                  (onClick)="onViewNewsletter(newsletter)"
+                  ariaLabel="View newsletter {{ newsletter.title }}">
+                </p-button>
+                <p-button
+                  label="Download"
+                  icon="pi pi-download"
+                  styleClass="p-button-raised p-button-primary"
+                  (onClick)="onDownloadNewsletter(newsletter)"
+                  ariaLabel="Download newsletter {{ newsletter.title }}">
+                </p-button>
+              </div>
+            </div>
+          </p-card>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Preview Dialog -->
+<p-dialog
+  [(visible)]="showPreviewDialog"
+  [header]="selectedNewsletter.title"
+  [modal]="true"
+  [style]="{ width: '90vw', height: '90vh' }"
+  [draggable]="false"
+  [resizable]="true"
+  (onHide)="onClosePreview()"
+  styleClass="newsletter-preview-dialog">
+  <div class="preview-container">
+    @if (previewUrl) {
+      <iframe
+        [src]="previewUrl"
+        class="preview-iframe"
+        [title]="'Preview of ' + selectedNewsletter.title">
+      </iframe>
+    } @else {
+      <div class="preview-loading">
+        <p-progressSpinner ariaLabel="Loading preview"></p-progressSpinner>
+        <p>Loading preview...</p>
+      </div>
+    }
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Download"
+      icon="pi pi-download"
+      styleClass="p-button-raised p-button-primary"
+      (onClick)="onDownloadNewsletter(selectedNewsletter)"
+      ariaLabel="Download newsletter">
+    </p-button>
+    <p-button
+      label="Close"
+      icon="pi pi-times"
+      styleClass="p-button-outlined"
+      (onClick)="onClosePreview()"
+      ariaLabel="Close preview">
+    </p-button>
+  </ng-template>
+</p-dialog>

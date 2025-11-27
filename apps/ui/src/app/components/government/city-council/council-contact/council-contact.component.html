@@ -1,0 +1,150 @@
+<div class="page-container">
+  <p-toast />
+
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-envelope" aria-hidden="true"></i>
+      Contact {{ state.selectedMember()?.name }}
+    </h1>
+    <p class="page-description">
+      {{ state.selectedMember()?.role }}
+    </p>
+  </div>
+
+  @if (state.selectedMember(); as member) {
+    <p-card styleClass="contact-card">
+      <div class="contact-form">
+        <form (ngSubmit)="onSubmitContactForm()">
+          <!-- Subject Field -->
+          <div class="form-field">
+            <label for="subject" class="form-label">
+              Subject <span class="required">*</span>
+            </label>
+            <input
+              pInputText
+              id="subject"
+              type="text"
+              [ngModel]="state.formData().subject"
+              (ngModelChange)="onFieldChange('subject', $event)"
+              (blur)="onFieldBlur('subject')"
+              [class.p-invalid]="hasError('subject')"
+              placeholder="Enter the subject of your message"
+              name="subject"
+              class="w-full"
+            />
+            @if (hasError('subject')) {
+              <small class="p-error">{{ getErrorMessage('subject') }}</small>
+            }
+          </div>
+
+          <!-- Name Field -->
+          <div class="form-field">
+            <label for="fromName" class="form-label">
+              Your Name <span class="required">*</span>
+            </label>
+            <input
+              pInputText
+              id="fromName"
+              type="text"
+              [ngModel]="state.formData().fromName"
+              (ngModelChange)="onFieldChange('fromName', $event)"
+              (blur)="onFieldBlur('fromName')"
+              [class.p-invalid]="hasError('fromName')"
+              placeholder="Enter your full name"
+              name="fromName"
+              class="w-full"
+            />
+            @if (hasError('fromName')) {
+              <small class="p-error">{{ getErrorMessage('fromName') }}</small>
+            }
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-field">
+            <label for="fromEmail" class="form-label">
+              Your Email <span class="required">*</span>
+            </label>
+            <input
+              pInputText
+              id="fromEmail"
+              type="email"
+              [ngModel]="state.formData().fromEmail"
+              (ngModelChange)="onFieldChange('fromEmail', $event)"
+              (blur)="onFieldBlur('fromEmail')"
+              [class.p-invalid]="hasError('fromEmail')"
+              placeholder="your.email@example.com"
+              name="fromEmail"
+              class="w-full"
+            />
+            @if (hasError('fromEmail')) {
+              <small class="p-error">{{ getErrorMessage('fromEmail') }}</small>
+            }
+          </div>
+
+          <!-- Phone Field -->
+          <div class="form-field">
+            <label for="fromPhone" class="form-label"> Your Phone (Optional) </label>
+            <input
+              pInputText
+              id="fromPhone"
+              type="tel"
+              [ngModel]="state.formData().fromPhone"
+              (ngModelChange)="onFieldChange('fromPhone', $event)"
+              (blur)="onFieldBlur('fromPhone')"
+              [class.p-invalid]="hasError('fromPhone')"
+              placeholder="(555) 123-4567"
+              name="fromPhone"
+              class="w-full"
+            />
+            @if (hasError('fromPhone')) {
+              <small class="p-error">{{ getErrorMessage('fromPhone') }}</small>
+            }
+          </div>
+
+          <!-- Message Field -->
+          <div class="form-field">
+            <label for="message" class="form-label">
+              Message <span class="required">*</span>
+            </label>
+            <textarea
+              pInputTextarea
+              id="message"
+              [ngModel]="state.formData().message"
+              (ngModelChange)="onFieldChange('message', $event)"
+              (blur)="onFieldBlur('message')"
+              [class.p-invalid]="hasError('message')"
+              placeholder="Enter your message"
+              name="message"
+              rows="6"
+              class="w-full"
+            ></textarea>
+            @if (hasError('message')) {
+              <small class="p-error">{{ getErrorMessage('message') }}</small>
+            }
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <p-button
+              label="Cancel"
+              icon="pi pi-times"
+              styleClass="p-button-outlined p-button-secondary"
+              type="button"
+              (onClick)="onCancel()"
+              [disabled]="state.isSubmitting()"
+            />
+            <p-button
+              label="Send Message"
+              icon="pi pi-send"
+              styleClass="p-button-raised p-button-primary"
+              type="submit"
+              [disabled]="!isFormValid() || state.isSubmitting()"
+              [loading]="state.isSubmitting()"
+              ariaLabel="Send message to council member"
+            />
+          </div>
+        </form>
+      </div>
+    </p-card>
+  }
+</div>

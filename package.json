@@ -34,6 +34,7 @@
     "primeng": "^20.3.0",
     "rxjs": "~7.8.0",
     "uuid": "^11.0.0",
+    "vest": "^5.4.6",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
@@ -58,7 +59,7 @@
     "@swc/helpers": "~0.5.11",
     "@types/aws-lambda": "^8.10.145",
     "@types/jest": "^29.5.12",
-    "@types/node": "18.16.9",
+    "@types/node": "^22.0.0",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/utils": "^8.40.0",
     "angular-eslint": "^20.3.0",
