@@ -1,167 +1,167 @@
 <div class="home-container">
-  <!-- Hero Carousel Section -->
-  <section class="hero-section" aria-label="Hero carousel showcasing Wellsville">
-    <p-carousel
-      [value]="carouselSlides()"
-      [numVisible]="1"
-      [numScroll]="1"
-      [circular]="true"
-      [autoplayInterval]="5000"
-      [showIndicators]="true"
-      [showNavigators]="true"
-    >
-      <ng-template let-slide pTemplate="item">
-        <div class="carousel-item">
-          <img [src]="slide.imageUrl" [alt]="slide.altText" class="carousel-image" loading="lazy" />
-          <div class="carousel-content">
-            <h2>{{ slide.title }}</h2>
-            <p>{{ slide.description }}</p>
-          </div>
-        </div>
-      </ng-template>
-    </p-carousel>
-  </section>
+	<!-- Hero Carousel Section -->
+	<section class="hero-section" aria-label="Hero carousel showcasing Wellsville">
+		<p-carousel
+			[value]="carouselSlides()"
+			[numVisible]="1"
+			[numScroll]="1"
+			[circular]="true"
+			[autoplayInterval]="5000"
+			[showIndicators]="true"
+			[showNavigators]="true"
+		>
+			<ng-template let-slide pTemplate="item">
+				<div class="carousel-item">
+					<img [src]="slide.imageUrl" [alt]="slide.altText" class="carousel-image" loading="lazy" />
+					<div class="carousel-content">
+						<h2>{{ slide.title }}</h2>
+						<p>{{ slide.description }}</p>
+					</div>
+				</div>
+			</ng-template>
+		</p-carousel>
+	</section>
 
-  <!-- Welcome Section -->
-  <section class="welcome-section" aria-label="Welcome to Wellsville">
-    <div class="welcome-content">
-      <h2>Your Community. Simplified.</h2>
-      <p class="welcome-lead">
-        Modern city services meet small-town care in the heart of Cache Valley. Wellsville makes it
-        easy to pay bills, stay informed, and connect with your local government—all in one place.
-      </p>
-      <p class="welcome-sub">
-        Whether you're a longtime resident or new to our community, everything you need is right here.
-      </p>
-      <div class="welcome-actions">
-        <a routerLink="/information">
-          <p-button label="Explore Wellsville" icon="pi pi-compass" severity="info">
-          </p-button>
-        </a>
-        <a routerLink="/departments">
-          <p-button
-            label="City Services"
-            icon="pi pi-briefcase"
-            severity="secondary"
-            [outlined]="true"
-          >
-          </p-button>
-        </a>
-      </div>
-    </div>
-  </section>
+	<!-- Welcome Section -->
+	<section class="welcome-section" aria-label="Welcome to Wellsville">
+		<div class="welcome-content">
+			<h2>Your Community. Simplified.</h2>
+			<p class="welcome-lead">
+				Modern city services meet small-town care in the heart of Cache Valley. Wellsville makes it
+				easy to pay bills, stay informed, and connect with your local government—all in one place.
+			</p>
+			<p class="welcome-sub">
+				Whether you're a longtime resident or new to our community, everything you need is right
+				here.
+			</p>
+			<div class="welcome-actions">
+				<a routerLink="/information">
+					<p-button label="Explore Wellsville" icon="pi pi-compass" severity="info"> </p-button>
+				</a>
+				<a routerLink="/departments">
+					<p-button
+						label="City Services"
+						icon="pi pi-briefcase"
+						severity="secondary"
+						[outlined]="true"
+					>
+					</p-button>
+				</a>
+			</div>
+		</div>
+	</section>
 
-  <!-- Quick Links Section -->
-  <section class="quick-links-section" aria-label="Quick access links">
-    <h2>Most Used Services</h2>
-    <div class="quick-links-grid">
-      @for (link of quickLinks(); track link.label) {
-        <p-card [styleClass]="'quick-link-card'">
-          <div class="quick-link-content">
-            <i [class]="link.icon + ' quick-link-icon'" [attr.aria-hidden]="true"></i>
-            <h3>{{ link.label }}</h3>
-            <p>{{ link.description }}</p>
-            <a [routerLink]="link.route" style="display: inline-block; width: 100%">
-              <p-button
-                [label]="'Go'"
-                [icon]="'pi pi-arrow-right'"
-                iconPos="right"
-                styleClass="p-button-sm"
-                [style]="{ width: '100%' }"
-              >
-              </p-button>
-            </a>
-          </div>
-        </p-card>
-      }
-    </div>
-  </section>
+	<!-- Quick Links Section -->
+	<section class="quick-links-section" aria-label="Quick access links">
+		<h2>Most Used Services</h2>
+		<div class="quick-links-grid">
+			@for (link of quickLinks(); track link.label) {
+				<p-card [styleClass]="'quick-link-card'">
+					<div class="quick-link-content">
+						<i [class]="link.icon + ' quick-link-icon'" [attr.aria-hidden]="true"></i>
+						<h3>{{ link.label }}</h3>
+						<p>{{ link.description }}</p>
+						<a [routerLink]="link.route" style="display: inline-block; width: 100%">
+							<p-button
+								[icon]="'pi pi-arrow-right'"
+								iconPos="right"
+								styleClass="p-button-sm"
+								[style]="{ width: '100%' }"
+							>
+								Go
+							</p-button>
+						</a>
+					</div>
+				</p-card>
+			}
+		</div>
+	</section>
 
-  <p-divider></p-divider>
+	<p-divider></p-divider>
 
-  <!-- Announcements Section -->
-  <section class="announcements-section" aria-label="City announcements">
-    <h2>
-      <i class="pi pi-megaphone" aria-hidden="true"></i>
-      What's Happening
-    </h2>
-    <div class="announcements-grid">
-      @for (announcement of announcements(); track announcement.id) {
-        <p-card [styleClass]="'announcement-card'">
-          <ng-template pTemplate="header">
-            <div class="announcement-header">
-              <h3>{{ announcement.title }}</h3>
-              <p-tag
-                [value]="announcement.priority.toUpperCase()"
-                [severity]="getPrioritySeverity(announcement.priority)"
-              >
-              </p-tag>
-            </div>
-          </ng-template>
-          <p class="announcement-content-preview">{{ announcement.content }}</p>
-          <ng-template pTemplate="footer">
-            <div class="announcement-footer">
-              <span class="announcement-date">
-                <i class="pi pi-calendar" aria-hidden="true"></i>
-                {{ announcement.date | date: 'mediumDate' }}
-              </span>
-              <p-button
-                label="Read More"
-                icon="pi pi-external-link"
-                [text]="true"
-                size="small"
-                (onClick)="viewAnnouncement(announcement)"
-              >
-              </p-button>
-            </div>
-          </ng-template>
-        </p-card>
-      }
-    </div>
-  </section>
+	<!-- Announcements Section -->
+	<section class="announcements-section" aria-label="City announcements">
+		<h2>
+			<i class="pi pi-megaphone" aria-hidden="true"></i>
+			What's Happening
+		</h2>
+		<div class="announcements-grid">
+			@for (announcement of announcements(); track announcement.id) {
+				<p-card [styleClass]="'announcement-card'">
+					<ng-template pTemplate="header">
+						<div class="announcement-header">
+							<h3>{{ announcement.title }}</h3>
+							<p-tag
+								[value]="announcement.priority.toUpperCase()"
+								[severity]="getPrioritySeverity(announcement.priority)"
+							>
+							</p-tag>
+						</div>
+					</ng-template>
+					<p class="announcement-content-preview">{{ announcement.content }}</p>
+					<ng-template pTemplate="footer">
+						<div class="announcement-footer">
+							<span class="announcement-date">
+								<i class="pi pi-calendar" aria-hidden="true"></i>
+								{{ announcement.date | date: 'mediumDate' }}
+							</span>
+							<p-button
+								label="Read More"
+								icon="pi pi-external-link"
+								[text]="true"
+								size="small"
+								(onClick)="viewAnnouncement(announcement)"
+							>
+							</p-button>
+						</div>
+					</ng-template>
+				</p-card>
+			}
+		</div>
+	</section>
 
-  <!-- Announcement Detail Dialog -->
-  <p-dialog
-    [(visible)]="displayAnnouncementDialog"
-    [modal]="true"
-    maskStyleClass="announcement-mask"
-    [style]="{ width: '50vw', background: '#ffffff' }"
-    [breakpoints]="{ '960px': '75vw', '640px': '95vw' }"
-    [draggable]="false"
-    [resizable]="false"
-  >
-    @if (selectedAnnouncement(); as announcement) {
-      <ng-template pTemplate="header">
-        <div class="dialog-header">
-          <h2>{{ announcement.title }}</h2>
-          <p-tag
-            [value]="announcement.priority.toUpperCase()"
-            [severity]="getPrioritySeverity(announcement.priority)"
-          >
-          </p-tag>
-        </div>
-      </ng-template>
+	<!-- Announcement Detail Dialog -->
+	<p-dialog
+		[(visible)]="displayAnnouncementDialog"
+		[modal]="true"
+		maskStyleClass="announcement-mask"
+		[style]="{ width: '50vw', background: '#ffffff' }"
+		[breakpoints]="{ '960px': '75vw', '640px': '95vw' }"
+		[draggable]="false"
+		[resizable]="false"
+	>
+		@if (selectedAnnouncement(); as announcement) {
+			<ng-template pTemplate="header">
+				<div class="dialog-header">
+					<h2>{{ announcement.title }}</h2>
+					<p-tag
+						[value]="announcement.priority.toUpperCase()"
+						[severity]="getPrioritySeverity(announcement.priority)"
+					>
+					</p-tag>
+				</div>
+			</ng-template>
 
-      <div class="announcement-dialog-content">
-        <p>{{ announcement.content }}</p>
-        <div class="announcement-meta">
-          <span class="announcement-date">
-            <i class="pi pi-calendar"></i>
-            {{ announcement.date | date: 'full' }}
-          </span>
-        </div>
-      </div>
+			<div class="announcement-dialog-content">
+				<p>{{ announcement.content }}</p>
+				<div class="announcement-meta">
+					<span class="announcement-date">
+						<i class="pi pi-calendar"></i>
+						{{ announcement.date | date: 'full' }}
+					</span>
+				</div>
+			</div>
 
-      <ng-template pTemplate="footer">
-        <p-button
-          label="Close"
-          icon="pi pi-times"
-          (onClick)="closeAnnouncementDialog()"
-          severity="secondary"
-          [text]="true"
-        >
-        </p-button>
-      </ng-template>
-    }
-  </p-dialog>
+			<ng-template pTemplate="footer">
+				<p-button
+					label="Close"
+					icon="pi pi-times"
+					(onClick)="closeAnnouncementDialog()"
+					severity="secondary"
+					[text]="true"
+				>
+				</p-button>
+			</ng-template>
+		}
+	</p-dialog>
 </div>

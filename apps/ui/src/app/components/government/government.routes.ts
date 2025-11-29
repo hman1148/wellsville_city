@@ -27,4 +27,11 @@ export const GOVERNMENT_ROUTES: Route[] = [
         (m) => m.MeetingsComponent
       ),
   },
+  {
+    path: 'government/ordinances',
+    loadComponent: () =>
+      import('./ordinances/ordinances.component').then(
+        (m) => m.OrdinancesComponent
+      ),
+  },
 ];

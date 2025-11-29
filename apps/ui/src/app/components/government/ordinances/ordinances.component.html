@@ -1,0 +1,198 @@
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-book" aria-hidden="true"></i>
+      City Ordinances
+    </h1>
+    <p class="page-description">
+      Browse and search Wellsville City ordinances. Click on any ordinance to view the full text.
+    </p>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <p-card styleClass="search-card">
+    <div class="search-section">
+      <!-- Search Input -->
+      <div class="search-input-container">
+        <label for="ordinance-search" class="search-label">
+          Search Ordinances
+        </label>
+        <span class="p-input-icon-left search-input-wrapper">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            id="ordinance-search"
+            type="text"
+            [ngModel]="state.searchQuery()"
+            (ngModelChange)="onSearchChange($event)"
+            placeholder="Search by title, chapter, or keyword..."
+            class="search-input"
+            aria-label="Search ordinances by title, chapter, or keyword"
+          />
+        </span>
+        @if (state.searchQuery()) {
+          <p-button
+            icon="pi pi-times"
+            [text]="true"
+            [rounded]="true"
+            (onClick)="onClearFilters()"
+            ariaLabel="Clear search"
+            styleClass="clear-button"
+          />
+        }
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="category-filter">
+        <p class="filter-label">Filter by Category:</p>
+        <div class="category-pills">
+          <p-chip
+            label="All Categories"
+            [styleClass]="state.selectedCategory() === null ? 'category-chip active' : 'category-chip'"
+            (click)="onCategorySelect(null)"
+            [attr.role]="'button'"
+            [attr.tabindex]="0"
+            [attr.aria-pressed]="state.selectedCategory() === null"
+          >
+            <span class="category-badge">{{ state.ordinances().length }}</span>
+          </p-chip>
+          @for (category of categories; track category.id) {
+            @if (getCategoryCount(category.id) > 0) {
+              <p-chip
+                [label]="category.label"
+                [styleClass]="state.selectedCategory() === category.id ? 'category-chip active' : 'category-chip'"
+                (click)="onCategorySelect(category.id)"
+                [attr.role]="'button'"
+                [attr.tabindex]="0"
+                [attr.aria-pressed]="state.selectedCategory() === category.id"
+              >
+                <i [class]="'pi ' + category.icon" aria-hidden="true"></i>
+                <span class="category-badge">{{ getCategoryCount(category.id) }}</span>
+              </p-chip>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Results Count -->
+      <div class="results-info">
+        <p>
+          <strong>{{ filteredOrdinances().length }}</strong>
+          {{ filteredOrdinances().length === 1 ? 'ordinance' : 'ordinances' }} found
+        </p>
+      </div>
+    </div>
+  </p-card>
+
+  <p-divider></p-divider>
+
+  <!-- Results Section -->
+  @if (filteredOrdinances().length === 0) {
+    <p-card styleClass="empty-state-card">
+      <div class="empty-state">
+        <i class="pi pi-inbox empty-icon" aria-hidden="true"></i>
+        <h2>No Ordinances Found</h2>
+        <p>Try adjusting your search or filter to find what you're looking for.</p>
+        <p-button
+          label="Clear All Filters"
+          icon="pi pi-refresh"
+          (onClick)="onClearFilters()"
+          styleClass="p-button-outlined"
+        />
+      </div>
+    </p-card>
+  } @else {
+    <!-- Ordinances List -->
+    <div class="ordinances-list">
+      @for (ordinance of filteredOrdinances(); track ordinance.id) {
+        <p-card styleClass="ordinance-card">
+          <div class="ordinance-content">
+            <!-- Ordinance Header -->
+            <div class="ordinance-header">
+              <div class="ordinance-title-section">
+                <span class="ordinance-chapter">{{ ordinance.chapter }}</span>
+                <h2 class="ordinance-title">{{ ordinance.title }}</h2>
+              </div>
+              @if (getCategoryInfo(ordinance.category); as categoryInfo) {
+                <p-chip
+                  [label]="categoryInfo.label"
+                  styleClass="category-tag"
+                >
+                  <i [class]="'pi ' + categoryInfo.icon" aria-hidden="true"></i>
+                </p-chip>
+              }
+            </div>
+
+            <!-- Ordinance Description -->
+            <p class="ordinance-description">{{ ordinance.description }}</p>
+
+            <!-- Ordinance Meta -->
+            <div class="ordinance-meta">
+              <span class="meta-item">
+                <i class="pi pi-calendar" aria-hidden="true"></i>
+                Last Updated: {{ ordinance.lastUpdated | date: 'mediumDate' }}
+              </span>
+              @if (ordinance.effectiveDate) {
+                <span class="meta-item">
+                  <i class="pi pi-check-circle" aria-hidden="true"></i>
+                  Effective: {{ ordinance.effectiveDate | date: 'mediumDate' }}
+                </span>
+              }
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="ordinance-actions">
+              <p-button
+                label="View Ordinance"
+                icon="pi pi-external-link"
+                styleClass="p-button-raised p-button-primary view-button"
+                (onClick)="onViewOrdinance(ordinance)"
+                [ariaLabel]="'View ' + ordinance.title"
+              />
+              @if (ordinance.pdfUrl) {
+                <p-button
+                  label="Download PDF"
+                  icon="pi pi-download"
+                  styleClass="p-button-outlined p-button-secondary"
+                  (onClick)="onViewOrdinance(ordinance)"
+                  [ariaLabel]="'Download PDF of ' + ordinance.title"
+                />
+              }
+            </div>
+          </div>
+        </p-card>
+      }
+    </div>
+  }
+
+  <!-- Help Section -->
+  <p-divider></p-divider>
+
+  <p-card styleClass="help-card">
+    <div class="help-section">
+      <h3>
+        <i class="pi pi-question-circle" aria-hidden="true"></i>
+        Need Help?
+      </h3>
+      <p>
+        If you have questions about city ordinances or need assistance finding specific regulations,
+        please contact City Hall.
+      </p>
+      <div class="help-actions">
+        <p-button
+          label="Contact City Hall"
+          icon="pi pi-phone"
+          styleClass="p-button-outlined"
+          routerLink="/departments"
+        />
+        <p-button
+          label="View All Ordinances Online"
+          icon="pi pi-external-link"
+          styleClass="p-button-outlined"
+          (onClick)="onViewAllOrdinancesOnline()"
+        />
+      </div>
+    </div>
+  </p-card>
+</div>

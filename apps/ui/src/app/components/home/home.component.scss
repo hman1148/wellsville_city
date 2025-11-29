@@ -138,6 +138,7 @@
 
 			.quick-link-card {
 				height: 100%;
+				margin: 0 auto;
 				transition:
 					transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
 					box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -211,6 +212,7 @@
 				height: 100%;
 				display: flex;
 				flex-direction: column;
+				padding: 15px;
 				transition:
 					transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
 					box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);

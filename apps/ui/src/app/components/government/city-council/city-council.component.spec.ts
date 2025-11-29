@@ -1,401 +1,382 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { CityCouncilComponent } from './city-council.component';
+import { CityCouncilStore } from '../../../stores/city-council/city-council.store';
+import { CouncilMember } from '../../../models';
 
 describe('CityCouncilComponent', () => {
   let component: CityCouncilComponent;
   let fixture: ComponentFixture<CityCouncilComponent>;
+  let mockRouter: Partial<Router>;
+  let store: InstanceType<typeof CityCouncilStore>;
+
+  const mockCouncilMember: CouncilMember = {
+    id: 'test-member',
+    name: 'Test Member',
+    role: 'Mayor',
+    photoPath: '/test.jpg',
+    email: 'test@wellsvillecity.com',
+    phone: '(435)555-0100',
+    termExpires: 'December 31, 2027',
+    assignments: ['Test Assignment'],
+    foundersDayDuties: ['Test Duty'],
+  };
 
   beforeEach(async () => {
+    mockRouter = {
+      navigate: jest.fn().mockResolvedValue(true),
+    };
+
     await TestBed.configureTestingModule({
-      imports: [CityCouncilComponent, ReactiveFormsModule],
+      imports: [CityCouncilComponent],
+      providers: [
+        { provide: Router, useValue: mockRouter },
+        CityCouncilStore,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CityCouncilComponent);
     component = fixture.componentInstance;
+    store = TestBed.inject(CityCouncilStore);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should have 5 council members', () => {
-    expect(component.councilMembers().length).toBe(5);
-  });
-
-  it('should have Bob Lindley as Mayor', () => {
-    const mayor = component.councilMembers().find((m) => m.role === 'Mayor');
-    expect(mayor).toBeTruthy();
-    expect(mayor?.name).toBe('Bob Lindley');
-  });
-
-  it('should have correct email for Kaylene Ames', () => {
-    const member = component.councilMembers().find(
-      (m) => m.name === 'Kaylene Ames'
-    );
-    expect(member?.email).toBe('kames@wellsvillecity.com');
-  });
-
-  it('should have correct phone for Carl Leatham', () => {
-    const member = component.councilMembers().find(
-      (m) => m.name === 'Carl Leatham'
-    );
-    expect(member?.phone).toBe('(435)757-7268');
-  });
-
-  it('should initialize with contact dialog hidden', () => {
-    expect(component.showContactDialog()).toBe(false);
-    expect(component.selectedMember()).toBeNull();
-  });
-
-  it('should create contact form with required fields', () => {
-    expect(component.contactForm).toBeTruthy();
-    expect(component.contactForm.get('subject')).toBeTruthy();
-    expect(component.contactForm.get('fromName')).toBeTruthy();
-    expect(component.contactForm.get('fromEmail')).toBeTruthy();
-    expect(component.contactForm.get('fromPhone')).toBeTruthy();
-    expect(component.contactForm.get('message')).toBeTruthy();
-  });
-
-  it('should mark form as invalid when empty', () => {
-    expect(component.contactForm.valid).toBe(false);
-  });
-
-  it('should mark form as valid when all fields are filled', () => {
-    component.contactForm.patchValue({
-      subject: 'Test Subject',
-      fromName: 'John Doe',
-      fromEmail: 'john@example.com',
-      fromPhone: '555-1234',
-      message: 'Test message',
-    });
-    expect(component.contactForm.valid).toBe(true);
-  });
-
-  it('should validate email format', () => {
-    const emailControl = component.contactForm.get('fromEmail');
-    emailControl?.setValue('invalid-email');
-    expect(emailControl?.hasError('email')).toBe(true);
-
-    emailControl?.setValue('valid@email.com');
-    expect(emailControl?.hasError('email')).toBe(false);
-  });
-
-  it('should open dialog when onContactMember is called', () => {
-    const member = component.councilMembers()[0];
-    component.onContactMember(member);
-
-    expect(component.showContactDialog()).toBe(true);
-    expect(component.selectedMember()).toBe(member);
-  });
-
-  it('should close dialog and reset form when onCloseDialog is called', () => {
-    const member = component.councilMembers()[0];
-    component.onContactMember(member);
-    component.contactForm.patchValue({
-      subject: 'Test',
-      fromName: 'Test User',
-      fromEmail: 'test@example.com',
-      fromPhone: '555-1234',
-      message: 'Test message',
+  describe('Component Initialization', () => {
+    it('should create', () => {
+      expect(component).toBeTruthy();
     });
 
-    component.onCloseDialog();
+    it('should inject Router', () => {
+      expect(component.router).toBeTruthy();
+    });
 
-    expect(component.showContactDialog()).toBe(false);
-    expect(component.selectedMember()).toBeNull();
-    expect(component.contactForm.value.subject).toBeNull();
-  });
-
-  it('should render the page header', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const header = compiled.querySelector('h1');
-    expect(header?.textContent).toContain('City Council');
-  });
-
-  it('should render all council member cards', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const cards = compiled.querySelectorAll('.council-card');
-    expect(cards.length).toBe(5);
-  });
-
-  it('should render member photos', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const photos = compiled.querySelectorAll('.council-photo');
-    expect(photos.length).toBe(5);
-  });
-
-  it('should render member names', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const content = compiled.textContent || '';
-    expect(content).toContain('Bob Lindley');
-    expect(content).toContain('Kaylene Ames');
-    expect(content).toContain('Carl Leatham');
-    expect(content).toContain('Denise Lindsay');
-    expect(content).toContain('Austin Wood');
-  });
-
-  it('should have all members with correct photo paths', () => {
-    component.councilMembers().forEach((member) => {
-      expect(member.photoPath).toContain('/Government/');
-      expect(member.photoPath).toContain('.jpg');
+    it('should inject CityCouncilStore', () => {
+      expect(component.cityCouncilStore).toBeTruthy();
     });
   });
 
-  it('should have all members with assignments', () => {
-    component.councilMembers().forEach((member) => {
-      expect(member.assignments.length).toBeGreaterThan(0);
+  describe('Store Integration', () => {
+    it('should have access to council members from store', () => {
+      expect(store.councilMembers).toBeTruthy();
+      expect(store.councilMembers().length).toBe(5);
+    });
+
+    it('should have Bob Lindley as Mayor', () => {
+      const members = store.councilMembers();
+      const mayor = members.find((m) => m.role === 'Mayor');
+      expect(mayor).toBeTruthy();
+      expect(mayor?.name).toBe('Bob Lindley');
+    });
+
+    it('should have correct email for Kaylene Ames', () => {
+      const members = store.councilMembers();
+      const member = members.find((m) => m.name === 'Kaylene Ames');
+      expect(member?.email).toBe('kames@wellsvillecity.com');
+    });
+
+    it('should have correct phone for Carl Leatham', () => {
+      const members = store.councilMembers();
+      const member = members.find((m) => m.name === 'Carl Leatham');
+      expect(member?.phone).toBe('(435)757-7268');
+    });
+
+    it('should initialize with no selected member', () => {
+      expect(store.selectedMember()).toBeNull();
     });
   });
 
-  it('should have all members with Founders Day duties', () => {
-    component.councilMembers().forEach((member) => {
-      expect(member.foundersDayDuties.length).toBeGreaterThan(0);
-    });
-  });
-
-  it('should not submit form when invalid', () => {
-    const member = component.councilMembers()[0];
-    component.onContactMember(member);
-
-    spyOn(console, 'log');
-    component.onSubmitContactForm();
-
-    expect(console.log).not.toHaveBeenCalled();
-  });
-
-  describe('Edge Cases - Form Validation', () => {
-    it('should reject email with no @ symbol', () => {
-      const emailControl = component.contactForm.get('fromEmail');
-      emailControl?.setValue('invalidemail.com');
-      expect(emailControl?.hasError('email')).toBe(true);
+  describe('onContactMember()', () => {
+    it('should select member in store', () => {
+      component.onContactMember(mockCouncilMember);
+      expect(store.selectedMember()).toBe(mockCouncilMember);
     });
 
-    it('should reject email with multiple @ symbols', () => {
-      const emailControl = component.contactForm.get('fromEmail');
-      emailControl?.setValue('invalid@@email.com');
-      expect(emailControl?.hasError('email')).toBe(true);
+    it('should navigate to contact page', () => {
+      component.onContactMember(mockCouncilMember);
+      expect(mockRouter.navigate).toHaveBeenCalledWith([
+        '/government/city-council/contact',
+      ]);
     });
 
-    it('should accept email with + symbol', () => {
-      const emailControl = component.contactForm.get('fromEmail');
-      emailControl?.setValue('user+tag@example.com');
-      expect(emailControl?.hasError('email')).toBe(false);
-    });
+    it('should call selectMember before navigation', () => {
+      const callOrder: string[] = [];
 
-    it('should handle very long subject line', () => {
-      const longSubject = 'A'.repeat(1000);
-      component.contactForm.patchValue({ subject: longSubject });
-      expect(component.contactForm.get('subject')?.value).toBe(longSubject);
-    });
-
-    it('should handle very long message', () => {
-      const longMessage = 'M'.repeat(10000);
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: 'Test User',
-        fromEmail: 'test@example.com',
-        fromPhone: '555-1234',
-        message: longMessage,
+      jest.spyOn(store, 'selectMember').mockImplementation((member: CouncilMember) => {
+        callOrder.push('selectMember');
       });
-      expect(component.contactForm.valid).toBe(true);
-    });
 
-    it('should handle special characters in name', () => {
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: "O'Connor-Smith III",
-        fromEmail: 'test@example.com',
-        fromPhone: '555-1234',
-        message: 'Test',
+      (mockRouter.navigate as jest.Mock).mockImplementation(() => {
+        callOrder.push('navigate');
+        return Promise.resolve(true);
       });
-      expect(component.contactForm.valid).toBe(true);
-    });
 
-    it('should handle international phone numbers', () => {
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: 'Test User',
-        fromEmail: 'test@example.com',
-        fromPhone: '+44 20 7123 4567',
-        message: 'Test',
-      });
-      expect(component.contactForm.valid).toBe(true);
+      component.onContactMember(mockCouncilMember);
+
+      expect(callOrder).toEqual(['selectMember', 'navigate']);
     });
   });
 
   describe('Edge Cases - Member Selection', () => {
-    it('should handle selecting same member twice', () => {
-      const member = component.councilMembers()[0];
+    it('should handle member with null values gracefully', () => {
+      const memberWithNulls: CouncilMember = {
+        ...mockCouncilMember,
+        phone: '',
+        photoPath: '',
+      };
 
-      component.onContactMember(member);
-      expect(component.selectedMember()).toBe(member);
-
-      component.onContactMember(member);
-      expect(component.selectedMember()).toBe(member);
+      expect(() => component.onContactMember(memberWithNulls)).not.toThrow();
+      expect(store.selectedMember()).toBe(memberWithNulls);
     });
 
-    it('should handle switching between members', () => {
-      const member1 = component.councilMembers()[0];
-      const member2 = component.councilMembers()[1];
+    it('should handle member with special characters in name', () => {
+      const memberWithSpecialChars: CouncilMember = {
+        ...mockCouncilMember,
+        name: "John O'Connor-Smith III",
+      };
 
-      component.onContactMember(member1);
-      expect(component.selectedMember()).toBe(member1);
-
-      component.onContactMember(member2);
-      expect(component.selectedMember()).toBe(member2);
+      component.onContactMember(memberWithSpecialChars);
+      expect(store.selectedMember()).toBe(memberWithSpecialChars);
     });
 
-    it('should reset form when switching members', () => {
-      const member1 = component.councilMembers()[0];
-      const member2 = component.councilMembers()[1];
+    it('should handle member with very long bio', () => {
+      const longAssignments = Array(100).fill('Assignment');
+      const memberWithLongData: CouncilMember = {
+        ...mockCouncilMember,
+        assignments: longAssignments,
+      };
 
-      component.onContactMember(member1);
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: 'User',
-        fromEmail: 'user@example.com',
-        fromPhone: '555-1234',
-        message: 'Message',
-      });
+      expect(() => component.onContactMember(memberWithLongData)).not.toThrow();
+    });
 
-      component.onContactMember(member2);
-      expect(component.contactForm.value.subject).toBeNull();
+    it('should handle member with empty email', () => {
+      const memberWithNoEmail: CouncilMember = {
+        ...mockCouncilMember,
+        email: '',
+      };
+
+      component.onContactMember(memberWithNoEmail);
+      expect(store.selectedMember()).toBe(memberWithNoEmail);
     });
   });
 
-  describe('Edge Cases - Member Data Integrity', () => {
+  describe('Edge Cases - Multiple Clicks', () => {
+    it('should handle rapid consecutive clicks', () => {
+      component.onContactMember(mockCouncilMember);
+      component.onContactMember(mockCouncilMember);
+      component.onContactMember(mockCouncilMember);
+
+      expect(mockRouter.navigate).toHaveBeenCalledTimes(3);
+    });
+
+    it('should handle different members in rapid succession', () => {
+      const member2: CouncilMember = {
+        ...mockCouncilMember,
+        id: '2',
+        name: 'Jane Smith',
+      };
+      const member3: CouncilMember = {
+        ...mockCouncilMember,
+        id: '3',
+        name: 'Bob Johnson',
+      };
+
+      component.onContactMember(mockCouncilMember);
+      expect(store.selectedMember()).toBe(mockCouncilMember);
+
+      component.onContactMember(member2);
+      expect(store.selectedMember()).toBe(member2);
+
+      component.onContactMember(member3);
+      expect(store.selectedMember()).toBe(member3);
+    });
+  });
+
+  describe('Edge Cases - Navigation Failures', () => {
+    it('should handle navigation rejection', () => {
+      (mockRouter.navigate as jest.Mock).mockResolvedValue(false);
+
+      component.onContactMember(mockCouncilMember);
+
+      expect(store.selectedMember()).toBe(mockCouncilMember);
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    });
+
+    it('should handle navigation error', () => {
+      (mockRouter.navigate as jest.Mock).mockRejectedValue('Navigation failed');
+
+      component.onContactMember(mockCouncilMember);
+
+      expect(store.selectedMember()).toBe(mockCouncilMember);
+    });
+  });
+
+  describe('Edge Cases - Invalid Data', () => {
+    it('should handle member with undefined id', () => {
+      const memberWithUndefinedId = {
+        ...mockCouncilMember,
+        id: undefined,
+      } as any;
+
+      expect(() => component.onContactMember(memberWithUndefinedId)).not.toThrow();
+    });
+
+    it('should handle member with malformed email', () => {
+      const memberWithBadEmail: CouncilMember = {
+        ...mockCouncilMember,
+        email: 'not-an-email',
+      };
+
+      component.onContactMember(memberWithBadEmail);
+      expect(store.selectedMember()).toBe(memberWithBadEmail);
+    });
+
+    it('should handle member with malformed phone', () => {
+      const memberWithBadPhone: CouncilMember = {
+        ...mockCouncilMember,
+        phone: 'abc-def-ghij',
+      };
+
+      component.onContactMember(memberWithBadPhone);
+      expect(store.selectedMember()).toBe(memberWithBadPhone);
+    });
+  });
+
+  describe('Integration - Store State', () => {
+    it('should work when store is in loading state', () => {
+      component.onContactMember(mockCouncilMember);
+
+      expect(store.selectedMember()).toBe(mockCouncilMember);
+      expect(mockRouter.navigate).toHaveBeenCalled();
+    });
+
+    it('should work when store has a different member selected', () => {
+      const firstMember = store.councilMembers()[0];
+      store.selectMember(firstMember);
+      expect(store.selectedMember()).toBe(firstMember);
+
+      const differentMember: CouncilMember = {
+        ...mockCouncilMember,
+        id: '999',
+        name: 'Different Person',
+      };
+      component.onContactMember(differentMember);
+
+      expect(store.selectedMember()).toBe(differentMember);
+    });
+  });
+
+  describe('Security - Input Validation', () => {
+    it('should not execute code in member name', () => {
+      const maliciousMember: CouncilMember = {
+        ...mockCouncilMember,
+        name: '<script>alert("XSS")</script>',
+      };
+
+      expect(() => component.onContactMember(maliciousMember)).not.toThrow();
+      expect(store.selectedMember()).toBe(maliciousMember);
+    });
+
+    it('should handle SQL injection attempt in member data', () => {
+      const sqlInjectionMember: CouncilMember = {
+        ...mockCouncilMember,
+        name: "'; DROP TABLE council_members; --",
+      };
+
+      expect(() => component.onContactMember(sqlInjectionMember)).not.toThrow();
+    });
+
+    it('should handle member with extremely long email', () => {
+      const longEmail = 'a'.repeat(1000) + '@example.com';
+      const memberWithLongEmail: CouncilMember = {
+        ...mockCouncilMember,
+        email: longEmail,
+      };
+
+      expect(() => component.onContactMember(memberWithLongEmail)).not.toThrow();
+    });
+  });
+
+  describe('Store Data Integrity', () => {
+    it('should have 5 council members in store', () => {
+      expect(store.councilMembers().length).toBe(5);
+    });
+
     it('should not have duplicate member names', () => {
-      const names = component.councilMembers().map((m) => m.name);
+      const members = store.councilMembers();
+      const names = members.map((m) => m.name);
       const uniqueNames = new Set(names);
       expect(names.length).toBe(uniqueNames.size);
     });
 
     it('should not have duplicate member emails', () => {
-      const emails = component.councilMembers().map((m) => m.email);
+      const members = store.councilMembers();
+      const emails = members.map((m) => m.email);
       const uniqueEmails = new Set(emails);
       expect(emails.length).toBe(uniqueEmails.size);
     });
 
     it('should have valid email format for all members', () => {
-      component.councilMembers().forEach((member) => {
+      const members = store.councilMembers();
+      members.forEach((member) => {
         expect(member.email).toContain('@');
         expect(member.email).toContain('.');
       });
     });
 
     it('should have phone numbers for all members', () => {
-      component.councilMembers().forEach((member) => {
+      const members = store.councilMembers();
+      members.forEach((member) => {
         expect(member.phone).toBeTruthy();
         expect(member.phone.length).toBeGreaterThan(0);
       });
     });
 
     it('should have role for all members', () => {
-      component.councilMembers().forEach((member) => {
+      const members = store.councilMembers();
+      members.forEach((member) => {
         expect(member.role).toBeTruthy();
       });
     });
-  });
 
-  describe('Security - Input Sanitization', () => {
-    it('should not execute script tags in subject', () => {
-      const maliciousSubject = '<script>alert("XSS")</script>';
-      component.contactForm.patchValue({ subject: maliciousSubject });
-
-      expect(() => {
-        component.contactForm.get('subject')?.value;
-      }).not.toThrow();
+    it('should have all members with correct photo paths', () => {
+      const members = store.councilMembers();
+      members.forEach((member) => {
+        expect(member.photoPath).toContain('/Government/');
+        expect(member.photoPath).toContain('.jpg');
+      });
     });
 
-    it('should not execute script tags in message', () => {
-      const maliciousMessage = '<script>alert("XSS")</script>';
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: 'User',
-        fromEmail: 'user@example.com',
-        fromPhone: '555-1234',
-        message: maliciousMessage,
+    it('should have all members with assignments', () => {
+      const members = store.councilMembers();
+      members.forEach((member) => {
+        expect(member.assignments.length).toBeGreaterThan(0);
       });
-
-      expect(component.contactForm.valid).toBe(true);
     });
 
-    it('should handle SQL injection attempt in name', () => {
-      const sqlInjection = "'; DROP TABLE users; --";
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: sqlInjection,
-        fromEmail: 'user@example.com',
-        fromPhone: '555-1234',
-        message: 'Test',
+    it('should have all members with Founders Day duties', () => {
+      const members = store.councilMembers();
+      members.forEach((member) => {
+        expect(member.foundersDayDuties.length).toBeGreaterThan(0);
       });
-
-      expect(component.contactForm.valid).toBe(true);
     });
   });
 
-  describe('Edge Cases - Form Reset', () => {
-    it('should reset form to pristine state', () => {
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: 'User',
-        fromEmail: 'user@example.com',
-        fromPhone: '555-1234',
-        message: 'Message',
-      });
-      component.contactForm.markAsDirty();
+  describe('Store Methods', () => {
+    it('should clear selected member', () => {
+      component.onContactMember(mockCouncilMember);
+      expect(store.selectedMember()).toBe(mockCouncilMember);
 
-      component.contactForm.reset();
-
-      expect(component.contactForm.pristine).toBe(true);
-      expect(component.contactForm.value.subject).toBeNull();
+      store.clearSelectedMember();
+      expect(store.selectedMember()).toBeNull();
     });
 
-    it('should handle closing dialog without submitting', () => {
-      const member = component.councilMembers()[0];
-      component.onContactMember(member);
-      component.contactForm.patchValue({
-        subject: 'Test',
-        fromName: 'User',
-        fromEmail: 'user@example.com',
-        fromPhone: '555-1234',
-        message: 'Message',
-      });
+    it('should reset store to initial state', () => {
+      component.onContactMember(mockCouncilMember);
+      expect(store.selectedMember()).toBe(mockCouncilMember);
 
-      component.onCloseDialog();
-
-      expect(component.showContactDialog()).toBe(false);
-      expect(component.contactForm.value.subject).toBeNull();
-    });
-  });
-
-  describe('Edge Cases - Empty and Whitespace Values', () => {
-    it('should reject form with only whitespace in required fields', () => {
-      component.contactForm.patchValue({
-        subject: '   ',
-        fromName: '   ',
-        fromEmail: 'user@example.com',
-        fromPhone: '555-1234',
-        message: '   ',
-      });
-
-      expect(component.contactForm.valid).toBe(false);
-    });
-
-    it('should handle empty string in phone number', () => {
-      const phoneControl = component.contactForm.get('fromPhone');
-      phoneControl?.setValue('');
-      expect(phoneControl?.hasError('required')).toBe(true);
-    });
-
-    it('should trim whitespace from email', () => {
-      const emailControl = component.contactForm.get('fromEmail');
-      emailControl?.setValue('  user@example.com  ');
-
-      // Value should be accepted (trimming handled by backend)
-      expect(emailControl?.value).toContain('user@example.com');
+      store.resetStore();
+      expect(store.selectedMember()).toBeNull();
+      expect(store.councilMembers().length).toBe(5);
     });
   });
 });

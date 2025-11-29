@@ -1,4 +1,4 @@
-export interface Ordinance {
+export type Ordinance = {
   id: string;
   title: string;
   chapter: string;
@@ -7,12 +7,12 @@ export interface Ordinance {
   lastUpdated: string;
   effectiveDate?: string;
   pdfUrl?: string; // S3 URL or external link
-  externalUrl?: string; // Link to codelibrary.amlegal.com
-  keywords: string[]; // For search functionality
+  externalUrl?: string;
+  keywords: string[];
   sections?: OrdinanceSection[];
 }
 
-export interface OrdinanceSection {
+export type OrdinanceSection = {
   id: string;
   sectionNumber: string;
   title: string;
@@ -35,7 +35,7 @@ export type OrdinanceCategory =
   | 'environmental'
   | 'other';
 
-export interface OrdinanceCategoryInfo {
+export type OrdinanceCategoryInfo = {
   id: OrdinanceCategory;
   label: string;
   description: string;
