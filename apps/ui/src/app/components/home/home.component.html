@@ -22,9 +22,38 @@
     </p-carousel>
   </section>
 
+  <!-- Welcome Section -->
+  <section class="welcome-section" aria-label="Welcome to Wellsville">
+    <div class="welcome-content">
+      <h2>Your Community. Simplified.</h2>
+      <p class="welcome-lead">
+        Modern city services meet small-town care in the heart of Cache Valley. Wellsville makes it
+        easy to pay bills, stay informed, and connect with your local government—all in one place.
+      </p>
+      <p class="welcome-sub">
+        Whether you're a longtime resident or new to our community, everything you need is right here.
+      </p>
+      <div class="welcome-actions">
+        <a routerLink="/information">
+          <p-button label="Explore Wellsville" icon="pi pi-compass" severity="info">
+          </p-button>
+        </a>
+        <a routerLink="/departments">
+          <p-button
+            label="City Services"
+            icon="pi pi-briefcase"
+            severity="secondary"
+            [outlined]="true"
+          >
+          </p-button>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Quick Links Section -->
   <section class="quick-links-section" aria-label="Quick access links">
-    <h2>Quick Access</h2>
+    <h2>Most Used Services</h2>
     <div class="quick-links-grid">
       @for (link of quickLinks(); track link.label) {
         <p-card [styleClass]="'quick-link-card'">
@@ -34,8 +63,9 @@
             <p>{{ link.description }}</p>
             <a [routerLink]="link.route" style="display: inline-block; width: 100%">
               <p-button
-                [label]="'Learn More'"
+                [label]="'Go'"
                 [icon]="'pi pi-arrow-right'"
+                iconPos="right"
                 styleClass="p-button-sm"
                 [style]="{ width: '100%' }"
               >
@@ -53,7 +83,7 @@
   <section class="announcements-section" aria-label="City announcements">
     <h2>
       <i class="pi pi-megaphone" aria-hidden="true"></i>
-      Announcements
+      What's Happening
     </h2>
     <div class="announcements-grid">
       @for (announcement of announcements(); track announcement.id) {
@@ -88,37 +118,6 @@
         </p-card>
       }
     </div>
-  </section>
-
-  <!-- Welcome Section -->
-  <section class="welcome-section" aria-label="Welcome to Wellsville">
-    <p-card>
-      <h2>Welcome to Wellsville City</h2>
-      <p>
-        Wellsville is a vibrant community located in beautiful Cache Valley, Utah. Our city is
-        committed to providing excellent services to our residents and maintaining the high quality
-        of life that makes Wellsville a great place to call home.
-      </p>
-      <p>
-        Explore our website to learn more about city services, community events, and how to get
-        involved in local government.
-      </p>
-      <div class="welcome-actions">
-        <a routerLink="/information">
-          <p-button label="Learn About Our City" icon="pi pi-info-circle" severity="info">
-          </p-button>
-        </a>
-        <a routerLink="/departments">
-          <p-button
-            label="View Departments"
-            icon="pi pi-briefcase"
-            severity="secondary"
-            [outlined]="true"
-          >
-          </p-button>
-        </a>
-      </div>
-    </p-card>
   </section>
 
   <!-- Announcement Detail Dialog -->

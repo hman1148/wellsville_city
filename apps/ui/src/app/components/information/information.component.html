@@ -1,29 +1,32 @@
 <div class="page-container">
-  <div class="page-header">
-    <h1>
-      <i class="pi pi-info-circle" aria-hidden="true"></i>
-      City Information
-    </h1>
-    <p class="page-description">
-      Discover resources, history, and ways to connect with our community
-    </p>
-  </div>
+	<div class="page-header">
+		<h1>
+			<i class="pi pi-info-circle" aria-hidden="true"></i>
+			City Information
+		</h1>
+		<p class="page-description">
+			Discover resources, history, and ways to connect with our community
+		</p>
+	</div>
 
-  <div class="services-grid">
-    <p-card *ngFor="let section of infoSections()" [styleClass]="'service-card'">
-      <div class="service-content">
-        <div class="service-icon">
-          <i [class]="section.icon" aria-hidden="true"></i>
-        </div>
-        <h2>{{ section.title }}</h2>
-        <p>{{ section.description }}</p>
-        <p-button
-          label="View Details"
-          icon="pi pi-arrow-right"
-          [routerLink]="section.link"
-          styleClass="p-button-outlined">
-        </p-button>
-      </div>
-    </p-card>
-  </div>
+	<div class="services-grid">
+		@for (section of infoSections(); track section.title) {
+			<p-card [styleClass]="'service-card'">
+				<div class="service-content">
+					<div class="service-icon">
+						<i [class]="section.icon" aria-hidden="true"></i>
+					</div>
+					<h2>{{ section.title }}</h2>
+					<p>{{ section.description }}</p>
+					<p-button
+						label="View Details"
+						icon="pi pi-arrow-right"
+						[routerLink]="section.link"
+						styleClass="p-button-outlined"
+					>
+					</p-button>
+				</div>
+			</p-card>
+		}
+	</div>
 </div>

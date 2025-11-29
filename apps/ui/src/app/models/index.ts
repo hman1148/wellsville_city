@@ -6,3 +6,4 @@ export * from './citizen-report/citizen-report.model';
 export * from './newsletter/newsletter.model';
 export * from './council-member';
 export * from './meeting/meeting.model';
+export * from './ordinance.model';

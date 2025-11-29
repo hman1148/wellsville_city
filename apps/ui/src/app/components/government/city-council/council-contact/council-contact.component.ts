@@ -1,23 +1,34 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { signalState, patchState } from '@ngrx/signals';
 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TextareaModule } from 'primeng/textarea';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 import {
-  CouncilMember,
   CouncilContactForm,
   initialCouncilContactForm,
 } from '../../../../models';
+import { CityCouncilStore } from '../../../../stores/city-council/city-council.store';
 import { cityCouncilFormSuite } from '../city-council-form.validation';
-import { initialCityCouncilFormState } from '../city-council-form.state';
+
+export type CouncilContactState = {
+  formData: Partial<CouncilContactForm>;
+  isSubmitting: boolean;
+  fieldTouched: { [key: string]: boolean };
+};
+
+export const initialCouncilContactState = (): CouncilContactState => ({
+  formData: initialCouncilContactForm(),
+  isSubmitting: false,
+  fieldTouched: {},
+});
 
 @Component({
   selector: 'app-council-contact',
@@ -28,7 +39,7 @@ import { initialCityCouncilFormState } from '../city-council-form.state';
     CardModule,
     ButtonModule,
     InputTextModule,
-    InputTextareaModule,
+    TextareaModule,
     ToastModule,
   ],
   providers: [MessageService],
@@ -38,9 +49,9 @@ import { initialCityCouncilFormState } from '../city-council-form.state';
 export class CouncilContactComponent implements OnInit {
   readonly messageService = inject(MessageService);
   readonly router = inject(Router);
-  readonly route = inject(ActivatedRoute);
+  readonly cityCouncilStore = inject(CityCouncilStore);
 
-  readonly state = signalState(initialCityCouncilFormState());
+  readonly state = signalState(initialCouncilContactState());
   validationResult = signal<ReturnType<typeof cityCouncilFormSuite> | null>(null);
 
   isFormValid = computed(() => {
@@ -49,18 +60,15 @@ export class CouncilContactComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    // Get the council member data from route state
-    const navigation = this.router.getCurrentNavigation();
-    const member = navigation?.extras?.state?.['member'] as CouncilMember;
+    // Get the council member data from the store
+    const member = this.cityCouncilStore.selectedMember();
 
-    if (member) {
-      patchState(this.state, {
-        selectedMember: member,
-        formData: initialCouncilContactForm(),
-      });
-    } else {
-      // If no member data, redirect back to city council
+    if (!member) {
+      // If no member selected, redirect back to city council
       this.router.navigate(['/government/city-council']);
+    } else {
+      // Reset form data
+      patchState(this.state, initialCouncilContactState());
     }
   }
 
@@ -107,7 +115,7 @@ export class CouncilContactComponent implements OnInit {
     // Validate form
     this.validateForm();
 
-    const selectedMember = this.state.selectedMember();
+    const selectedMember = this.cityCouncilStore.selectedMember();
     if (this.isFormValid() && selectedMember) {
       patchState(this.state, { isSubmitting: true });
 
@@ -139,6 +147,7 @@ export class CouncilContactComponent implements OnInit {
 
         // Navigate back to city council page after a delay
         setTimeout(() => {
+          this.cityCouncilStore.clearSelectedMember();
           this.router.navigate(['/government/city-council']);
         }, 2000);
       }, 1000);
@@ -146,6 +155,7 @@ export class CouncilContactComponent implements OnInit {
   }
 
   onCancel(): void {
+    this.cityCouncilStore.clearSelectedMember();
     this.router.navigate(['/government/city-council']);
   }
 }

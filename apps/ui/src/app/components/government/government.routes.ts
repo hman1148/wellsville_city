@@ -14,6 +14,13 @@ export const GOVERNMENT_ROUTES: Route[] = [
       ),
   },
   {
+    path: 'government/city-council/contact',
+    loadComponent: () =>
+      import('./city-council/council-contact/council-contact.component').then(
+        (m) => m.CouncilContactComponent
+      ),
+  },
+  {
     path: 'government/meetings',
     loadComponent: () =>
       import('./meetings/meetings.component').then(

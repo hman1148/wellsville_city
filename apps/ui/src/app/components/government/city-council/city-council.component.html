@@ -10,7 +10,7 @@
   </div>
 
   <div class="council-grid">
-    @for (member of state.councilMembers(); track member.id) {
+    @for (member of cityCouncilStore.councilMembers(); track member.id) {
       <p-card styleClass="council-card" (click)="onContactMember(member)">
         <div class="card-content">
           <!-- Photo -->
@@ -68,7 +68,7 @@
                 City Council Assignments
               </h3>
               <ul class="assignments-list">
-                @for (assignment of member.assignments; track assignment) {
+                @for (assignment of member.assignments; track $index) {
                   <li>{{ assignment }}</li>
                 }
               </ul>
@@ -82,7 +82,7 @@
                   Founders' Day Duties
                 </h3>
                 <ul class="assignments-list">
-                  @for (duty of member.foundersDayDuties; track duty) {
+                  @for (duty of member.foundersDayDuties; track $index) {
                     <li>{{ duty }}</li>
                   }
                 </ul>
@@ -105,156 +105,3 @@
     }
   </div>
 </div>
-
-<!-- Contact Dialog -->
-<p-dialog
-  [header]="'Contact ' + (state.selectedMember()?.name || '')"
-  [visible]="state.showContactDialog()"
-  (visibleChange)="state.showContactDialog() ? null : onCloseDialog()"
-  [modal]="true"
-  [style]="{ width: '90vw', maxWidth: '600px' }"
-  [dismissableMask]="true"
-  [draggable]="false"
-  [resizable]="false"
-  (onHide)="onCloseDialog()">
-  <form (ngSubmit)="onSubmitContactForm()">
-    <div class="form-container">
-      <p class="dialog-description">
-        Fill out the form below to send a message to
-        <strong>{{ state.selectedMember()?.name }}</strong>.
-      </p>
-
-      <!-- Subject -->
-      <div class="form-field">
-        <label for="subject" class="form-label">
-          Subject <span class="required">*</span>
-        </label>
-        <input
-          pInputText
-          id="subject"
-          [(ngModel)]="state.formData().subject"
-          name="subject"
-          (ngModelChange)="onFieldChange('subject', $event)"
-          (blur)="onFieldBlur('subject')"
-          placeholder="Enter subject"
-          class="w-full"
-          aria-required="true"
-        />
-        @if (hasError('subject')) {
-          <small class="error-text">{{ getErrorMessage('subject') }}</small>
-        }
-      </div>
-
-      <!-- From Name -->
-      <div class="form-field">
-        <label for="fromName" class="form-label">
-          Your Name <span class="required">*</span>
-        </label>
-        <input
-          pInputText
-          id="fromName"
-          [(ngModel)]="state.formData().fromName"
-          name="fromName"
-          (ngModelChange)="onFieldChange('fromName', $event)"
-          (blur)="onFieldBlur('fromName')"
-          placeholder="Enter your name"
-          class="w-full"
-          aria-required="true"
-        />
-        @if (hasError('fromName')) {
-          <small class="error-text">{{ getErrorMessage('fromName') }}</small>
-        }
-      </div>
-
-      <!-- From Email -->
-      <div class="form-field">
-        <label for="fromEmail" class="form-label">
-          Your Email <span class="required">*</span>
-        </label>
-        <input
-          pInputText
-          id="fromEmail"
-          type="email"
-          [(ngModel)]="state.formData().fromEmail"
-          name="fromEmail"
-          (ngModelChange)="onFieldChange('fromEmail', $event)"
-          (blur)="onFieldBlur('fromEmail')"
-          placeholder="Enter your email"
-          class="w-full"
-          aria-required="true"
-        />
-        @if (hasError('fromEmail')) {
-          <small class="error-text">{{ getErrorMessage('fromEmail') }}</small>
-        }
-      </div>
-
-      <!-- From Phone -->
-      <div class="form-field">
-        <label for="fromPhone" class="form-label">
-          Your Phone <span class="required">*</span>
-        </label>
-        <input
-          pInputText
-          id="fromPhone"
-          type="tel"
-          [(ngModel)]="state.formData().fromPhone"
-          name="fromPhone"
-          (ngModelChange)="onFieldChange('fromPhone', $event)"
-          (blur)="onFieldBlur('fromPhone')"
-          placeholder="Enter your phone number"
-          class="w-full"
-          aria-required="true"
-        />
-        @if (hasError('fromPhone')) {
-          <small class="error-text">{{ getErrorMessage('fromPhone') }}</small>
-        }
-      </div>
-
-      <!-- Message -->
-      <div class="form-field">
-        <label for="message" class="form-label">
-          Message <span class="required">*</span>
-        </label>
-        <textarea
-          pInputTextarea
-          id="message"
-          [(ngModel)]="state.formData().message"
-          name="message"
-          (ngModelChange)="onFieldChange('message', $event)"
-          (blur)="onFieldBlur('message')"
-          rows="6"
-          placeholder="Enter your message"
-          class="w-full"
-          aria-required="true">
-        </textarea>
-        @if (hasError('message')) {
-          <small class="error-text">{{ getErrorMessage('message') }}</small>
-        }
-      </div>
-
-      <!-- Form Actions -->
-      <div class="form-actions">
-        <p-button
-          label="Cancel"
-          icon="pi pi-times"
-          styleClass="p-button-text"
-          type="button"
-          (onClick)="onCloseDialog()"
-          ariaLabel="Cancel and close dialog">
-        </p-button>
-        <p-button
-          label="Send Message"
-          icon="pi pi-send"
-          styleClass="p-button-raised p-button-primary"
-          type="submit"
-          [disabled]="!isFormValid() || state.isSubmitting()"
-          [loading]="state.isSubmitting()"
-          ariaLabel="Send message to council member">
-        </p-button>
-      </div>
-    </div>
-  </form>
-</p-dialog>
-
-<!-- Toast for success/error messages -->
-<p-toast position="top-right"></p-toast>

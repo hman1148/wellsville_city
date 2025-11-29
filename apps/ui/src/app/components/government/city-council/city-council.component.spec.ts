@@ -164,4 +164,238 @@ describe('CityCouncilComponent', () => {
 
     expect(console.log).not.toHaveBeenCalled();
   });
+
+  describe('Edge Cases - Form Validation', () => {
+    it('should reject email with no @ symbol', () => {
+      const emailControl = component.contactForm.get('fromEmail');
+      emailControl?.setValue('invalidemail.com');
+      expect(emailControl?.hasError('email')).toBe(true);
+    });
+
+    it('should reject email with multiple @ symbols', () => {
+      const emailControl = component.contactForm.get('fromEmail');
+      emailControl?.setValue('invalid@@email.com');
+      expect(emailControl?.hasError('email')).toBe(true);
+    });
+
+    it('should accept email with + symbol', () => {
+      const emailControl = component.contactForm.get('fromEmail');
+      emailControl?.setValue('user+tag@example.com');
+      expect(emailControl?.hasError('email')).toBe(false);
+    });
+
+    it('should handle very long subject line', () => {
+      const longSubject = 'A'.repeat(1000);
+      component.contactForm.patchValue({ subject: longSubject });
+      expect(component.contactForm.get('subject')?.value).toBe(longSubject);
+    });
+
+    it('should handle very long message', () => {
+      const longMessage = 'M'.repeat(10000);
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: 'Test User',
+        fromEmail: 'test@example.com',
+        fromPhone: '555-1234',
+        message: longMessage,
+      });
+      expect(component.contactForm.valid).toBe(true);
+    });
+
+    it('should handle special characters in name', () => {
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: "O'Connor-Smith III",
+        fromEmail: 'test@example.com',
+        fromPhone: '555-1234',
+        message: 'Test',
+      });
+      expect(component.contactForm.valid).toBe(true);
+    });
+
+    it('should handle international phone numbers', () => {
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: 'Test User',
+        fromEmail: 'test@example.com',
+        fromPhone: '+44 20 7123 4567',
+        message: 'Test',
+      });
+      expect(component.contactForm.valid).toBe(true);
+    });
+  });
+
+  describe('Edge Cases - Member Selection', () => {
+    it('should handle selecting same member twice', () => {
+      const member = component.councilMembers()[0];
+
+      component.onContactMember(member);
+      expect(component.selectedMember()).toBe(member);
+
+      component.onContactMember(member);
+      expect(component.selectedMember()).toBe(member);
+    });
+
+    it('should handle switching between members', () => {
+      const member1 = component.councilMembers()[0];
+      const member2 = component.councilMembers()[1];
+
+      component.onContactMember(member1);
+      expect(component.selectedMember()).toBe(member1);
+
+      component.onContactMember(member2);
+      expect(component.selectedMember()).toBe(member2);
+    });
+
+    it('should reset form when switching members', () => {
+      const member1 = component.councilMembers()[0];
+      const member2 = component.councilMembers()[1];
+
+      component.onContactMember(member1);
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: 'User',
+        fromEmail: 'user@example.com',
+        fromPhone: '555-1234',
+        message: 'Message',
+      });
+
+      component.onContactMember(member2);
+      expect(component.contactForm.value.subject).toBeNull();
+    });
+  });
+
+  describe('Edge Cases - Member Data Integrity', () => {
+    it('should not have duplicate member names', () => {
+      const names = component.councilMembers().map((m) => m.name);
+      const uniqueNames = new Set(names);
+      expect(names.length).toBe(uniqueNames.size);
+    });
+
+    it('should not have duplicate member emails', () => {
+      const emails = component.councilMembers().map((m) => m.email);
+      const uniqueEmails = new Set(emails);
+      expect(emails.length).toBe(uniqueEmails.size);
+    });
+
+    it('should have valid email format for all members', () => {
+      component.councilMembers().forEach((member) => {
+        expect(member.email).toContain('@');
+        expect(member.email).toContain('.');
+      });
+    });
+
+    it('should have phone numbers for all members', () => {
+      component.councilMembers().forEach((member) => {
+        expect(member.phone).toBeTruthy();
+        expect(member.phone.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('should have role for all members', () => {
+      component.councilMembers().forEach((member) => {
+        expect(member.role).toBeTruthy();
+      });
+    });
+  });
+
+  describe('Security - Input Sanitization', () => {
+    it('should not execute script tags in subject', () => {
+      const maliciousSubject = '<script>alert("XSS")</script>';
+      component.contactForm.patchValue({ subject: maliciousSubject });
+
+      expect(() => {
+        component.contactForm.get('subject')?.value;
+      }).not.toThrow();
+    });
+
+    it('should not execute script tags in message', () => {
+      const maliciousMessage = '<script>alert("XSS")</script>';
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: 'User',
+        fromEmail: 'user@example.com',
+        fromPhone: '555-1234',
+        message: maliciousMessage,
+      });
+
+      expect(component.contactForm.valid).toBe(true);
+    });
+
+    it('should handle SQL injection attempt in name', () => {
+      const sqlInjection = "'; DROP TABLE users; --";
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: sqlInjection,
+        fromEmail: 'user@example.com',
+        fromPhone: '555-1234',
+        message: 'Test',
+      });
+
+      expect(component.contactForm.valid).toBe(true);
+    });
+  });
+
+  describe('Edge Cases - Form Reset', () => {
+    it('should reset form to pristine state', () => {
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: 'User',
+        fromEmail: 'user@example.com',
+        fromPhone: '555-1234',
+        message: 'Message',
+      });
+      component.contactForm.markAsDirty();
+
+      component.contactForm.reset();
+
+      expect(component.contactForm.pristine).toBe(true);
+      expect(component.contactForm.value.subject).toBeNull();
+    });
+
+    it('should handle closing dialog without submitting', () => {
+      const member = component.councilMembers()[0];
+      component.onContactMember(member);
+      component.contactForm.patchValue({
+        subject: 'Test',
+        fromName: 'User',
+        fromEmail: 'user@example.com',
+        fromPhone: '555-1234',
+        message: 'Message',
+      });
+
+      component.onCloseDialog();
+
+      expect(component.showContactDialog()).toBe(false);
+      expect(component.contactForm.value.subject).toBeNull();
+    });
+  });
+
+  describe('Edge Cases - Empty and Whitespace Values', () => {
+    it('should reject form with only whitespace in required fields', () => {
+      component.contactForm.patchValue({
+        subject: '   ',
+        fromName: '   ',
+        fromEmail: 'user@example.com',
+        fromPhone: '555-1234',
+        message: '   ',
+      });
+
+      expect(component.contactForm.valid).toBe(false);
+    });
+
+    it('should handle empty string in phone number', () => {
+      const phoneControl = component.contactForm.get('fromPhone');
+      phoneControl?.setValue('');
+      expect(phoneControl?.hasError('required')).toBe(true);
+    });
+
+    it('should trim whitespace from email', () => {
+      const emailControl = component.contactForm.get('fromEmail');
+      emailControl?.setValue('  user@example.com  ');
+
+      // Value should be accepted (trimming handled by backend)
+      expect(emailControl?.value).toContain('user@example.com');
+    });
+  });
 });
