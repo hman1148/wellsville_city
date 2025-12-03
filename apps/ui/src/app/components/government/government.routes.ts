@@ -34,4 +34,11 @@ export const GOVERNMENT_ROUTES: Route[] = [
         (m) => m.OrdinancesComponent
       ),
   },
+  {
+    path: 'government/disclosures',
+    loadComponent: () =>
+      import('./disclosures/disclosures.component').then(
+        (m) => m.DisclosuresComponent
+      ),
+  },
 ];

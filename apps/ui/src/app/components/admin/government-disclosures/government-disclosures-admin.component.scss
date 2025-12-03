@@ -1,0 +1,203 @@
+.admin-container {
+	padding: 2rem;
+	max-width: 1400px;
+	margin: 0 auto;
+
+	@media (max-width: 768px) {
+		padding: 1rem;
+	}
+}
+
+.card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 2rem;
+	background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+	color: white;
+	border-radius: 8px 8px 0 0;
+
+	@media (max-width: 768px) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.header-content {
+		h1 {
+			margin: 0 0 0.5rem 0;
+			font-size: 2rem;
+			font-weight: 700;
+
+			@media (max-width: 768px) {
+				font-size: 1.5rem;
+			}
+		}
+
+		.header-description {
+			margin: 0;
+			opacity: 0.95;
+			font-size: 1rem;
+		}
+	}
+}
+
+.document-title {
+	strong {
+		display: block;
+		margin-bottom: 0.25rem;
+		color: var(--text-color);
+	}
+
+	.document-description {
+		margin: 0;
+		font-size: 0.875rem;
+		color: var(--text-color-secondary);
+		line-height: 1.4;
+	}
+}
+
+.action-buttons {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem 1rem;
+	text-align: center;
+
+	p {
+		margin: 1rem 0;
+		color: var(--text-color-secondary);
+		font-size: 1rem;
+	}
+}
+
+.empty-message {
+	text-align: center;
+}
+
+/* Upload Form */
+.upload-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	padding: 1rem 0;
+}
+
+.form-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+
+	label {
+		font-weight: 600;
+		font-size: 0.875rem;
+		color: var(--text-color);
+
+		&.required::after {
+			content: ' *';
+			color: var(--red-500);
+		}
+	}
+
+	.p-error {
+		color: var(--red-500);
+		font-size: 0.75rem;
+		margin-top: 0.25rem;
+	}
+}
+
+.w-full {
+	width: 100%;
+}
+
+.selected-file {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.75rem;
+	background: var(--surface-50);
+	border: 1px solid var(--surface-200);
+	border-radius: 6px;
+	margin-top: 0.5rem;
+
+	i {
+		color: var(--primary-500);
+		font-size: 1.25rem;
+	}
+
+	span {
+		font-size: 0.875rem;
+		color: var(--text-color);
+	}
+}
+
+.upload-progress {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 1rem;
+	background: var(--surface-50);
+	border: 1px solid var(--surface-200);
+	border-radius: 6px;
+
+	p {
+		margin: 0;
+		text-align: center;
+		color: var(--text-color-secondary);
+		font-size: 0.875rem;
+	}
+}
+
+/* Table Styling */
+:host ::ng-deep {
+	.p-datatable {
+		.p-datatable-thead > tr > th {
+			background-color: var(--surface-100);
+			color: var(--text-color);
+			font-weight: 600;
+			border-bottom: 2px solid var(--primary-500);
+		}
+
+		.p-datatable-tbody > tr {
+			&:hover {
+				background-color: var(--surface-50);
+			}
+		}
+	}
+
+	.p-paginator {
+		background-color: var(--surface-0);
+		border-top: 1px solid var(--surface-200);
+	}
+
+	.p-dialog {
+		.p-dialog-header {
+			background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+			color: white;
+			font-weight: 600;
+		}
+
+		.p-dialog-content {
+			padding: 2rem;
+		}
+	}
+
+	.p-fileupload-choose {
+		width: 100%;
+	}
+}
+
+/* Accessibility */
+.upload-form input:focus,
+.upload-form textarea:focus,
+.upload-form .p-dropdown:focus,
+.upload-form .p-inputnumber:focus {
+	outline: 2px solid var(--primary-500);
+	outline-offset: 2px;
+}

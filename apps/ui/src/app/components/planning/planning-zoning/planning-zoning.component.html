@@ -1,0 +1,32 @@
+<div class="page-container">
+	<div class="page-header">
+		<h1>
+			<i class="pi pi-map" aria-hidden="true"></i>
+			Planning and Zoning
+		</h1>
+		<p class="page-description">
+			Information about zoning regulations, permits, development standards, and city planning
+		</p>
+	</div>
+
+	<div class="services-grid">
+		@for (section of sections; track section.title) {
+			<p-card [styleClass]="'service-card'">
+				<div class="service-content">
+					<div class="service-icon">
+						<i [class]="section.icon" aria-hidden="true"></i>
+					</div>
+					<h2>{{ section.title }}</h2>
+					<p>{{ section.description }}</p>
+					<p-button
+						label="Learn More"
+						icon="pi pi-arrow-right"
+						[routerLink]="section.link"
+						styleClass="p-button-outlined"
+					>
+					</p-button>
+				</div>
+			</p-card>
+		}
+	</div>
+</div>

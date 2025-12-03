@@ -4,6 +4,7 @@ import { CITIZENS_ROUTES } from './components/citizens/citizens.routes';
 import { GOVERNMENT_ROUTES } from './components/government/government.routes';
 import { DEPARTMENTS_ROUTES } from './components/departments/departments.routes';
 import { INFORMATION_ROUTES } from './components/information/information.routes';
+import { PLANNING_ROUTES } from './components/planning/planning.routes';
 
 export const appRoutes: Route[] = [
   {
@@ -23,6 +24,7 @@ export const appRoutes: Route[] = [
       ...GOVERNMENT_ROUTES,
       ...DEPARTMENTS_ROUTES,
       ...INFORMATION_ROUTES,
+      ...PLANNING_ROUTES,
     ],
   },
   {

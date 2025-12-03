@@ -1,0 +1,264 @@
+<div class="disclosures-container">
+	<p-card>
+		<ng-template pTemplate="header">
+			<div class="card-header">
+				<h1>Government Disclosures</h1>
+				<p class="header-description">
+					Access public disclosure documents including campaign finance reports, conflict of
+					interest forms, and financial records.
+				</p>
+			</div>
+		</ng-template>
+
+		<!-- Filters Section -->
+		<div class="filters-section">
+			<div class="filters-grid">
+				<div class="filter-item search-filter">
+					<label for="search" class="filter-label">Search Documents</label>
+					<span class="p-input-icon-left" style="width: 100%">
+						<i class="pi pi-search"></i>
+						<input
+							id="search"
+							type="text"
+							pInputText
+							[value]="searchText()"
+							(input)="onSearchChange($event)"
+							placeholder="Search by title, description, or category..."
+							class="search-input"
+							aria-label="Search government disclosure documents"
+						/>
+					</span>
+				</div>
+
+				<div class="filter-item">
+					<label for="category" class="filter-label">Category</label>
+					<p-select
+						id="category"
+						[options]="categories"
+						[(ngModel)]="selectedCategory"
+						(onChange)="onCategoryChange($event.value)"
+						optionLabel="label"
+						optionValue="value"
+						placeholder="All Categories"
+						[showClear]="true"
+						styleClass="category-dropdown"
+						aria-label="Filter by category"
+					>
+					</p-select>
+				</div>
+
+				<div class="filter-item">
+					<label for="year" class="filter-label">Year</label>
+					<p-select
+						id="year"
+						[options]="availableYears()"
+						[(ngModel)]="selectedYear"
+						(onChange)="onYearChange($event.value)"
+						optionLabel="label"
+						optionValue="value"
+						placeholder="All Years"
+						[showClear]="true"
+						styleClass="year-dropdown"
+						aria-label="Filter by year"
+					>
+					</p-select>
+				</div>
+
+				<div class="filter-item filter-actions">
+					<p-button
+						label="Clear Filters"
+						icon="pi pi-filter-slash"
+						(onClick)="onClearFilters()"
+						severity="secondary"
+						[outlined]="true"
+						styleClass="clear-filters-btn"
+					>
+					</p-button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Desktop Table View -->
+		<div class="desktop-table">
+			<p-table
+				[value]="filteredDisclosures()"
+				[loading]="isLoading"
+				[paginator]="true"
+				[rows]="10"
+				[rowsPerPageOptions]="[10, 25, 50]"
+				[tableStyle]="{ 'min-width': '50rem' }"
+				[globalFilterFields]="['title', 'description', 'category', 'fileName']"
+				responsiveLayout="scroll"
+				styleClass="p-datatable-striped"
+				[showCurrentPageReport]="true"
+				currentPageReportTemplate="Showing {first} to {last} of {totalRecords} documents"
+			>
+				<ng-template pTemplate="header">
+					<tr>
+						<th pSortableColumn="title" style="width: 30%">
+							Document Title
+							<p-sortIcon field="title"></p-sortIcon>
+						</th>
+						<th pSortableColumn="category" style="width: 20%">
+							Category
+							<p-sortIcon field="category"></p-sortIcon>
+						</th>
+						<th pSortableColumn="year" style="width: 10%">
+							Year
+							<p-sortIcon field="year"></p-sortIcon>
+						</th>
+						<th pSortableColumn="uploadDate" style="width: 15%">
+							Upload Date
+							<p-sortIcon field="uploadDate"></p-sortIcon>
+						</th>
+						<th style="width: 10%">File Size</th>
+						<th style="width: 15%">Actions</th>
+					</tr>
+				</ng-template>
+
+				<ng-template pTemplate="body" let-disclosure>
+					<tr>
+						<td>
+							<div class="document-title">
+								<strong>{{ disclosure.title }}</strong>
+								@if (disclosure.description) {
+									<p class="document-description">{{ disclosure.description }}</p>
+								}
+							</div>
+						</td>
+						<td>
+							<p-tag
+								[value]="getCategoryLabel(disclosure.category)"
+								[severity]="getCategorySeverity(disclosure.category)"
+							>
+							</p-tag>
+						</td>
+						<td>{{ disclosure.year }}</td>
+						<td>{{ formatDate(disclosure.uploadDate) }}</td>
+						<td>{{ formatFileSize(disclosure.fileSize) }}</td>
+						<td>
+							<p-button
+								icon="pi pi-download"
+								label="Download"
+								(onClick)="onDownload(disclosure)"
+								severity="info"
+								[outlined]="true"
+								size="small"
+								pTooltip="Download {{ disclosure.fileName }}"
+								tooltipPosition="left"
+							>
+							</p-button>
+						</td>
+					</tr>
+				</ng-template>
+
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="6" class="empty-message">
+							<div class="empty-state">
+								<i class="pi pi-inbox" style="font-size: 3rem; color: var(--surface-400)"></i>
+								<p>No disclosure documents found.</p>
+								@if (searchText() || selectedCategory() || selectedYear()) {
+									<p-button
+										label="Clear Filters"
+										icon="pi pi-filter-slash"
+										(onClick)="onClearFilters()"
+										severity="secondary"
+										[text]="true"
+									>
+									</p-button>
+								}
+							</div>
+						</td>
+					</tr>
+				</ng-template>
+			</p-table>
+		</div>
+
+		<!-- Mobile Card View -->
+		<div class="mobile-cards">
+			@if (isLoading()) {
+				<div class="loading-container">
+					<i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+					<p>Loading documents...</p>
+				</div>
+			} @else if (filteredDisclosures().length === 0) {
+				<div class="empty-state">
+					<i class="pi pi-inbox" style="font-size: 3rem; color: var(--surface-400)"></i>
+					<p>No disclosure documents found.</p>
+					@if (searchText() || selectedCategory() || selectedYear()) {
+						<p-button
+							label="Clear Filters"
+							icon="pi pi-filter-slash"
+							(onClick)="onClearFilters()"
+							severity="secondary"
+							[text]="true"
+						>
+						</p-button>
+					}
+				</div>
+			} @else {
+				@for (disclosure of filteredDisclosures(); track disclosure.id) {
+					<p-card styleClass="disclosure-card">
+						<ng-template pTemplate="header">
+							<div class="mobile-card-header">
+								<h3>{{ disclosure.title }}</h3>
+								<p-tag
+									[value]="getCategoryLabel(disclosure.category)"
+									[severity]="getCategorySeverity(disclosure.category)"
+								>
+								</p-tag>
+							</div>
+						</ng-template>
+
+						@if (disclosure.description) {
+							<p class="card-description">{{ disclosure.description }}</p>
+						}
+
+						<div class="card-details">
+							<div class="detail-row">
+								<span class="detail-label">
+									<i class="pi pi-calendar"></i>
+									Year:
+								</span>
+								<span class="detail-value">{{ disclosure.year }}</span>
+							</div>
+							<div class="detail-row">
+								<span class="detail-label">
+									<i class="pi pi-upload"></i>
+									Uploaded:
+								</span>
+								<span class="detail-value">{{ formatDate(disclosure.uploadDate) }}</span>
+							</div>
+							<div class="detail-row">
+								<span class="detail-label">
+									<i class="pi pi-file"></i>
+									File Size:
+								</span>
+								<span class="detail-value">{{ formatFileSize(disclosure.fileSize) }}</span>
+							</div>
+							<div class="detail-row">
+								<span class="detail-label">
+									<i class="pi pi-file-pdf"></i>
+									File Name:
+								</span>
+								<span class="detail-value">{{ disclosure.fileName }}</span>
+							</div>
+						</div>
+
+						<ng-template pTemplate="footer">
+							<p-button
+								icon="pi pi-download"
+								label="Download Document"
+								(onClick)="onDownload(disclosure)"
+								severity="info"
+								[style]="{ width: '100%' }"
+							>
+							</p-button>
+						</ng-template>
+					</p-card>
+				}
+			}
+		</div>
+	</p-card>
+</div>

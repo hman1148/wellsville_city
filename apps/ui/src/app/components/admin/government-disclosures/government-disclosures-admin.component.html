@@ -1,0 +1,240 @@
+<div class="admin-container">
+	<p-toast></p-toast>
+	<p-confirmDialog></p-confirmDialog>
+
+	<p-card>
+		<ng-template pTemplate="header">
+			<div class="card-header">
+				<div class="header-content">
+					<h1>Government Disclosures Management</h1>
+					<p class="header-description">Upload and manage government disclosure documents</p>
+				</div>
+				<p-button
+					label="Upload Document"
+					icon="pi pi-upload"
+					(onClick)="onShowUploadDialog()"
+					severity="info"
+				>
+				</p-button>
+			</div>
+		</ng-template>
+
+		<p-table
+			[value]="disclosures"
+			[loading]="isLoading"
+			[paginator]="true"
+			[rows]="10"
+			[rowsPerPageOptions]="[10, 25, 50]"
+			[tableStyle]="{ 'min-width': '50rem' }"
+			responsiveLayout="scroll"
+			styleClass="p-datatable-striped"
+			[showCurrentPageReport]="true"
+			currentPageReportTemplate="Showing {first} to {last} of {totalRecords} documents"
+		>
+			<ng-template pTemplate="header">
+				<tr>
+					<th pSortableColumn="title" style="width: 25%">
+						Title
+						<p-sortIcon field="title"></p-sortIcon>
+					</th>
+					<th pSortableColumn="category" style="width: 15%">
+						Category
+						<p-sortIcon field="category"></p-sortIcon>
+					</th>
+					<th pSortableColumn="year" style="width: 10%">
+						Year
+						<p-sortIcon field="year"></p-sortIcon>
+					</th>
+					<th pSortableColumn="uploadDate" style="width: 15%">
+						Upload Date
+						<p-sortIcon field="uploadDate"></p-sortIcon>
+					</th>
+					<th style="width: 15%">File Name</th>
+					<th style="width: 10%">Size</th>
+					<th style="width: 10%">Actions</th>
+				</tr>
+			</ng-template>
+
+			<ng-template pTemplate="body" let-disclosure>
+				<tr>
+					<td>
+						<div class="document-title">
+							<strong>{{ disclosure.title }}</strong>
+							@if (disclosure.description) {
+								<p class="document-description">{{ disclosure.description }}</p>
+							}
+						</div>
+					</td>
+					<td>
+						<p-tag
+							[value]="getCategoryLabel(disclosure.category)"
+							[severity]="getCategorySeverity(disclosure.category)"
+						>
+						</p-tag>
+					</td>
+					<td>{{ disclosure.year }}</td>
+					<td>{{ formatDate(disclosure.uploadDate) }}</td>
+					<td>{{ disclosure.fileName }}</td>
+					<td>{{ formatFileSize(disclosure.fileSize) }}</td>
+					<td>
+						<div class="action-buttons">
+							<p-button
+								icon="pi pi-trash"
+								(onClick)="onDeleteDisclosure(disclosure)"
+								severity="danger"
+								[outlined]="true"
+								size="small"
+								pTooltip="Delete document"
+								tooltipPosition="left"
+							>
+							</p-button>
+						</div>
+					</td>
+				</tr>
+			</ng-template>
+
+			<ng-template pTemplate="emptymessage">
+				<tr>
+					<td colspan="7" class="empty-message">
+						<div class="empty-state">
+							<i class="pi pi-inbox" style="font-size: 3rem; color: var(--surface-400)"></i>
+							<p>No disclosure documents found.</p>
+							<p-button
+								label="Upload First Document"
+								icon="pi pi-upload"
+								(onClick)="onShowUploadDialog()"
+								severity="info"
+							>
+							</p-button>
+						</div>
+					</td>
+				</tr>
+			</ng-template>
+		</p-table>
+	</p-card>
+
+	<!-- Upload Dialog -->
+	<p-dialog
+		[(visible)]="displayUploadDialog"
+		[modal]="true"
+		[style]="{ width: '50vw' }"
+		[breakpoints]="{ '960px': '75vw', '640px': '95vw' }"
+		[draggable]="false"
+		[resizable]="false"
+		header="Upload Government Disclosure Document"
+	>
+		<form [formGroup]="uploadForm" class="upload-form">
+			<div class="form-field">
+				<label for="title" class="required">Document Title</label>
+				<input
+					id="title"
+					type="text"
+					pInputText
+					formControlName="title"
+					placeholder="Enter document title"
+					class="w-full"
+					aria-label="Document title"
+				/>
+				@if (uploadForm.get('title')?.invalid && uploadForm.get('title')?.touched) {
+					<small class="p-error">Title is required (minimum 3 characters)</small>
+				}
+			</div>
+
+			<div class="form-field">
+				<label for="description">Description</label>
+				<textarea
+					id="description"
+					pTextarea
+					formControlName="description"
+					placeholder="Enter description (optional)"
+					[rows]="3"
+					class="w-full"
+					aria-label="Document description"
+				></textarea>
+			</div>
+
+			<div class="form-field">
+				<label for="category" class="required">Category</label>
+				<p-select
+					id="category"
+					[options]="categories"
+					formControlName="category"
+					optionLabel="label"
+					optionValue="value"
+					placeholder="Select category"
+					styleClass="w-full"
+					aria-label="Document category"
+				>
+				</p-select>
+				@if (uploadForm.get('category')?.invalid && uploadForm.get('category')?.touched) {
+					<small class="p-error">Category is required</small>
+				}
+			</div>
+
+			<div class="form-field">
+				<label for="year" class="required">Year</label>
+				<p-inputNumber
+					id="year"
+					formControlName="year"
+					[useGrouping]="false"
+					placeholder="Enter year"
+					styleClass="w-full"
+					aria-label="Document year"
+				>
+				</p-inputNumber>
+				@if (uploadForm.get('year')?.invalid && uploadForm.get('year')?.touched) {
+					<small class="p-error">Valid year is required (2000-2100)</small>
+				}
+			</div>
+
+			<div class="form-field">
+				<label class="required">Document File</label>
+				<p-fileUpload
+					mode="basic"
+					[auto]="false"
+					chooseLabel="Select File"
+					(onSelect)="onFileSelect($event)"
+					accept=".pdf,.doc,.docx,.xls,.xlsx"
+					[maxFileSize]="10000000"
+					chooseIcon="pi pi-upload"
+					styleClass="w-full"
+				>
+				</p-fileUpload>
+				@if (selectedFile()) {
+					<div class="selected-file">
+						<i class="pi pi-file"></i>
+						<span>{{ selectedFile()!.name }} ({{ formatFileSize(selectedFile()!.size) }})</span>
+					</div>
+				}
+			</div>
+
+			@if (isUploading()) {
+				<div class="upload-progress">
+					<p-progressBar [value]="uploadProgress()"></p-progressBar>
+					<p>Uploading... {{ uploadProgress() }}%</p>
+				</div>
+			}
+		</form>
+
+		<ng-template pTemplate="footer">
+			<p-button
+				label="Cancel"
+				icon="pi pi-times"
+				(onClick)="onCloseUploadDialog()"
+				severity="secondary"
+				[text]="true"
+				[disabled]="isUploading()"
+			>
+			</p-button>
+			<p-button
+				label="Upload"
+				icon="pi pi-upload"
+				(onClick)="onUploadDocument()"
+				severity="info"
+				[disabled]="uploadForm.invalid || !selectedFile() || isUploading()"
+				[loading]="isUploading()"
+			>
+			</p-button>
+		</ng-template>
+	</p-dialog>
+</div>

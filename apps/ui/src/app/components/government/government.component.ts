@@ -30,7 +30,7 @@ export class GovernmentComponent {
       title: 'Planning and Zoning',
       description: 'Information about zoning regulations, permits, and development',
       icon: 'pi pi-map',
-      link: '/government/planning-zoning',
+      link: '/planning',
     },
     {
       title: 'City Ordinances',
