@@ -1,7 +1,7 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   DynamoDBDocumentClient,
-  GetCommand,
+  QueryCommand,
   DeleteCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
@@ -60,7 +60,7 @@ export const handler = async (
     }
 
     const item = queryResponse.Items[0];
-    const s3Key = item.fileUrl;
+    const s3Key = item['fileUrl'];
 
     if (s3Key) {
       const deleteS3Command = new DeleteObjectCommand({
@@ -73,8 +73,8 @@ export const handler = async (
     const deleteCommand = new DeleteCommand({
       TableName: tableName,
       Key: {
-        id: item.id,
-        uploadDate: item.uploadDate,
+        id: item['id'],
+        uploadDate: item['uploadDate'],
       },
     });
 

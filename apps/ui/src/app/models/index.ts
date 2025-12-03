@@ -8,3 +8,4 @@ export * from './council-member';
 export * from './meeting/meeting.model';
 export * from './ordinance.model';
 export * from './government-disclosure';
+export * from './planning-commission';

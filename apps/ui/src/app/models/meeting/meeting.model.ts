@@ -20,6 +20,8 @@ export const initialMeetingFile = (): MeetingFile => ({
   category: 'other',
 });
 
+export type MeetingType = 'city-council' | 'planning-zoning';
+
 export type Meeting = {
   id: string;
   title: string;
@@ -27,8 +29,12 @@ export type Meeting = {
   meetingDate: string;
   meetingTime: string;
   location: string;
+  meetingType: MeetingType;
   status: 'upcoming' | 'past' | 'cancelled';
   files: MeetingFile[];
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
 };
 
 export const initialMeeting = (): Meeting => ({
@@ -38,6 +44,7 @@ export const initialMeeting = (): Meeting => ({
   meetingDate: new Date().toISOString(),
   meetingTime: '',
   location: '',
+  meetingType: 'city-council',
   status: 'upcoming',
   files: [],
 });

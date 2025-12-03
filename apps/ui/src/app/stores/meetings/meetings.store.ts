@@ -8,16 +8,18 @@ import { inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 
 import { initialMeetingsStoreState } from './meetings-store.state';
-import { Meeting, initialMeeting } from '../../models';
+import { Meeting, initialMeeting, MeetingType } from '../../models';
 import { MeetingsService } from '../../services/meetings.service';
+import { MessageService } from 'primeng/api';
 
 export const MeetingsStore = signalStore(
   { providedIn: 'root' },
   withState(initialMeetingsStoreState()),
-  withMethods((store, meetingsService = inject(MeetingsService)) => ({
-    resolveMeetings: async () => {
-      // Prevent duplicate loading
-      if (store.isEntitiesLoaded()) {
+  withMethods((store, meetingsService = inject(MeetingsService), messageService = inject(MessageService)) => ({
+    resolveMeetings: async (meetingType?: MeetingType) => {
+      // Check if this specific meeting type has already been loaded
+      const cacheKey = meetingType || 'all';
+      if (store.loadedMeetingTypes().has(cacheKey)) {
         return true;
       }
 
@@ -25,11 +27,10 @@ export const MeetingsStore = signalStore(
 
       try {
         const { items, success } = await firstValueFrom(
-          meetingsService.getMeetings()
+          meetingsService.getMeetings(meetingType)
         );
 
         if (success) {
-          // Sort meetings by date (newest first)
           const sortedMeetings = items.sort(
             (a, b) =>
               new Date(b.meetingDate).getTime() -
@@ -41,11 +42,15 @@ export const MeetingsStore = signalStore(
             (meeting) => meeting.status === 'upcoming'
           );
 
+          // Update loaded meeting types
+          const updatedLoadedTypes = new Set(store.loadedMeetingTypes());
+          updatedLoadedTypes.add(cacheKey);
+
           patchState(store, {
             meetings: sortedMeetings,
             upcomingMeetings: upcoming,
             isLoading: false,
-            isEntitiesLoaded: true,
+            loadedMeetingTypes: updatedLoadedTypes,
           });
         } else {
           patchState(store, { isLoading: false });
@@ -58,12 +63,12 @@ export const MeetingsStore = signalStore(
       return true;
     },
 
-    resolveUpcomingMeetings: async () => {
+    resolveUpcomingMeetings: async (meetingType?: MeetingType) => {
       patchState(store, { isLoading: true });
 
       try {
         const { items, success } = await firstValueFrom(
-          meetingsService.getUpcomingMeetings()
+          meetingsService.getUpcomingMeetings(meetingType)
         );
 
         if (success) {
@@ -87,6 +92,53 @@ export const MeetingsStore = signalStore(
       }
 
       return true;
+    },
+
+    refreshMeetings: async (meetingType?: MeetingType) => {
+      const cacheKey = meetingType || 'all';
+
+      // Remove from loaded types to force reload
+      const updatedLoadedTypes = new Set(store.loadedMeetingTypes());
+      updatedLoadedTypes.delete(cacheKey);
+
+      patchState(store, {
+        isLoading: true,
+        loadedMeetingTypes: updatedLoadedTypes
+      });
+
+      try {
+        const { items, success } = await firstValueFrom(
+          meetingsService.getMeetings(meetingType)
+        );
+
+        if (success) {
+          const sortedMeetings = items.sort(
+            (a, b) =>
+              new Date(b.meetingDate).getTime() -
+              new Date(a.meetingDate).getTime()
+          );
+
+          const upcoming = sortedMeetings.filter(
+            (meeting) => meeting.status === 'upcoming'
+          );
+
+          // Add back to loaded types
+          const finalLoadedTypes = new Set(store.loadedMeetingTypes());
+          finalLoadedTypes.add(cacheKey);
+
+          patchState(store, {
+            meetings: sortedMeetings,
+            upcomingMeetings: upcoming,
+            isLoading: false,
+            loadedMeetingTypes: finalLoadedTypes,
+          });
+        } else {
+          patchState(store, { isLoading: false });
+        }
+      } catch (error) {
+        console.error('Error refreshing meetings:', error);
+        patchState(store, { isLoading: false });
+      }
     },
 
     selectMeeting: (meeting: Meeting) => {

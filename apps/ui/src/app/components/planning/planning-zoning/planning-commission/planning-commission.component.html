@@ -10,8 +10,79 @@
 	</div>
 
 	<div class="content-section">
-		<p-card header="Planning Commission">
-			<p>Content for Planning Commission will be added here.</p>
+		<!-- Meeting Information -->
+		<p-card header="Meetings" styleClass="meeting-info-card">
+			<div class="meeting-details">
+				<div class="meeting-item">
+					<i class="pi pi-calendar" aria-hidden="true"></i>
+					<div>
+						<strong>Schedule:</strong>
+						<span>{{ commissionInfo().meetingSchedule }}, {{ commissionInfo().meetingTime }}</span>
+					</div>
+				</div>
+				<div class="meeting-item">
+					<i class="pi pi-map-marker" aria-hidden="true"></i>
+					<div>
+						<strong>Location:</strong>
+						<span>{{ commissionInfo().meetingLocation }}</span>
+					</div>
+				</div>
+			</div>
+			<p-divider></p-divider>
+			<p class="ada-notice">
+				<i class="pi pi-info-circle" aria-hidden="true"></i>
+				All Planning and Zoning Commission meetings are open to the public.
+				{{ commissionInfo().adaNotice }}
+			</p>
+		</p-card>
+
+		<!-- Purpose and Description -->
+		<p-card header="What is the purpose of the Planning and Zoning Commission?" styleClass="purpose-card">
+			<p class="purpose-text">{{ commissionInfo().purpose }}</p>
+			<p-divider></p-divider>
+			<p class="description-text">{{ commissionInfo().description }}</p>
+		</p-card>
+
+		<!-- Members Section -->
+		<p-card header="Members" styleClass="members-card">
+			<div class="commissioners-grid">
+				@for (commissioner of commissionInfo().commissioners; track commissioner.name) {
+					<div class="commissioner-card">
+						<div class="commissioner-header">
+							<i class="pi pi-user" aria-hidden="true"></i>
+							<h3>{{ commissioner.name }}</h3>
+						</div>
+						<div class="commissioner-details">
+							<p class="position">{{ commissioner.position }}</p>
+							<p class="term">
+								<i class="pi pi-calendar-times" aria-hidden="true"></i>
+								Term expires: {{ commissioner.termExpires }}
+							</p>
+						</div>
+					</div>
+				}
+			</div>
+
+			<p-divider></p-divider>
+
+			<!-- City Council Representative -->
+			<div class="council-rep">
+				<h3>
+					<i class="pi pi-building" aria-hidden="true"></i>
+					City Council Representative
+				</h3>
+				<div class="rep-details">
+					<p class="rep-name">{{ commissionInfo().cityCouncilRep.name }}</p>
+					@if (commissionInfo().cityCouncilRep.phone) {
+						<p class="rep-phone">
+							<i class="pi pi-phone" aria-hidden="true"></i>
+							<a href="tel:{{ commissionInfo().cityCouncilRep.phone }}">
+								{{ commissionInfo().cityCouncilRep.phone }}
+							</a>
+						</p>
+					}
+				</div>
+			</div>
 		</p-card>
 	</div>
 </div>

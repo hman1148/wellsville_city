@@ -8,6 +8,7 @@ import {
 import { setAllEntities, withEntities } from '@ngrx/signals/entities';
 import { inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 import { initialGovernmentDisclosuresStoreState } from './government-disclosures-store.state';
 import { GovernmentDisclosure } from '../../models';
@@ -25,7 +26,8 @@ export const GovernmentDisclosuresStore = signalStore(
   withMethods(
     (
       store,
-      disclosuresService = inject(GovernmentDisclosuresService)
+      disclosuresService = inject(GovernmentDisclosuresService),
+      messageService = inject(MessageService)
     ) => ({
       resolveDisclosures: async () => {
         if (store.isEntitiesLoaded()) {
@@ -53,10 +55,22 @@ export const GovernmentDisclosuresStore = signalStore(
             );
           } else {
             patchState(store, { isLoading: false });
+            messageService.add({
+              severity: 'error',
+              summary: 'Failed to Load Disclosures',
+              detail: 'Unable to retrieve government disclosures. Please try again later.',
+              life: 5000,
+            });
           }
         } catch (error) {
           console.error('Error loading government disclosures:', error);
           patchState(store, { isLoading: false });
+          messageService.add({
+            severity: 'error',
+            summary: 'Failed to Load Disclosures',
+            detail: 'An error occurred while loading disclosures. Please try again.',
+            life: 5000,
+          });
         }
 
         return true;

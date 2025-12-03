@@ -5,13 +5,201 @@
 			Design Standards
 		</h1>
 		<p class="page-description">
-			View design standards and architectural guidelines
+			View design standards and architectural guidelines for Wellsville City
 		</p>
 	</div>
 
 	<div class="content-section">
-		<p-card header="Design Standards">
-			<p>Content for Design Standards will be added here.</p>
+		<!-- Design Standards Document Section -->
+		<p-card styleClass="document-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-file-pdf" aria-hidden="true"></i>
+					<h2>{{ designStandardsDoc().title }}</h2>
+				</div>
+			</ng-template>
+
+			<div class="document-info">
+				<p class="description">{{ designStandardsDoc().description }}</p>
+
+				<div class="document-meta">
+					<div class="meta-item">
+						<i class="pi pi-file" aria-hidden="true"></i>
+						<span>PDF Document</span>
+					</div>
+					<div class="meta-item">
+						<i class="pi pi-database" aria-hidden="true"></i>
+						<span>{{ designStandardsDoc().fileSize }}</span>
+					</div>
+					<div class="meta-item">
+						<i class="pi pi-calendar" aria-hidden="true"></i>
+						<span>Last Updated: {{ designStandardsDoc().lastUpdated }}</span>
+					</div>
+				</div>
+
+				<p-divider></p-divider>
+
+				<div class="action-buttons">
+					<p-button
+						label="View PDF"
+						icon="pi pi-eye"
+						severity="primary"
+						(onClick)="openPdfViewer()"
+						styleClass="view-button"
+					/>
+					<p-button
+						label="Download PDF"
+						icon="pi pi-download"
+						severity="secondary"
+						(onClick)="downloadPdf()"
+						styleClass="download-button"
+					/>
+				</div>
+
+				<div class="external-link">
+					<p class="info-text">
+						<i class="pi pi-info-circle" aria-hidden="true"></i>
+						These standards are established in collaboration with Jones & Associates Consulting Engineers.
+					</p>
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Zoning Map Section -->
+		<p-card styleClass="zoning-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-map" aria-hidden="true"></i>
+					<h2>{{ zoningMap().title }}</h2>
+				</div>
+			</ng-template>
+
+			<div class="zoning-info">
+				<p class="description">{{ zoningMap().description }}</p>
+
+				<!-- Zoning Map Preview -->
+				<div class="map-preview">
+					<img
+						[src]="zoningMap().imageUrl"
+						[alt]="zoningMap().imageAlt"
+						class="map-thumbnail"
+						(click)="openZoningMap()"
+					/>
+					<div class="map-overlay" (click)="openZoningMap()">
+						<i class="pi pi-search-plus" aria-hidden="true"></i>
+						<span>Click to view full size</span>
+					</div>
+				</div>
+
+				<p-divider></p-divider>
+
+				<div class="action-buttons">
+					<p-button
+						label="View Full Size"
+						icon="pi pi-search-plus"
+						severity="primary"
+						(onClick)="openZoningMap()"
+						styleClass="view-button"
+					/>
+					<p-button
+						label="Download Map"
+						icon="pi pi-download"
+						severity="secondary"
+						(onClick)="downloadZoningMap()"
+						styleClass="download-button"
+					/>
+				</div>
+			</div>
 		</p-card>
 	</div>
 </div>
+
+<!-- PDF Viewer Dialog -->
+<p-dialog
+	[(visible)]="showPdfViewer"
+	[modal]="true"
+	[dismissableMask]="true"
+	[draggable]="false"
+	[resizable]="false"
+	styleClass="pdf-dialog"
+	[breakpoints]="{ '960px': '90vw' }"
+	[style]="{ width: '90vw', height: '90vh' }"
+>
+	<ng-template pTemplate="header">
+		<div class="dialog-header">
+			<i class="pi pi-file-pdf" aria-hidden="true"></i>
+			<span>{{ designStandardsDoc().title }}</span>
+		</div>
+	</ng-template>
+
+	<div class="pdf-viewer-container">
+		<iframe
+			[src]="pdfViewerUrl()"
+			type="application/pdf"
+			class="pdf-iframe"
+			title="Design Standards PDF"
+		></iframe>
+	</div>
+
+	<ng-template pTemplate="footer">
+		<div class="dialog-footer">
+			<p-button
+				label="Download"
+				icon="pi pi-download"
+				severity="secondary"
+				(onClick)="downloadPdf()"
+			/>
+			<p-button
+				label="Close"
+				icon="pi pi-times"
+				severity="secondary"
+				(onClick)="closePdfViewer()"
+			/>
+		</div>
+	</ng-template>
+</p-dialog>
+
+<!-- Zoning Map Dialog -->
+<p-dialog
+	[(visible)]="showZoningMapDialog"
+	[modal]="true"
+	[dismissableMask]="true"
+	[draggable]="false"
+	[resizable]="false"
+	styleClass="map-dialog"
+	[breakpoints]="{ '960px': '95vw' }"
+	[style]="{ width: '95vw', maxWidth: '1400px' }"
+>
+	<ng-template pTemplate="header">
+		<div class="dialog-header">
+			<i class="pi pi-map" aria-hidden="true"></i>
+			<span>{{ zoningMap().title }}</span>
+		</div>
+	</ng-template>
+
+	<div class="map-viewer-container">
+		<p-image
+			[src]="zoningMap().imageUrl"
+			[alt]="zoningMap().imageAlt"
+			[preview]="true"
+			styleClass="zoning-map-image"
+		></p-image>
+	</div>
+
+	<ng-template pTemplate="footer">
+		<div class="dialog-footer">
+			<p-button
+				label="Download Map"
+				icon="pi pi-download"
+				severity="secondary"
+				(onClick)="downloadZoningMap()"
+			/>
+			<p-button
+				label="Close"
+				icon="pi pi-times"
+				severity="secondary"
+				(onClick)="closeZoningMap()"
+			/>
+		</div>
+	</ng-template>
+</p-dialog>

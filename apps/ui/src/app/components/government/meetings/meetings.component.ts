@@ -28,7 +28,8 @@ export class MeetingsComponent implements OnInit {
   readonly meetingsStore = inject(MeetingsStore);
 
   ngOnInit(): void {
-    this.meetingsStore.resolveMeetings();
+    // Load only City Council meetings
+    this.meetingsStore.resolveMeetings('city-council');
   }
 
   get upcomingMeetings() {

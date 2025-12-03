@@ -1,17 +1,19 @@
-import { Meeting, initialMeeting } from '../../models';
+import { Meeting, initialMeeting, MeetingType } from '../../models';
 
 export type MeetingsStoreState = {
-  isEntitiesLoaded: boolean;
+  loadedMeetingTypes: Set<MeetingType | 'all'>;
   isLoading: boolean;
   meetings: Meeting[];
   upcomingMeetings: Meeting[];
   selectedMeeting: Meeting;
+  isEntitiesLoaded: boolean;
 };
 
 export const initialMeetingsStoreState = (): MeetingsStoreState => ({
-  isEntitiesLoaded: false,
+  loadedMeetingTypes: new Set(),
   isLoading: false,
   meetings: [],
   upcomingMeetings: [],
   selectedMeeting: initialMeeting(),
+  isEntitiesLoaded: false,
 });

@@ -1,17 +1,265 @@
 <div class="page-container">
-	<div class="page-header">
-		<h1>
-			<i class="pi pi-file" aria-hidden="true"></i>
-			Agendas and Minutes
-		</h1>
-		<p class="page-description">
-			Access Planning and Zoning meeting agendas and minutes
-		</p>
-	</div>
+  <div class="page-header">
+    <h1>
+      <i class="pi pi-calendar" aria-hidden="true"></i>
+      Planning & Zoning Meeting Documents
+    </h1>
+    <p class="page-description">
+      View upcoming meetings and download agendas, minutes, and discussion topics
+    </p>
+  </div>
 
-	<div class="content-section">
-		<p-card header="Agendas and Minutes">
-			<p>Content for Agendas and Minutes will be added here.</p>
-		</p-card>
-	</div>
+  @if (isLoading) {
+    <div class="loading-container">
+      <p-progressSpinner ariaLabel="Loading meetings"></p-progressSpinner>
+      <p class="loading-text">Loading meetings...</p>
+    </div>
+  }
+
+  @if (!isLoading && upcomingMeetings.length === 0 && allMeetings.length === 0) {
+    <p-card styleClass="empty-card">
+      <div class="empty-state">
+        <i class="pi pi-calendar-times" aria-hidden="true"></i>
+        <h2>No Meetings Scheduled</h2>
+        <p>There are currently no meetings to display. Please check back later.</p>
+      </div>
+    </p-card>
+  }
+
+  @if (!isLoading && (upcomingMeetings.length > 0 || allMeetings.length > 0)) {
+    <div class="meetings-container">
+      <!-- Upcoming Meetings Section -->
+      @if (upcomingMeetings.length > 0) {
+        <div class="section">
+          <h2 class="section-title">
+            <i class="pi pi-clock" aria-hidden="true"></i>
+            Upcoming Meetings
+          </h2>
+
+          <div class="meetings-grid">
+            @for (meeting of upcomingMeetings; track meeting.id) {
+              <p-card styleClass="meeting-card upcoming-meeting">
+                <!-- Meeting Header -->
+                <div class="meeting-header">
+                  <div class="meeting-title-section">
+                    <h3 class="meeting-title">{{ meeting.title }}</h3>
+                    <p-tag
+                      [value]="getMeetingStatus(meeting)"
+                      [severity]="getStatusSeverity(getMeetingStatus(meeting))"
+                      styleClass="status-tag">
+                    </p-tag>
+                  </div>
+
+                  <div class="meeting-info">
+                    <div class="info-item">
+                      <i class="pi pi-calendar" aria-hidden="true"></i>
+                      <span class="info-text">{{ formatDate(meeting.meetingDate) }}</span>
+                    </div>
+                    @if (meeting.meetingTime) {
+                      <div class="info-item">
+                        <i class="pi pi-clock" aria-hidden="true"></i>
+                        <span class="info-text">{{ formatTime(meeting.meetingTime) }}</span>
+                      </div>
+                    }
+                    @if (meeting.location) {
+                      <div class="info-item">
+                        <i class="pi pi-map-marker" aria-hidden="true"></i>
+                        <span class="info-text">{{ meeting.location }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  @if (meeting.description) {
+                    <p class="meeting-description">{{ meeting.description }}</p>
+                  }
+                </div>
+
+                <p-divider></p-divider>
+
+                <!-- Meeting Files -->
+                @if (meeting.files.length > 0) {
+                  <div class="files-section">
+                    <h4 class="files-title">
+                      <i class="pi pi-file" aria-hidden="true"></i>
+                      Available Documents
+                    </h4>
+
+                    <div class="files-grid">
+                      @for (file of meeting.files; track file.id) {
+                        <div class="file-card">
+                          <div class="file-info">
+                            <div class="file-header">
+                              <i class="pi pi-file-pdf file-icon" aria-hidden="true"></i>
+                              <div class="file-details">
+                                <p class="file-title">{{ file.title }}</p>
+                                <p-tag
+                                  [value]="getCategoryLabel(file.category)"
+                                  [severity]="getCategorySeverity(file.category)"
+                                  styleClass="category-tag">
+                                </p-tag>
+                              </div>
+                            </div>
+
+                            @if (file.description) {
+                              <p class="file-description">{{ file.description }}</p>
+                            }
+
+                            <div class="file-meta">
+                              <span class="meta-text">{{ file.fileType.toUpperCase() }}</span>
+                              @if (file.fileSize) {
+                                <span class="meta-separator">•</span>
+                                <span class="meta-text">{{ formatFileSize(file.fileSize) }}</span>
+                              }
+                            </div>
+                          </div>
+
+                          <p-button
+                            label="Download"
+                            icon="pi pi-download"
+                            styleClass="p-button-raised p-button-lg download-button"
+                            (onClick)="onDownloadFile(file)"
+                            [ariaLabel]="'Download ' + file.title">
+                          </p-button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                } @else {
+                  <div class="no-files">
+                    <i class="pi pi-info-circle" aria-hidden="true"></i>
+                    <p>No documents available yet for this meeting.</p>
+                  </div>
+                }
+              </p-card>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Past Meetings Section (Limited to 5 most recent) -->
+      @if (pastMeetings().length > 0) {
+        <div class="section">
+          <h2 class="section-title">
+            <i class="pi pi-history" aria-hidden="true"></i>
+            Recent Meeting Minutes
+          </h2>
+          <p class="section-description">
+            The minutes for the five most recent meetings are shown below.
+          </p>
+
+          <div class="meetings-grid">
+            @for (meeting of pastMeetings(); track meeting.id) {
+              <p-card styleClass="meeting-card past-meeting">
+                <!-- Meeting Header -->
+                <div class="meeting-header">
+                  <div class="meeting-title-section">
+                    <h3 class="meeting-title">{{ meeting.title }}</h3>
+                    <p-tag
+                      [value]="getMeetingStatus(meeting)"
+                      [severity]="getStatusSeverity(getMeetingStatus(meeting))"
+                      styleClass="status-tag">
+                    </p-tag>
+                  </div>
+
+                  <div class="meeting-info">
+                    <div class="info-item">
+                      <i class="pi pi-calendar" aria-hidden="true"></i>
+                      <span class="info-text">{{ formatDate(meeting.meetingDate) }}</span>
+                    </div>
+                    @if (meeting.meetingTime) {
+                      <div class="info-item">
+                        <i class="pi pi-clock" aria-hidden="true"></i>
+                        <span class="info-text">{{ formatTime(meeting.meetingTime) }}</span>
+                      </div>
+                    }
+                    @if (meeting.location) {
+                      <div class="info-item">
+                        <i class="pi pi-map-marker" aria-hidden="true"></i>
+                        <span class="info-text">{{ meeting.location }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  @if (meeting.description) {
+                    <p class="meeting-description">{{ meeting.description }}</p>
+                  }
+                </div>
+
+                <p-divider></p-divider>
+
+                <!-- Meeting Files -->
+                @if (meeting.files.length > 0) {
+                  <div class="files-section">
+                    <h4 class="files-title">
+                      <i class="pi pi-file" aria-hidden="true"></i>
+                      Available Documents
+                    </h4>
+
+                    <div class="files-grid">
+                      @for (file of meeting.files; track file.id) {
+                        <div class="file-card">
+                          <div class="file-info">
+                            <div class="file-header">
+                              <i class="pi pi-file-pdf file-icon" aria-hidden="true"></i>
+                              <div class="file-details">
+                                <p class="file-title">{{ file.title }}</p>
+                                <p-tag
+                                  [value]="getCategoryLabel(file.category)"
+                                  [severity]="getCategorySeverity(file.category)"
+                                  styleClass="category-tag">
+                                </p-tag>
+                              </div>
+                            </div>
+
+                            @if (file.description) {
+                              <p class="file-description">{{ file.description }}</p>
+                            }
+
+                            <div class="file-meta">
+                              <span class="meta-text">{{ file.fileType.toUpperCase() }}</span>
+                              @if (file.fileSize) {
+                                <span class="meta-separator">•</span>
+                                <span class="meta-text">{{ formatFileSize(file.fileSize) }}</span>
+                              }
+                            </div>
+                          </div>
+
+                          <p-button
+                            label="Download"
+                            icon="pi pi-download"
+                            styleClass="p-button-raised p-button-lg download-button"
+                            (onClick)="onDownloadFile(file)"
+                            [ariaLabel]="'Download ' + file.title">
+                          </p-button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                } @else {
+                  <div class="no-files">
+                    <i class="pi pi-info-circle" aria-hidden="true"></i>
+                    <p>No documents available for this meeting.</p>
+                  </div>
+                }
+              </p-card>
+            }
+          </div>
+
+          <!-- Link to Utah PMN for other meeting records -->
+          <p-card styleClass="info-card">
+            <div class="external-link-section">
+              <i class="pi pi-external-link" aria-hidden="true"></i>
+              <p>
+                If you would like records of other meetings they can be searched for at the
+                <a href="https://www.utah.gov/pmn/index.html" target="_blank" rel="noopener noreferrer" class="external-link">
+                  Utah Public Meeting Notice Website
+                  <i class="pi pi-external-link" aria-hidden="true"></i>
+                </a>
+              </p>
+            </div>
+          </p-card>
+        </div>
+      }
+    </div>
+  }
 </div>

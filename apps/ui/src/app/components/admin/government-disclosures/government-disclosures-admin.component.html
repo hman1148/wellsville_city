@@ -20,8 +20,8 @@
 		</ng-template>
 
 		<p-table
-			[value]="disclosures"
-			[loading]="isLoading"
+			[value]="disclosures()"
+			[loading]="isLoading()"
 			[paginator]="true"
 			[rows]="10"
 			[rowsPerPageOptions]="[10, 25, 50]"

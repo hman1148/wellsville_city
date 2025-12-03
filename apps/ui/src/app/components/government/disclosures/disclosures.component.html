@@ -82,7 +82,7 @@
 		<div class="desktop-table">
 			<p-table
 				[value]="filteredDisclosures()"
-				[loading]="isLoading"
+				[loading]="isLoading()"
 				[paginator]="true"
 				[rows]="10"
 				[rowsPerPageOptions]="[10, 25, 50]"
@@ -177,7 +177,7 @@
 
 		<!-- Mobile Card View -->
 		<div class="mobile-cards">
-			@if (isLoading()) {
+			@if (isLoading) {
 				<div class="loading-container">
 					<i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
 					<p>Loading documents...</p>

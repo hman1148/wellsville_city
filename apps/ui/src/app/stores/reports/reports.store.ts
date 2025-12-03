@@ -9,6 +9,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
+import { MessageService } from 'primeng/api';
 import { CitizenReportsService } from '../../services/citizen-reports.service';
 import {
   CitizenReport,
@@ -77,7 +78,7 @@ export const ReportsStore = signalStore(
     hasNewReports: computed(() => state.newReportsCount() > 0),
   })),
 
-  withMethods((store, reportsService = inject(CitizenReportsService)) => ({
+  withMethods((store, reportsService = inject(CitizenReportsService), messageService = inject(MessageService)) => ({
     // Load reports
     loadReports: rxMethod<{ status?: ReportStatus; issueType?: string } | void>(
       pipe(
@@ -100,6 +101,12 @@ export const ReportsStore = signalStore(
                 patchState(store, {
                   error: error.message,
                   loading: false,
+                });
+                messageService.add({
+                  severity: 'error',
+                  summary: 'Failed to Load Reports',
+                  detail: 'Unable to retrieve citizen reports. Please try again later.',
+                  life: 5000,
                 });
               },
             })
@@ -136,6 +143,12 @@ export const ReportsStore = signalStore(
                     error: error.message,
                     loading: false,
                   });
+                  messageService.add({
+                    severity: 'error',
+                    summary: 'Failed to Load More Reports',
+                    detail: 'Unable to retrieve additional reports. Please try again.',
+                    life: 5000,
+                  });
                 },
               })
             );
@@ -160,6 +173,12 @@ export const ReportsStore = signalStore(
                 patchState(store, {
                   error: error.message,
                   loading: false,
+                });
+                messageService.add({
+                  severity: 'error',
+                  summary: 'Failed to Load Report',
+                  detail: 'Unable to retrieve the selected report. Please try again.',
+                  life: 5000,
                 });
               },
             })
@@ -193,11 +212,23 @@ export const ReportsStore = signalStore(
                   newReportsCount: reports.filter((r) => r.status === 'new')
                     .length,
                 });
+                messageService.add({
+                  severity: 'success',
+                  summary: 'Report Updated',
+                  detail: `Report status successfully changed to ${status.replace('_', ' ')}.`,
+                  life: 3000,
+                });
               },
               error: (error: Error) => {
                 patchState(store, {
                   error: error.message,
                   loading: false,
+                });
+                messageService.add({
+                  severity: 'error',
+                  summary: 'Failed to Update Report',
+                  detail: 'Unable to update report status. Please try again.',
+                  life: 5000,
                 });
               },
             })
@@ -217,6 +248,12 @@ export const ReportsStore = signalStore(
               },
               error: (error: Error) => {
                 console.error('Failed to load stats:', error);
+                messageService.add({
+                  severity: 'error',
+                  summary: 'Failed to Load Statistics',
+                  detail: 'Unable to retrieve report statistics.',
+                  life: 5000,
+                });
               },
             })
           )

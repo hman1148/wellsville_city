@@ -6,6 +6,7 @@ import {
 } from '@ngrx/signals';
 import { inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { MessageService } from 'primeng/api';
 
 import { initialNewsletterStoreState } from './newsletter-store.state';
 import { Newsletter, initialNewsletter } from '../../models';
@@ -14,7 +15,7 @@ import { NewsletterService } from '../../services/newsletter.service';
 export const NewsletterStore = signalStore(
   { providedIn: 'root' },
   withState(initialNewsletterStoreState()),
-  withMethods((store, newsletterService = inject(NewsletterService)) => ({
+  withMethods((store, newsletterService = inject(NewsletterService), messageService = inject(MessageService)) => ({
     resolveNewsletters: async () => {
       if (store.isEntitiesLoaded()) {
         return true;
@@ -42,10 +43,22 @@ export const NewsletterStore = signalStore(
           });
         } else {
           patchState(store, { isLoading: false });
+          messageService.add({
+            severity: 'error',
+            summary: 'Failed to Load Newsletters',
+            detail: 'Unable to retrieve newsletters. Please try again later.',
+            life: 5000,
+          });
         }
       } catch (error) {
         console.error('Error loading newsletters:', error);
         patchState(store, { isLoading: false });
+        messageService.add({
+          severity: 'error',
+          summary: 'Failed to Load Newsletters',
+          detail: 'An error occurred while loading newsletters. Please try again.',
+          life: 5000,
+        });
       }
 
       return true;
@@ -68,6 +81,12 @@ export const NewsletterStore = signalStore(
       } catch (error) {
         console.error('Error getting presigned URL:', error);
         patchState(store, { previewUrl: '' });
+        messageService.add({
+          severity: 'error',
+          summary: 'Failed to Load Preview',
+          detail: 'Unable to load newsletter preview. Please try again.',
+          life: 5000,
+        });
       }
     },
 
