@@ -1,0 +1,563 @@
+<div class="form-container">
+	<div class="form-header">
+		<h1>
+			<i class="pi pi-file-edit" aria-hidden="true"></i>
+			Business License Application
+		</h1>
+		<p class="form-description">
+			Complete this form to apply for a business license in Wellsville City
+		</p>
+	</div>
+
+	<form (ngSubmit)="onSubmit()" class="business-license-form">
+		<!-- Important Notice -->
+		<p-card styleClass="notice-card">
+			<div class="notice-content">
+				<i class="pi pi-info-circle" aria-hidden="true"></i>
+				<p>
+					<strong>This is NOT a License.</strong> This is an application for a business license. All applications must be reviewed and approved before a license is issued.
+				</p>
+			</div>
+		</p-card>
+
+		<!-- Basic Business Information -->
+		<p-card>
+			<ng-template pTemplate="header">
+				<div class="section-header">
+					<i class="pi pi-building" aria-hidden="true"></i>
+					<h2>Business Information</h2>
+				</div>
+			</ng-template>
+
+			<div class="form-section">
+				<!-- Utah Sales Tax ID -->
+				<div class="form-group">
+					<label for="utahSalesTaxId" class="form-label required">
+						Utah State Sales Tax ID Number
+					</label>
+					<input
+						pInputText
+						id="utahSalesTaxId"
+						[(ngModel)]="formData.utahSalesTaxId"
+						name="utahSalesTaxId"
+						(blur)="markFieldAsTouched('utahSalesTaxId')"
+						placeholder="Enter your Utah State sales tax ID"
+						class="form-input"
+					/>
+					@if (hasError('utahSalesTaxId')) {
+						<small class="form-error">{{ getErrorMessage('utahSalesTaxId') }}</small>
+					}
+				</div>
+
+				<!-- Business Name and Phone Row -->
+				<div class="form-row">
+					<div class="form-group">
+						<label for="businessName" class="form-label required">
+							Business Name (DBA)
+						</label>
+						<input
+							pInputText
+							id="businessName"
+							[(ngModel)]="formData.businessName"
+							name="businessName"
+							(blur)="markFieldAsTouched('businessName')"
+							placeholder="Enter business name"
+							class="form-input"
+						/>
+						@if (hasError('businessName')) {
+							<small class="form-error">{{ getErrorMessage('businessName') }}</small>
+						}
+					</div>
+
+					<div class="form-group">
+						<label for="phone" class="form-label required">Phone</label>
+						<input
+							pInputText
+							id="phone"
+							[(ngModel)]="formData.phone"
+							name="phone"
+							(blur)="markFieldAsTouched('phone')"
+							placeholder="(435) 245-3686"
+							class="form-input"
+						/>
+						@if (hasError('phone')) {
+							<small class="form-error">{{ getErrorMessage('phone') }}</small>
+						}
+					</div>
+				</div>
+
+				<!-- Business Location Row -->
+				<div class="form-row">
+					<div class="form-group flex-2">
+						<label for="businessLocation" class="form-label required">
+							Business Location
+							<small class="field-note">(No P.O. Boxes)</small>
+						</label>
+						<input
+							pInputText
+							id="businessLocation"
+							[(ngModel)]="formData.businessLocation"
+							name="businessLocation"
+							(blur)="markFieldAsTouched('businessLocation')"
+							placeholder="Street address"
+							class="form-input"
+						/>
+						@if (hasError('businessLocation')) {
+							<small class="form-error">{{ getErrorMessage('businessLocation') }}</small>
+						}
+					</div>
+
+					<div class="form-group">
+						<label for="businessZip" class="form-label required">Zip Code</label>
+						<input
+							pInputText
+							id="businessZip"
+							[(ngModel)]="formData.businessZip"
+							name="businessZip"
+							(blur)="markFieldAsTouched('businessZip')"
+							placeholder="84339"
+							class="form-input"
+						/>
+						@if (hasError('businessZip')) {
+							<small class="form-error">{{ getErrorMessage('businessZip') }}</small>
+						}
+					</div>
+				</div>
+
+				<!-- Mailing Address (Optional) -->
+				<div class="form-row">
+					<div class="form-group flex-2">
+						<label for="mailingAddress" class="form-label">
+							Mailing Address
+							<small class="field-note">(if different from above)</small>
+						</label>
+						<input
+							pInputText
+							id="mailingAddress"
+							[(ngModel)]="formData.mailingAddress"
+							name="mailingAddress"
+							placeholder="Street address"
+							class="form-input"
+						/>
+					</div>
+
+					<div class="form-group">
+						<label for="mailingZip" class="form-label">Zip Code</label>
+						<input
+							pInputText
+							id="mailingZip"
+							[(ngModel)]="formData.mailingZip"
+							name="mailingZip"
+							placeholder="84339"
+							class="form-input"
+						/>
+					</div>
+				</div>
+
+				<!-- Local Agent Contact Row -->
+				<div class="form-row">
+					<div class="form-group">
+						<label for="localAgentContact" class="form-label required">
+							Local Agent Contact Person
+						</label>
+						<input
+							pInputText
+							id="localAgentContact"
+							[(ngModel)]="formData.localAgentContact"
+							name="localAgentContact"
+							(blur)="markFieldAsTouched('localAgentContact')"
+							placeholder="Contact person name"
+							class="form-input"
+						/>
+						@if (hasError('localAgentContact')) {
+							<small class="form-error">{{ getErrorMessage('localAgentContact') }}</small>
+						}
+					</div>
+
+					<div class="form-group">
+						<label for="localAgentPhone" class="form-label required">Phone</label>
+						<input
+							pInputText
+							id="localAgentPhone"
+							[(ngModel)]="formData.localAgentPhone"
+							name="localAgentPhone"
+							(blur)="markFieldAsTouched('localAgentPhone')"
+							placeholder="(435) 245-3686"
+							class="form-input"
+						/>
+						@if (hasError('localAgentPhone')) {
+							<small class="form-error">{{ getErrorMessage('localAgentPhone') }}</small>
+						}
+					</div>
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Business Details -->
+		<p-card>
+			<ng-template pTemplate="header">
+				<div class="section-header">
+					<i class="pi pi-info-circle" aria-hidden="true"></i>
+					<h2>Business Details</h2>
+				</div>
+			</ng-template>
+
+			<div class="form-section">
+				<!-- Opening Date and New Business Type Row -->
+				<div class="form-row">
+					<div class="form-group">
+						<label for="openingDate" class="form-label required">
+							Opening Date at This Location
+						</label>
+						<p-datepicker
+							inputId="openingDate"
+							[(ngModel)]="formData.openingDate"
+							name="openingDate"
+							[showIcon]="true"
+							iconDisplay="input"
+							placeholder="Select date"
+							dateFormat="mm/dd/yy"
+							styleClass="form-input"
+						></p-datepicker>
+						@if (hasError('openingDate')) {
+							<small class="form-error">{{ getErrorMessage('openingDate') }}</small>
+						}
+					</div>
+
+					<div class="form-group">
+						<label class="form-label required">Is this a new type of business at this location?</label>
+						<div class="radio-group">
+							<div class="radio-item">
+								<p-radiobutton
+									inputId="newBusinessYes"
+									name="isNewBusinessType"
+									[value]="true"
+									[(ngModel)]="formData.isNewBusinessType"
+								></p-radiobutton>
+								<label for="newBusinessYes">Yes</label>
+							</div>
+							<div class="radio-item">
+								<p-radiobutton
+									inputId="newBusinessNo"
+									name="isNewBusinessType"
+									[value]="false"
+									[(ngModel)]="formData.isNewBusinessType"
+								></p-radiobutton>
+								<label for="newBusinessNo">No</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Location Type and License Period Row -->
+				<div class="form-row">
+					<div class="form-group">
+						<label for="locationType" class="form-label required">
+							Location Type
+						</label>
+						<p-select
+							inputId="locationType"
+							[(ngModel)]="formData.locationType"
+							name="locationType"
+							[options]="locationTypeOptions"
+							optionLabel="label"
+							optionValue="value"
+							placeholder="Select location type"
+							styleClass="form-input"
+						></p-select>
+					</div>
+
+					<div class="form-group">
+						<label for="licensePeriod" class="form-label required">
+							Period of Time License is Requested
+						</label>
+						<input
+							pInputText
+							id="licensePeriod"
+							[(ngModel)]="formData.licensePeriod"
+							name="licensePeriod"
+							(blur)="markFieldAsTouched('licensePeriod')"
+							placeholder="e.g., 1 year, January 1 - December 31"
+							class="form-input"
+						/>
+						@if (hasError('licensePeriod')) {
+							<small class="form-error">{{ getErrorMessage('licensePeriod') }}</small>
+						}
+					</div>
+				</div>
+
+				<!-- Previously Licensed -->
+				<div class="form-group">
+					<label class="form-label required">
+						Have you been previously licensed by Wellsville City or elsewhere?
+					</label>
+					<div class="radio-group">
+						<div class="radio-item">
+							<p-radiobutton
+								inputId="previouslyLicensedYes"
+								name="previouslyLicensed"
+								[value]="true"
+								[(ngModel)]="formData.previouslyLicensed"
+							></p-radiobutton>
+							<label for="previouslyLicensedYes">Yes</label>
+						</div>
+						<div class="radio-item">
+							<p-radiobutton
+								inputId="previouslyLicensedNo"
+								name="previouslyLicensed"
+								[value]="false"
+								[(ngModel)]="formData.previouslyLicensed"
+							></p-radiobutton>
+							<label for="previouslyLicensedNo">No</label>
+						</div>
+					</div>
+				</div>
+
+				<!-- Business Type Activity -->
+				<div class="form-group">
+					<label for="businessTypeActivity" class="form-label required">
+						Business Type Activity
+					</label>
+					<textarea
+						pTextarea
+						id="businessTypeActivity"
+						[(ngModel)]="formData.businessTypeActivity"
+						name="businessTypeActivity"
+						(blur)="markFieldAsTouched('businessTypeActivity')"
+						placeholder="Describe your business activity (e.g., retail sales, restaurant, professional services)"
+						rows="3"
+						class="form-input"
+					></textarea>
+					@if (hasError('businessTypeActivity')) {
+						<small class="form-error">{{ getErrorMessage('businessTypeActivity') }}</small>
+					}
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Ownership Information -->
+		<p-card>
+			<ng-template pTemplate="header">
+				<div class="section-header">
+					<i class="pi pi-users" aria-hidden="true"></i>
+					<h2>Ownership Information</h2>
+				</div>
+			</ng-template>
+
+			<div class="form-section">
+				<!-- Type of Ownership -->
+				<div class="form-group">
+					<label for="ownershipType" class="form-label required">
+						Type of Ownership
+					</label>
+					<p-select
+						inputId="ownershipType"
+						[(ngModel)]="formData.ownershipType"
+						name="ownershipType"
+						[options]="ownershipTypeOptions"
+						optionLabel="label"
+						optionValue="value"
+						placeholder="Select ownership type"
+						styleClass="form-input"
+					></p-select>
+				</div>
+
+				<!-- Corporation Name (Conditional) -->
+				@if (showCorporationName) {
+					<div class="form-group">
+						<label for="corporationName" class="form-label required">
+							Corporation Name
+						</label>
+						<input
+							pInputText
+							id="corporationName"
+							[(ngModel)]="formData.corporationName"
+							name="corporationName"
+							(blur)="markFieldAsTouched('corporationName')"
+							placeholder="Enter corporation name"
+							class="form-input"
+						/>
+						@if (hasError('corporationName')) {
+							<small class="form-error">{{ getErrorMessage('corporationName') }}</small>
+						}
+					</div>
+				}
+
+				<!-- Ownership Other Description (Conditional) -->
+				@if (showOwnershipOtherDescription) {
+					<div class="form-group">
+						<label for="ownershipOtherDescription" class="form-label required">
+							Describe Ownership Type
+						</label>
+						<input
+							pInputText
+							id="ownershipOtherDescription"
+							[(ngModel)]="formData.ownershipOtherDescription"
+							name="ownershipOtherDescription"
+							(blur)="markFieldAsTouched('ownershipOtherDescription')"
+							placeholder="Describe ownership type"
+							class="form-input"
+						/>
+						@if (hasError('ownershipOtherDescription')) {
+							<small class="form-error">{{ getErrorMessage('ownershipOtherDescription') }}</small>
+						}
+					</div>
+				}
+
+				<!-- Owner Name -->
+				<div class="form-group">
+					<label for="ownerName" class="form-label required">
+						Name of Owner, General Partner, or Principal Officer
+					</label>
+					<input
+						pInputText
+						id="ownerName"
+						[(ngModel)]="formData.ownerName"
+						name="ownerName"
+						(blur)="markFieldAsTouched('ownerName')"
+						placeholder="Enter full name"
+						class="form-input"
+					/>
+					@if (hasError('ownerName')) {
+						<small class="form-error">{{ getErrorMessage('ownerName') }}</small>
+					}
+				</div>
+
+				<!-- Owner Address -->
+				<div class="form-group">
+					<label for="ownerAddress" class="form-label required">
+						Address of Owner(s)/General Partner/Principal Officer
+					</label>
+					<input
+						pInputText
+						id="ownerAddress"
+						[(ngModel)]="formData.ownerAddress"
+						name="ownerAddress"
+						(blur)="markFieldAsTouched('ownerAddress')"
+						placeholder="Enter full address"
+						class="form-input"
+					/>
+					@if (hasError('ownerAddress')) {
+						<small class="form-error">{{ getErrorMessage('ownerAddress') }}</small>
+					}
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Document Attachments -->
+		<p-card>
+			<ng-template pTemplate="header">
+				<div class="section-header">
+					<i class="pi pi-paperclip" aria-hidden="true"></i>
+					<h2>Supporting Documents</h2>
+				</div>
+			</ng-template>
+
+			<div class="form-section">
+				<div class="upload-info">
+					<i class="pi pi-info-circle" aria-hidden="true"></i>
+					<p>
+						If this business requires any Utah State or Federal licenses or contracts, please attach copies.
+					</p>
+				</div>
+
+				<p-fileUpload
+					mode="advanced"
+					[multiple]="true"
+					accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+					[maxFileSize]="10000000"
+					[customUpload]="true"
+					(uploadHandler)="onFileSelect($event)"
+					chooseLabel="Choose Files"
+					uploadLabel="Upload"
+					cancelLabel="Clear"
+					styleClass="file-upload-advanced"
+				>
+					<ng-template pTemplate="content" let-files>
+						@if (state.uploadedFiles().length > 0) {
+							<div class="uploaded-files-list">
+								@for (file of state.uploadedFiles(); track file.name) {
+									<div class="uploaded-file-item">
+										<div class="file-info">
+											<i class="pi pi-file" aria-hidden="true"></i>
+											<span>{{ file.name }}</span>
+											<small>({{ (file.size / 1024).toFixed(2) }} KB)</small>
+										</div>
+										<p-button
+											icon="pi pi-times"
+											severity="danger"
+											[text]="true"
+											[rounded]="true"
+											(onClick)="onRemoveFile(file)"
+											pTooltip="Remove file"
+										/>
+									</div>
+								}
+							</div>
+						}
+					</ng-template>
+				</p-fileUpload>
+			</div>
+		</p-card>
+
+		<!-- Terms and Agreement -->
+		<p-card styleClass="terms-card">
+			<div class="terms-content">
+				<div class="terms-text">
+					<p>
+						<strong>Important Legal Notice:</strong> It is unlawful to operate a business without a current license (Wellsville Ordinance Section 5.04.020). Failure to obtain a business license prior to opening will result in penalties (Ordinance Section 5.04.050).
+					</p>
+					<p>
+						It is the responsibility of the Licensee to be familiar with the ordinances under which this license is applied, and applicant hereby agrees to conduct said business strictly in accordance with the Laws and Ordinances covering such business.
+					</p>
+					<p>
+						All business licenses are to be renewed yearly, on January 1st of each year. Licenses renewed more than 30 days after January 1st will be assessed a penalty. It is the responsibility of the Licensee to renew the license.
+					</p>
+				</div>
+
+				<p-divider></p-divider>
+
+				<div class="form-group">
+					<div class="checkbox-field">
+						<p-checkbox
+							inputId="agreesToTerms"
+							[(ngModel)]="formData.agreesToTerms"
+							name="agreesToTerms"
+							[binary]="true"
+						></p-checkbox>
+						<label for="agreesToTerms" class="checkbox-label">
+							I have read and agree to the terms and conditions above. I certify that the information provided is accurate and complete.
+						</label>
+					</div>
+					@if (hasError('agreesToTerms')) {
+						<small class="form-error">{{ getErrorMessage('agreesToTerms') }}</small>
+					}
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Form Actions -->
+		<div class="form-actions">
+			<p-button
+				label="Cancel"
+				icon="pi pi-times"
+				severity="secondary"
+				(onClick)="onCancel()"
+				[outlined]="true"
+				[disabled]="businessLicenseStore.isSubmitting()"
+				type="button"
+			/>
+			<p-button
+				label="Submit Application"
+				icon="pi pi-check"
+				severity="primary"
+				type="submit"
+				[loading]="businessLicenseStore.isSubmitting()"
+				[disabled]="!isFormValid"
+			/>
+		</div>
+	</form>
+</div>
+
+<!-- Toast Messages -->
+<p-toast position="top-right"></p-toast>

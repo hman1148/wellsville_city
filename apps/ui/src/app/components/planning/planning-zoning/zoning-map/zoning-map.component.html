@@ -1,17 +1,214 @@
 <div class="page-container">
 	<div class="page-header">
 		<h1>
-			<i class="pi pi-map-marker" aria-hidden="true"></i>
-			Wellsville City Adopted Zoning Map
+			<i class="pi pi-map" aria-hidden="true"></i>
+			Zoning Map
 		</h1>
 		<p class="page-description">
-			View the official adopted zoning map for Wellsville City
+			Explore Wellsville City's official zoning map and public works standards
 		</p>
 	</div>
 
 	<div class="content-section">
-		<p-card header="Zoning Map">
-			<p>Content for the Wellsville City Adopted Zoning Map will be added here.</p>
+		<!-- Zoning Map Section -->
+		<p-card styleClass="zoning-map-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-map" aria-hidden="true"></i>
+					<h2>{{ state.zoningMap().title }}</h2>
+				</div>
+			</ng-template>
+
+			<div class="zoning-map-info">
+				<p class="description">{{ state.zoningMap().description }}</p>
+
+				<!-- Zoning Map Preview -->
+				<div class="map-preview">
+					<img
+						[src]="state.zoningMap().imageUrl"
+						[alt]="state.zoningMap().imageAlt"
+						class="map-thumbnail"
+						(click)="openZoningMap()"
+					/>
+					<div class="map-overlay" (click)="openZoningMap()">
+						<i class="pi pi-search-plus" aria-hidden="true"></i>
+						<span>Click to view full size</span>
+					</div>
+				</div>
+
+				<p-divider></p-divider>
+
+				<div class="action-buttons">
+					<p-button
+						label="View Full Size"
+						icon="pi pi-search-plus"
+						severity="primary"
+						(onClick)="openZoningMap()"
+						styleClass="view-button"
+					/>
+					<p-button
+						label="Download Map"
+						icon="pi pi-download"
+						severity="secondary"
+						(onClick)="downloadZoningMap()"
+						styleClass="download-button"
+					/>
+				</div>
+
+				<div class="external-link">
+					<p class="info-text">
+						<i class="pi pi-info-circle" aria-hidden="true"></i>
+						This zoning map shows all current zoning districts, boundaries, and classifications within Wellsville City limits.
+					</p>
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Public Works Standards Section -->
+		<p-card styleClass="document-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-file-pdf" aria-hidden="true"></i>
+					<h2>{{ state.publicWorksStandards().title }}</h2>
+				</div>
+			</ng-template>
+
+			<div class="document-info">
+				<p class="description">{{ state.publicWorksStandards().description }}</p>
+
+				<div class="document-meta">
+					<div class="meta-item">
+						<i class="pi pi-file" aria-hidden="true"></i>
+						<span>PDF Document</span>
+					</div>
+					<div class="meta-item">
+						<i class="pi pi-database" aria-hidden="true"></i>
+						<span>{{ state.publicWorksStandards().fileSize }}</span>
+					</div>
+					<div class="meta-item">
+						<i class="pi pi-calendar" aria-hidden="true"></i>
+						<span>Last Updated: {{ state.publicWorksStandards().lastUpdated }}</span>
+					</div>
+				</div>
+
+				<p-divider></p-divider>
+
+				<div class="action-buttons">
+					<p-button
+						label="View Standards"
+						icon="pi pi-eye"
+						severity="primary"
+						(onClick)="openPdfViewer()"
+						styleClass="view-button"
+					/>
+					<p-button
+						label="Download PDF"
+						icon="pi pi-download"
+						severity="secondary"
+						(onClick)="downloadPdf()"
+						styleClass="download-button"
+					/>
+				</div>
+
+				<div class="external-link">
+					<p class="info-text">
+						<i class="pi pi-info-circle" aria-hidden="true"></i>
+						The Public Works Standards provide essential technical specifications and requirements for construction and development projects in Wellsville City.
+					</p>
+				</div>
+			</div>
 		</p-card>
 	</div>
 </div>
+
+<!-- Zoning Map Dialog -->
+<p-dialog
+	[visible]="state.showZoningMapDialog()"
+	(onHide)="closeZoningMap()"
+	[modal]="true"
+	[dismissableMask]="true"
+	[draggable]="false"
+	[resizable]="false"
+	styleClass="map-dialog"
+	[breakpoints]="{ '960px': '95vw' }"
+	[style]="{ width: '95vw', maxWidth: '1400px' }"
+>
+	<ng-template pTemplate="header">
+		<div class="dialog-header">
+			<i class="pi pi-map" aria-hidden="true"></i>
+			<span>{{ state.zoningMap().title }}</span>
+		</div>
+	</ng-template>
+
+	<div class="map-viewer-container">
+		<p-image
+			[src]="state.zoningMap().imageUrl"
+			[alt]="state.zoningMap().imageAlt"
+			[preview]="true"
+			styleClass="zoning-map-image"
+		></p-image>
+	</div>
+
+	<ng-template pTemplate="footer">
+		<div class="dialog-footer">
+			<p-button
+				label="Download Map"
+				icon="pi pi-download"
+				severity="secondary"
+				(onClick)="downloadZoningMap()"
+			/>
+			<p-button
+				label="Close"
+				icon="pi pi-times"
+				severity="secondary"
+				(onClick)="closeZoningMap()"
+			/>
+		</div>
+	</ng-template>
+</p-dialog>
+
+<!-- PDF Viewer Dialog -->
+<p-dialog
+	[visible]="state.showPdfViewer()"
+	(onHide)="closePdfViewer()"
+	[modal]="true"
+	[dismissableMask]="true"
+	[draggable]="false"
+	[resizable]="false"
+	styleClass="pdf-dialog"
+	[breakpoints]="{ '960px': '90vw' }"
+	[style]="{ width: '90vw', height: '90vh' }"
+>
+	<ng-template pTemplate="header">
+		<div class="dialog-header">
+			<i class="pi pi-file-pdf" aria-hidden="true"></i>
+			<span>{{ state.publicWorksStandards().title }}</span>
+		</div>
+	</ng-template>
+
+	<div class="pdf-viewer-container">
+		<iframe
+			[src]="pdfViewerUrl()"
+			type="application/pdf"
+			class="pdf-iframe"
+			title="Public Works Standards PDF"
+		></iframe>
+	</div>
+
+	<ng-template pTemplate="footer">
+		<div class="dialog-footer">
+			<p-button
+				label="Download"
+				icon="pi pi-download"
+				severity="secondary"
+				(onClick)="downloadPdf()"
+			/>
+			<p-button
+				label="Close"
+				icon="pi pi-times"
+				severity="secondary"
+				(onClick)="closePdfViewer()"
+			/>
+		</div>
+	</ng-template>
+</p-dialog>

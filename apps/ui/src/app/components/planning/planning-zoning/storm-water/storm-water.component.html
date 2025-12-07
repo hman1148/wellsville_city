@@ -1,17 +1,380 @@
 <div class="page-container">
+	<!-- Header Section -->
 	<div class="page-header">
 		<h1>
 			<i class="pi pi-cloud" aria-hidden="true"></i>
-			Storm Water
+			Storm Water Management
 		</h1>
 		<p class="page-description">
-			Storm water management regulations and guidelines
+			Understanding storm water runoff and pollution prevention in Wellsville
 		</p>
 	</div>
 
-	<div class="content-section">
-		<p-card header="Storm Water Management">
-			<p>Content for Storm Water will be added here.</p>
-		</p-card>
+	<!-- Hero Image -->
+	<div class="hero-image-container">
+		<img [src]="waterImageUrl" alt="Storm water management" class="hero-image" />
 	</div>
+
+	<!-- Management Plan Section -->
+	<p-card styleClass="management-plan-card">
+		<div class="management-plan-section">
+			<h2>
+				<i class="pi pi-file-pdf" aria-hidden="true"></i>
+				Storm Water Management Plan
+			</h2>
+			<p>
+				Download or view our comprehensive Storm Water Management Plan to learn about Wellsville's
+				approach to managing storm water runoff and protecting our water resources.
+			</p>
+			<div class="plan-actions">
+				<p-button
+					label="View Plan"
+					icon="pi pi-eye"
+					styleClass="p-button-raised p-button-primary"
+					(onClick)="onViewManagementPlan()"
+					ariaLabel="View Storm Water Management Plan PDF"
+				/>
+				<p-button
+					label="Download Plan"
+					icon="pi pi-download"
+					styleClass="p-button-outlined p-button-secondary"
+					(onClick)="onDownloadManagementPlan()"
+					ariaLabel="Download Storm Water Management Plan PDF"
+				/>
+			</div>
+		</div>
+	</p-card>
+
+	<p-divider></p-divider>
+
+	<!-- Prevention Tips Section -->
+	<p-card styleClass="content-card">
+		<h2 class="section-title">
+			<i class="pi pi-shield" aria-hidden="true"></i>
+			Storm Water Prevention Tips
+		</h2>
+		<p class="intro-text">
+			Controlling erosion and preventing the spread of pollutants are important reasons to understand
+			how your property impacts storm water runoff. Storm water runoff occurs when rain or snow melt
+			cannot percolate into the soil or sediments. Modern buildings, roads and parking lots cause
+			dramatic increases in storm water runoff because they are made of impervious materials. To make
+			matters worse, water flowing across these surfaces pick up trash and pollutants such as oil,
+			pesticides, and other toxins on their way to local streams, rivers and lakes.
+		</p>
+		<p class="intro-text">
+			Creative landscaping that takes storm water into consideration is the best solution to runoff
+			problems. Walk the perimeter of your property during, or shortly after, a heavy run and look for
+			areas that have water running into a street or onto sidewalks. Using plants, gravel or a
+			combination of both in these areas will slow the flow of water and allow it to seep into the
+			ground. Incorporate wood decks, gravel or interlocking bricks and stones rather than cement
+			whenever possible to increase percolation. It's best to limit the use of high maintenance areas,
+			such as green lawns. If you choose to keep a lawn area, incorporate landscaping swales. These are
+			low dips in the lawn that allow water to collect and percolate rather than flowing off the grass.
+		</p>
+	</p-card>
+
+	<!-- Pollution Prevention Section -->
+	<p-card styleClass="content-card">
+		<h2 class="section-title">
+			<i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+			Storm Water Pollution Prevention
+		</h2>
+		<div class="prevention-content">
+			<p>
+				Take care of your trash, trash bins, and dumpsters. Post "No littering" signs and enforce
+				anti-litter laws. Provide a sufficient number of litter receptacles for your home or business.
+				Clean out and cover litter receptacles frequently to prevent spillage. Keep dumpster areas
+				clean. Recycle materials whenever possible. Use all of a product before disposing of the
+				container. Ensure that only appropriate solid wastes are added to the solid waste container.
+				Certain wastes such as hazardous wastes, appliances, fluorescent lamps, pesticides, etc., may
+				not be disposed of in solid waster containers. Take special care when loading or unloading
+				wastes to minimize losses. Inspect dumpsters and trash bins weekly for leaks and to ensure lids
+				are on tightly. Replace any that are leaking, corroded, or otherwise deteriorating. Sweep and
+				clean the storage area regularly and clean up spills immediately.
+			</p>
+		</div>
+	</p-card>
+
+	<!-- Did You Know Section -->
+	<p-card styleClass="info-card">
+		<h3 class="info-title">
+			<i class="pi pi-info-circle" aria-hidden="true"></i>
+			Did You Know?
+		</h3>
+		<ul class="info-list">
+			<li>Storm drains are not part of the sanitary sewer system.</li>
+			<li>Storm water often goes untreated, directly into our rivers and lakes.</li>
+			<li>
+				Improperly used or disposed chemicals can mix with the storm water and contaminate local rivers
+				and lakes.
+			</li>
+			<li>These chemicals can end up in the aquifer, the source of our drinking water!</li>
+		</ul>
+		<p class="highlight-text">
+			Rainwater running off houses, roads, and parking lots picks up pollutants such as dirt, chemicals,
+			oil and soap as it flows to waterways. Storm water does not get treated before it enters these
+			natural waterways, and it is the leading cause of water quality problems.
+		</p>
+		<p class="highlight-text">
+			By practicing healthy household habits, homeowners can keep common pollutants like pesticides, pet
+			waste, grass clippings, excess fertilizer, and automotive fluids off the ground and out of the
+			storm water.
+		</p>
+	</p-card>
+
+	<p-divider></p-divider>
+
+	<!-- Healthy Household Habits Accordion -->
+	<p-card styleClass="content-card">
+		<h2 class="section-title">
+			<i class="pi pi-home" aria-hidden="true"></i>
+			Adopt Healthy Household Habits
+		</h2>
+		<p class="intro-text">
+			Protect lakes, rivers, and wetlands by adopting these simple habits in your daily life:
+		</p>
+
+		<div class="habits-sections">
+			@for (section of habitSections; track section.title) {
+				<div class="habit-section">
+					<h3 class="habit-section-title">{{ section.title }}</h3>
+					<ul class="habits-list">
+						@for (habit of section.habits; track $index) {
+							<li>{{ habit }}</li>
+						}
+					</ul>
+				</div>
+			}
+		</div>
+	</p-card>
+
+	<!-- Important Reminder -->
+	<p-card styleClass="reminder-card">
+		<div class="reminder-content">
+			<i class="pi pi-exclamation-circle reminder-icon" aria-hidden="true"></i>
+			<p class="reminder-text">
+				Remember, don't put anything in the storm drain you wouldn't want in your drinking water!
+			</p>
+		</div>
+	</p-card>
+
+	<p-divider></p-divider>
+
+	<!-- Storm Water News Section -->
+	<p-card styleClass="content-card">
+		<h2 class="section-title">
+			<i class="pi pi-megaphone" aria-hidden="true"></i>
+			Storm Water News
+		</h2>
+
+		<!-- What is a Storm Drain -->
+		<div class="news-section">
+			<h3>What is a Storm Drain?</h3>
+			<p>
+				A storm drain is the grate openings in the street that collects water from rain and melting snow
+				to minimize street flooding. Rainwater often carries street debris, trash, leaves, fertilizer,
+				pesticides, grass clippings, pet waste, paints, anti-freeze, used motor oil and bare soils that
+				end up in the storm drains when people dispose of them improperly.
+			</p>
+		</div>
+
+		<!-- Where Does It Go -->
+		<div class="news-section">
+			<h3>Where Does It Go?</h3>
+			<p>
+				Everything that we do outdoors has an effect on the water bodies around us. As water flows it
+				collects difference pollutants that are left in its path. It then travels to the nearest storm
+				drain where it is carried to the nearest lake, pond, river or stream. Let's make sure "Only rain
+				goes down the drain!"
+			</p>
+		</div>
+
+		<!-- Snow and Storm Water -->
+		<div class="news-section">
+			<h3>Snow and Storm Water</h3>
+			<p>
+				As snow piles up in the winter, we often turn to salt to melt snow and ice. Excess salt can seep
+				into groundwater and stormwater runoff. Effective ice control can help prevent excess salt runoff
+				to our waterways.
+			</p>
+			<p>
+				There are many alternatives to salt, including potassium chloride, calcium chloride and magnesium
+				acetate. Most can be found in hardware stores under various trade names, so check the labels for
+				chemical content. While these alternatives can be spread in a dry form or sprayed as a liquid,
+				their best use occurs when they are used with salt. They tend to increase the efficiency of salt
+				thereby reducing the amount that needs to be applied.
+			</p>
+			<p>
+				Keep in mind that your first line of defense should simply be to shovel sidewalks and pathways to
+				keep them clean and to prevent ice from forming. Also consider that salt and de-icers are not
+				effective when more than 3 inches of snow have accumulated.
+			</p>
+		</div>
+	</p-card>
+
+	<!-- What is Storm Water Runoff -->
+	<p-card styleClass="content-card">
+		<h2 class="section-title">
+			<i class="pi pi-question-circle" aria-hidden="true"></i>
+			What is Storm Water Runoff?
+		</h2>
+		<p>
+			Storm water runoff is the rain or snow melt that runs off streets, rooftops, parking lots, lawns and
+			other land surfaces. As communities develop, more impervious surfaces are created and less rainfall
+			can soak into the ground. This increases flooding and stream bank erosion. Storm water also picks up
+			pollutants as it flows across land surfaces. Pollutants include:
+		</p>
+		<ul class="pollutants-list">
+			<li>Sediment from bare areas like construction sites</li>
+			<li>Pesticides and fertilizers from lawns, parks, and roadsides</li>
+			<li>Bacteria and disease causing organisms from pet waste and failing septic systems</li>
+			<li>Oil and grease from car leaks, gas stations and industrial areas</li>
+			<li>Salt used on roads and driveways</li>
+			<li>
+				Toxic chemicals from leaks, spills, and auto wear and exhaust. Sometimes pollutants (e.g., used
+				oil, paint, thinners, etc) are illegally dumped directly into storm drains and waterways.
+			</li>
+		</ul>
+	</p-card>
+
+	<!-- Where Does Storm Water Go -->
+	<p-card styleClass="content-card">
+		<h2 class="section-title">
+			<i class="pi pi-map-marker" aria-hidden="true"></i>
+			Where Does the Storm Water Go?
+		</h2>
+		<p>
+			Storm water typically flows into storm drains on parking lots and street curbs where it enters
+			underground pipes called storm sewers. Unlike sanitary sewers, storm sewers do not lead to a
+			treatment plant. So storm water runoff directed to storm sewers usually receives no treatment before
+			entering our streams, rivers, and lakes. The result can be the contamination of our drinking water
+			supplies.
+		</p>
+		<p>
+			As storm water runs off from a building or driveway it carries with it fertilizers, salts,
+			insecticides that were applied too heavily, too carelessly, or too near the time of a storm. Storm
+			water also carries oils, paint, chrome, and other products that may chip or seep from automobiles.
+		</p>
+		<p>
+			Another contaminant carried in storm water is the fecal material from dogs, horses, and other
+			animals. These harmful contaminants stay suspended and are taken downstream to food producing
+			agricultural fields, livestock watering systems, and fish inhabited waterways.
+		</p>
+	</p-card>
+
+	<!-- 12 Things You Can Do -->
+	<p-card styleClass="action-card">
+		<h2 class="section-title">
+			<i class="pi pi-check-square" aria-hidden="true"></i>
+			12 Things You Can Do to Prevent Storm Water Runoff Pollution
+		</h2>
+		<p class="intro-text">Residents can make a big difference. Here are 12 actions you can take:</p>
+		<ol class="action-list">
+			<li>Use fertilizers sparingly and sweep up driveways, sidewalks, and gutters</li>
+			<li>Never dump anything down storm drains or in streams</li>
+			<li>Vegetate bare spots in your yard</li>
+			<li>Compost your yard waste</li>
+			<li>Use least toxic pesticides, follow labels, and learn how to prevent pest problems</li>
+			<li>
+				Direct downspouts should be away from paved surfaces; consider a rain garden to capture runoff
+			</li>
+			<li>Take your car to the car wash instead of washing it in the driveway</li>
+			<li>Check your car for leaks and recycle your motor oil</li>
+			<li>Pick up after your pet</li>
+			<li>Have your septic tank pumped and system inspected regularly</li>
+			<li>Keep grass clippings out of curbs and away from banks of waterways</li>
+			<li>Find proper receptacles for hazardous waste</li>
+		</ol>
+	</p-card>
+
+	<p-divider></p-divider>
+
+	<!-- Water Pollution Prevention Best Practices -->
+	<p-card styleClass="content-card">
+		<h2 class="section-title">
+			<i class="pi pi-lock" aria-hidden="true"></i>
+			Water Pollution Prevention Best Practices
+		</h2>
+
+		<div class="best-practice">
+			<h3>
+				<i class="pi pi-trash" aria-hidden="true"></i>
+				Dispose of Household Hazardous Waste Properly
+			</h3>
+			<p>
+				Never dump household hazardous waste such as pesticides, fertilizers, paint or solvents into a
+				storm drain, open waterway or ditch. Storm drains discharge directly into canals and then streams
+				without the benefit of treatment, unlike the drains inside homes and businesses that connect to
+				the sanitary sewer system. Beyond posing a threat to our health and environment, such dumping is
+				illegal.
+			</p>
+		</div>
+
+		<div class="best-practice">
+			<h3>
+				<i class="pi pi-ban" aria-hidden="true"></i>
+				Don't Fill Drainage Ditches
+			</h3>
+			<p>
+				If your home has a drainage ditch or swale, do not fill it in. Leaves swept to the curb will not
+				be collected and can clog storm drains. Dumping yard waste into storm drains or waterways is
+				harmful to the rivers and is illegal.
+			</p>
+		</div>
+
+		<div class="best-practice">
+			<h3>
+				<i class="pi pi-times-circle" aria-hidden="true"></i>
+				Please Don't Litter
+			</h3>
+			<p>
+				Trash left along our roadways, ditches, and stream banks washes into our waterways through rain
+				and melting snow. Not only is littering illegal, it is an eyesore which can endanger wildlife and
+				can allow stagnant water to breed mosquitoes. Debris can also block drain inlets, preventing
+				efficient drainage.
+			</p>
+		</div>
+
+		<div class="best-practice">
+			<h3>
+				<i class="pi pi-car" aria-hidden="true"></i>
+				Maintain Cars and Driveways
+			</h3>
+			<ul class="habits-list">
+				<li>Maintain vehicles to prevent leaking fluids from washing into stormwater.</li>
+				<li>Absorb leaks on the driveway with sand or cat litter, then sweep and place in the trash.</li>
+				<li>
+					Wash cars at a commercial car wash, or over gravel, if possible, to avoid the soapy runoff from
+					entering the storm drains. Car wash businesses are required to dispose of the water through the
+					sanitary sewer system, where it can be treated.
+				</li>
+				<li>Sweep debris from sidewalks and driveways instead of washing it away with water.</li>
+			</ul>
+		</div>
+
+		<div class="best-practice">
+			<h3>
+				<i class="pi pi-leaf" aria-hidden="true"></i>
+				Dispose of Yard Waste Properly
+			</h3>
+			<p>
+				Remember it's not only in keeping with city ordinances, but it helps to keep Wellsville a
+				beautiful, healthful city.
+			</p>
+		</div>
+	</p-card>
+
+	<!-- Call to Action -->
+	<p-card styleClass="cta-card">
+		<div class="cta-content">
+			<h2>
+				<i class="pi pi-heart" aria-hidden="true"></i>
+				Make Your Home the Solution to Stormwater Pollution!
+			</h2>
+			<p>
+				Every action you take helps protect our water resources and the environment for future
+				generations.
+			</p>
+		</div>
+	</p-card>
 </div>

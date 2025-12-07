@@ -1,1 +1,283 @@
 // Storm Water component styles
+@import '../../../../styles/shared-page-styles.scss';
+
+.hero-image-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  .hero-image {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+  }
+}
+
+.management-plan-section {
+  text-align: center;
+  padding: 1.5rem;
+
+  h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+
+    i {
+      color: #e74c3c;
+    }
+  }
+
+  .plan-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+}
+
+.section-title {
+  font-size: 1.75rem;
+  color: #2c3e50;
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  i {
+    color: #5a9367;
+  }
+}
+
+::ng-deep .info-card {
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border-left: 4px solid #5a9367;
+}
+
+.info-title {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0 0 1.25rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i {
+    color: #5a9367;
+  }
+}
+
+.info-list,
+.habits-list,
+.pollutants-list {
+  list-style: none;
+  padding: 0;
+
+  li {
+    padding: 0.75rem 0 0.75rem 1.75rem;
+    position: relative;
+    line-height: 1.6;
+
+    @media (max-width: 768px) {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.info-list li::before {
+  content: '●';
+  position: absolute;
+  left: 0;
+  color: #5a9367;
+  font-weight: bold;
+}
+
+.habits-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #5a9367;
+  font-weight: bold;
+}
+
+.habits-sections {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.habit-section {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.habit-section-title {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  border-bottom: 2px solid #5a9367;
+  padding-bottom: 0.5rem;
+}
+
+.pollutants-list li::before {
+  content: '⚠';
+  position: absolute;
+  left: 0;
+  color: #e74c3c;
+}
+
+.highlight-text {
+  background-color: rgba(90, 147, 103, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #5a9367;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+::ng-deep .reminder-card {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border: 2px solid #f39c12;
+}
+
+.reminder-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .reminder-icon {
+    color: #f39c12;
+    font-size: 2.5rem;
+  }
+
+  .reminder-text {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.news-section {
+  margin-bottom: 2rem;
+
+  h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+  }
+}
+
+::ng-deep .action-card {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 4px solid #2196f3;
+}
+
+.action-list {
+  list-style: none;
+  counter-reset: action-counter;
+  padding: 0;
+  margin: 1.5rem 0 0;
+
+  li {
+    padding: 1rem 0 1rem 2.5rem;
+    position: relative;
+    line-height: 1.7;
+    counter-increment: action-counter;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &::before {
+      content: counter(action-counter);
+      position: absolute;
+      left: 0;
+      top: 0.85rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      background-color: #2196f3;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+  }
+}
+
+.best-practice {
+  margin-bottom: 2.5rem;
+
+  h3 {
+    font-size: 1.35rem;
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+
+    i {
+      color: #e74c3c;
+    }
+  }
+}
+
+::ng-deep .cta-card {
+  background: linear-gradient(135deg, #5a9367 0%, #3d6845 100%);
+}
+
+.cta-content {
+  text-align: center;
+
+  h2 {
+    font-size: 2rem;
+    color: white;
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.15rem;
+    margin: 0;
+    line-height: 1.6;
+  }
+}

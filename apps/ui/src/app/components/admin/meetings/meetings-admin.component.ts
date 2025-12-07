@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -7,6 +7,7 @@ import {
   FormGroup,
   Validators,
   FormArray,
+  FormControl,
 } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
@@ -22,15 +23,15 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { CalendarModule } from 'primeng/calendar';
+import { DatePickerModule } from 'primeng/datepicker';
 import { DividerModule } from 'primeng/divider';
 import { MessageService, ConfirmationService } from 'primeng/api';
 
 import { MeetingsStore } from '../../../stores';
 import { Meeting, MeetingFile, MeetingType } from '../../../models';
 import { MeetingsService } from '../../../services/meetings.service';
-
-type MeetingDialogMode = 'create' | 'edit';
+import { patchState, signalState } from '@ngrx/signals';
+import { initialMeetingAdminComponentState } from './meetings-admin.component.state';
 
 @Component({
   selector: 'app-meetings-admin',
@@ -51,7 +52,7 @@ type MeetingDialogMode = 'create' | 'edit';
     ToastModule,
     ConfirmDialogModule,
     ProgressBarModule,
-    CalendarModule,
+    DatePickerModule,
     DividerModule,
   ],
   providers: [MessageService, ConfirmationService],
@@ -59,37 +60,12 @@ type MeetingDialogMode = 'create' | 'edit';
   styleUrl: './meetings-admin.component.scss',
 })
 export class MeetingsAdminComponent implements OnInit {
+  readonly state = signalState(initialMeetingAdminComponentState());
   readonly meetingsStore = inject(MeetingsStore);
   readonly meetingsService = inject(MeetingsService);
   readonly messageService = inject(MessageService);
   readonly confirmationService = inject(ConfirmationService);
   readonly fb = inject(FormBuilder);
-
-  displayDialog = signal(false);
-  dialogMode = signal<MeetingDialogMode>('create');
-  isSubmitting = signal(false);
-  selectedMeetingId = signal<string | null>(null);
-
-  meetingForm: FormGroup;
-
-  meetingTypes: { label: string; value: MeetingType }[] = [
-    { label: 'City Council', value: 'city-council' },
-    { label: 'Planning & Zoning', value: 'planning-zoning' },
-  ];
-
-  meetingStatuses = [
-    { label: 'Upcoming', value: 'upcoming' },
-    { label: 'Past', value: 'past' },
-    { label: 'Cancelled', value: 'cancelled' },
-  ];
-
-  fileCategories = [
-    { label: 'Agenda', value: 'agenda' },
-    { label: 'Minutes', value: 'minutes' },
-    { label: 'Discussion Topics', value: 'discussion' },
-    { label: 'Attachment', value: 'attachment' },
-    { label: 'Other', value: 'other' },
-  ];
 
   ngOnInit(): void {
     this.meetingsStore.resolveMeetings();
@@ -97,17 +73,20 @@ export class MeetingsAdminComponent implements OnInit {
   }
 
   initForm(): void {
-    this.meetingForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', Validators.required],
-      meetingDate: [new Date(), Validators.required],
-      meetingTime: ['', Validators.required],
-      location: ['', Validators.required],
-      meetingType: ['city-council', Validators.required],
-      status: ['upcoming', Validators.required],
-      files: this.fb.array([]),
+    patchState(this.state, {
+      meetingForm: this.fb.group({
+        title: ['', [Validators.required, Validators.minLength(3)]],
+        description: ['', Validators.required],
+        meetingDate: [new Date(), Validators.required],
+        meetingTime: ['', Validators.required],
+        location: ['', Validators.required],
+        meetingType: ['city-council', Validators.required],
+        status: ['upcoming', Validators.required],
+        files: this.fb.array([]),
+      })
     });
   }
+
 
   get meetings() {
     return this.meetingsStore.meetings();
@@ -118,43 +97,46 @@ export class MeetingsAdminComponent implements OnInit {
   }
 
   get filesFormArray(): FormArray {
-    return this.meetingForm.get('files') as FormArray;
+    return this.state.meetingForm().get('files') as FormArray;
   }
 
   onShowCreateDialog(): void {
-    this.dialogMode.set('create');
-    this.selectedMeetingId.set(null);
-    this.displayDialog.set(true);
-    this.meetingForm.reset({
-      meetingDate: new Date(),
-      meetingType: 'city-council',
-      status: 'upcoming',
+    patchState(this.state, {
+      dialogMode: 'create',
+      selectedMeetingId: null,
+      displayDialog: true,
+      meetingForm: new FormGroup({
+        title: new FormControl(''),
+        description: new FormControl(''),
+        meetingDate: new FormControl(new Date()),
+        meetingTime: new FormControl(''),
+        location: new FormControl(''),
+        meetingType: new FormControl('city-council'),
+        status: new FormControl('upcoming'),
+        files: this.fb.array([])
+      })
     });
-    this.filesFormArray.clear();
   }
 
-  onShowEditDialog(meeting: Meeting): void {
-    this.dialogMode.set('edit');
-    this.selectedMeetingId.set(meeting.id);
-    this.displayDialog.set(true);
 
-    // Convert ISO date string to Date object for calendar
+  onShowEditDialog(meeting: Meeting): void {
     const meetingDate = new Date(meeting.meetingDate);
 
-    this.meetingForm.patchValue({
-      title: meeting.title,
-      description: meeting.description,
-      meetingDate: meetingDate,
-      meetingTime: meeting.meetingTime,
-      location: meeting.location,
-      meetingType: meeting.meetingType,
-      status: meeting.status,
+    const editForm = this.fb.group({
+      title: [meeting.title, [Validators.required, Validators.minLength(3)]],
+      description: [meeting.description, Validators.required],
+      meetingDate: [meetingDate, Validators.required],
+      meetingTime: [meeting.meetingTime, Validators.required],
+      location: [meeting.location, Validators.required],
+      meetingType: [meeting.meetingType, Validators.required],
+      status: [meeting.status, Validators.required],
+      files: this.fb.array([]),
     });
 
     // Load existing files
-    this.filesFormArray.clear();
+    const filesArray = editForm.get('files') as FormArray;
     meeting.files.forEach((file) => {
-      this.filesFormArray.push(
+      filesArray.push(
         this.fb.group({
           id: [file.id],
           title: [file.title, Validators.required],
@@ -167,12 +149,21 @@ export class MeetingsAdminComponent implements OnInit {
         })
       );
     });
+
+    patchState(this.state, {
+      dialogMode: 'edit',
+      selectedMeetingId: meeting.id,
+      displayDialog: true,
+      meetingForm: editForm,
+    });
   }
 
   onCloseDialog(): void {
-    this.displayDialog.set(false);
-    this.isSubmitting.set(false);
-    this.meetingForm.reset();
+    patchState(this.state, {
+      displayDialog: false,
+      isSubmitting: false,
+    });
+    this.state.meetingForm().reset();
     this.filesFormArray.clear();
   }
 
@@ -216,7 +207,7 @@ export class MeetingsAdminComponent implements OnInit {
   }
 
   async onSubmit(): Promise<void> {
-    if (this.meetingForm.invalid) {
+    if (this.state.meetingForm().invalid) {
       this.messageService.add({
         severity: 'error',
         summary: 'Validation Error',
@@ -225,10 +216,10 @@ export class MeetingsAdminComponent implements OnInit {
       return;
     }
 
-    this.isSubmitting.set(true);
+    patchState(this.state, { isSubmitting: true });
 
     try {
-      const formValue = this.meetingForm.value;
+      const formValue = this.state.meetingForm().value;
 
       // Convert Date object to ISO string
       const meetingDate = new Date(formValue.meetingDate);
@@ -283,7 +274,7 @@ export class MeetingsAdminComponent implements OnInit {
       }
 
       const meetingData: Meeting = {
-        id: this.selectedMeetingId() || crypto.randomUUID(),
+        id: this.state.selectedMeetingId() || crypto.randomUUID(),
         title: formValue.title,
         description: formValue.description,
         meetingDate: isoDate,
@@ -294,7 +285,7 @@ export class MeetingsAdminComponent implements OnInit {
         files: uploadedFiles,
       };
 
-      if (this.dialogMode() === 'create') {
+      if (this.state.dialogMode() === 'create') {
         await firstValueFrom(this.meetingsService.createMeeting(meetingData));
         this.messageService.add({
           severity: 'success',
@@ -324,7 +315,7 @@ export class MeetingsAdminComponent implements OnInit {
         detail: 'Failed to save meeting. Please try again.',
       });
     } finally {
-      this.isSubmitting.set(false);
+      patchState(this.state, { isSubmitting: false });
     }
   }
 
@@ -365,7 +356,7 @@ export class MeetingsAdminComponent implements OnInit {
   }
 
   getMeetingTypeLabel(type: MeetingType): string {
-    const found = this.meetingTypes.find((t) => t.value === type);
+    const found = this.state.meetingTypes().find((t) => t.value === type);
     return found?.label || type;
   }
 

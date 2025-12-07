@@ -1,0 +1,180 @@
+<div class="page-container">
+	<div class="page-header">
+		<h1>
+			<i class="pi pi-briefcase" aria-hidden="true"></i>
+			Business Forms & Licenses
+		</h1>
+		<p class="page-description">
+			Download and submit required forms for business licensing and project approvals
+		</p>
+	</div>
+
+	<div class="content-section">
+		<!-- Important Notice Card -->
+		<p-card styleClass="notice-card">
+			<ng-template pTemplate="header">
+				<div class="notice-header">
+					<i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+					<h2>Important Information</h2>
+				</div>
+			</ng-template>
+
+			<div class="notice-content">
+				<div class="notice-item">
+					<i class="pi pi-info-circle" aria-hidden="true"></i>
+					<p>
+						All business applications must be submitted to the Wellsville City office for review.
+					</p>
+				</div>
+
+				<div class="notice-item warning">
+					<i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+					<p>
+						<strong>It is unlawful to operate a business without a current license</strong> (Wellsville Ordinance Section 5.04.020). Failure to obtain a business license prior to opening will result in penalties (Ordinance Section 5.04.050).
+					</p>
+				</div>
+
+				<div class="notice-item">
+					<i class="pi pi-calendar" aria-hidden="true"></i>
+					<p>
+						<strong>Annual Renewal Required:</strong> All business licenses must be renewed yearly on January 1st. Licenses renewed more than 30 days after January 1st will be assessed a penalty.
+					</p>
+				</div>
+
+				<div class="notice-item">
+					<i class="pi pi-shield" aria-hidden="true"></i>
+					<p>
+						It is the responsibility of the Licensee to be familiar with the ordinances under which this license is applied, and to conduct business strictly in accordance with all applicable Laws and Ordinances.
+					</p>
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Forms Grid -->
+		<div class="forms-grid">
+			@for (form of state.forms(); track form.id) {
+				<p-card styleClass="form-card">
+					<ng-template pTemplate="header">
+						<div class="form-card-header">
+							<div class="header-top">
+								<i class="pi pi-file-pdf" aria-hidden="true"></i>
+								<p-tag
+									[value]="getCategoryLabel(form.category)"
+									[severity]="getCategorySeverity(form.category)"
+									styleClass="category-tag"
+								></p-tag>
+							</div>
+							<h3>{{ form.title }}</h3>
+						</div>
+					</ng-template>
+
+					<div class="form-card-body">
+						<p class="form-description">{{ form.description }}</p>
+
+						<div class="form-meta">
+							@if (form.fileSize) {
+								<div class="meta-item">
+									<i class="pi pi-database" aria-hidden="true"></i>
+									<span>{{ form.fileSize }}</span>
+								</div>
+							}
+							@if (form.lastUpdated) {
+								<div class="meta-item">
+									<i class="pi pi-calendar" aria-hidden="true"></i>
+									<span>Updated: {{ form.lastUpdated }}</span>
+								</div>
+							}
+							<div class="meta-item">
+								<i class="pi pi-file" aria-hidden="true"></i>
+								<span>PDF Format</span>
+							</div>
+						</div>
+
+						<p-divider></p-divider>
+
+						<div class="form-actions">
+							<p-button
+								label="Fill Out Online"
+								icon="pi pi-file-edit"
+								severity="primary"
+								(onClick)="onFillOutForm(form)"
+								styleClass="action-button fill-online-btn"
+							/>
+							<p-button
+								label="View PDF"
+								icon="pi pi-eye"
+								severity="secondary"
+								(onClick)="onViewPdf(form)"
+								styleClass="action-button"
+								[outlined]="true"
+							/>
+						</div>
+
+						<div class="download-link">
+							<a (click)="onDownloadPdf(form)" class="download-pdf-link">
+								<i class="pi pi-download" aria-hidden="true"></i>
+								Download PDF copy
+							</a>
+						</div>
+					</div>
+				</p-card>
+			}
+		</div>
+
+		<!-- Submission Information Card -->
+		<p-card styleClass="submission-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-send" aria-hidden="true"></i>
+					<h2>How to Submit Your Application</h2>
+				</div>
+			</ng-template>
+
+			<div class="submission-content">
+				<p class="submission-intro">
+					Once you have completed your application, please submit it using one of the following methods:
+				</p>
+
+				<div class="submission-methods">
+					<!-- Email Method -->
+					<div class="method-card">
+						<div class="method-icon email">
+							<i class="pi pi-envelope" aria-hidden="true"></i>
+						</div>
+						<div class="method-details">
+							<h3>Email Submission</h3>
+							<p>Send completed forms to:</p>
+							<a [href]="'mailto:' + state.contactInfo().email" class="contact-link">
+								<i class="pi pi-envelope" aria-hidden="true"></i>
+								{{ state.contactInfo().email }}
+							</a>
+						</div>
+					</div>
+
+					<!-- Mail Method -->
+					<div class="method-card">
+						<div class="method-icon mail">
+							<i class="pi pi-map-marker" aria-hidden="true"></i>
+						</div>
+						<div class="method-details">
+							<h3>Mail Submission</h3>
+							<p>Send completed forms to:</p>
+							<address class="mailing-address">
+								@for (line of state.contactInfo().mailingAddress; track $index) {
+									<span>{{ line }}</span>
+								}
+							</address>
+						</div>
+					</div>
+				</div>
+
+				<div class="help-section">
+					<i class="pi pi-question-circle" aria-hidden="true"></i>
+					<p>
+						<strong>Need assistance?</strong> Contact Wellsville City office for help with your application or questions about business licensing requirements.
+					</p>
+				</div>
+			</div>
+		</p-card>
+	</div>
+</div>

@@ -1,0 +1,466 @@
+// Business License Form Component Styles
+
+.form-container {
+  padding: 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.form-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    i {
+      font-size: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+      gap: 0.75rem;
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+  }
+
+  .form-description {
+    font-size: 1.1rem;
+    color: var(--text-color-secondary);
+    margin: 0;
+
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
+  }
+}
+
+.business-license-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    gap: 1.25rem;
+  }
+}
+
+// Notice Card
+.notice-card {
+  background: var(--blue-50);
+  border-left: 4px solid var(--blue-500);
+
+  ::ng-deep {
+    .p-card-body {
+      padding: 1.25rem;
+    }
+  }
+}
+
+.notice-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+
+  i {
+    font-size: 1.5rem;
+    color: var(--blue-600);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-color);
+
+    strong {
+      color: var(--text-color);
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 0.75rem;
+
+    i {
+      font-size: 1.25rem;
+    }
+
+    p {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Section Header
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-600));
+  color: white;
+
+  i {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    gap: 0.75rem;
+
+    i {
+      font-size: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Form Section
+.form-section {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    gap: 1.25rem;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.flex-2 {
+    flex: 2;
+  }
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &.required::after {
+    content: ' *';
+    color: var(--red-500);
+  }
+
+  .field-note {
+    font-weight: normal;
+    color: var(--text-color-secondary);
+    font-style: italic;
+  }
+}
+
+.form-input {
+  width: 100%;
+
+  ::ng-deep {
+    .p-inputtext,
+    .p-select,
+    .p-datepicker-input,
+    .p-textarea {
+      width: 100%;
+    }
+  }
+}
+
+.form-error {
+  color: var(--red-500);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+// Radio Group
+.radio-group {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    font-weight: normal;
+    color: var(--text-color);
+    cursor: pointer;
+  }
+}
+
+// File Upload
+.upload-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--blue-50);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+
+  i {
+    font-size: 1.25rem;
+    color: var(--blue-600);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-color);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+
+    i {
+      font-size: 1.1rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+.file-upload-advanced {
+  ::ng-deep {
+    .p-fileupload {
+      width: 100%;
+    }
+  }
+}
+
+.uploaded-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.uploaded-file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--surface-50);
+  border-radius: 6px;
+  border: 1px solid var(--surface-border);
+
+  .file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+
+    i {
+      font-size: 1.25rem;
+      color: var(--primary-color);
+    }
+
+    span {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    small {
+      color: var(--text-color-secondary);
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+
+    .file-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+  }
+}
+
+// Terms Card
+.terms-card {
+  background: var(--orange-50);
+  border-left: 4px solid var(--orange-500);
+
+  ::ng-deep {
+    .p-card-body {
+      padding: 1.5rem;
+    }
+  }
+}
+
+.terms-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.terms-text {
+  p {
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text-color);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    strong {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+  }
+
+  @media (max-width: 768px) {
+    p {
+      font-size: 0.9rem;
+      margin-bottom: 0.875rem;
+    }
+  }
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+
+  .checkbox-label {
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    line-height: 1.5;
+  }
+
+  ::ng-deep {
+    .p-checkbox {
+      margin-top: 0.125rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+
+    .checkbox-label {
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid var(--surface-border);
+
+  ::ng-deep {
+    .p-button {
+      min-width: 150px;
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    gap: 0.75rem;
+
+    ::ng-deep {
+      .p-button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Card Styles
+::ng-deep {
+  .p-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .p-card-body {
+      padding: 0;
+    }
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+// Print styles
+@media print {
+  .form-actions,
+  .upload-info {
+    display: none;
+  }
+
+  .form-container {
+    padding: 0;
+  }
+
+  .p-card {
+    box-shadow: none;
+    break-inside: avoid;
+  }
+}

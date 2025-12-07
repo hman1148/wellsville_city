@@ -1,0 +1,251 @@
+<div class="page-container">
+	<div class="page-header">
+		<h1>
+			<i class="pi pi-info-circle" aria-hidden="true"></i>
+			Business License Information
+		</h1>
+		<p class="page-description">
+			Frequently asked questions about business licensing in Wellsville City
+		</p>
+	</div>
+
+	<div class="content-section">
+		<!-- Quick Links Card -->
+		<p-card styleClass="quick-links-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-link" aria-hidden="true"></i>
+					<h2>Quick Links</h2>
+				</div>
+			</ng-template>
+
+			<div class="quick-links-content">
+				<p class="links-intro">
+					Ready to get started? Access forms and applications here:
+				</p>
+
+				<div class="links-grid">
+					<a
+						routerLink="/departments/businesses/business-forms"
+						class="link-card"
+					>
+						<div class="link-icon">
+							<i class="pi pi-file-edit" aria-hidden="true"></i>
+						</div>
+						<div class="link-details">
+							<h3>Business Forms & Applications</h3>
+							<p>Download and submit required forms for business licensing</p>
+						</div>
+						<i class="pi pi-arrow-right arrow-icon" aria-hidden="true"></i>
+					</a>
+				</div>
+			</div>
+		</p-card>
+
+		<!-- Important Notice Card -->
+		<p-card styleClass="notice-card">
+			<ng-template pTemplate="header">
+				<div class="notice-header">
+					<i class="pi pi-exclamation-circle" aria-hidden="true"></i>
+					<h2>Important Licensing Requirements</h2>
+				</div>
+			</ng-template>
+
+			<div class="notice-content">
+				<div class="notice-item warning">
+					<i class="pi pi-shield" aria-hidden="true"></i>
+					<div>
+						<p class="notice-title">License Required by Law</p>
+						<p>
+							All businesses operating in Wellsville require a business
+							license. Failure to obtain a license is a Class B misdemeanor.
+						</p>
+					</div>
+				</div>
+
+				<div class="notice-item">
+					<i class="pi pi-calendar" aria-hidden="true"></i>
+					<div>
+						<p class="notice-title">Annual Renewal</p>
+						<p>
+							Business licenses run from January 1 through December 31 each
+							year. Fees are due before each calendar year and become delinquent
+							if not paid by February 1st.
+						</p>
+					</div>
+				</div>
+
+				<div class="notice-item">
+					<i class="pi pi-users" aria-hidden="true"></i>
+					<div>
+						<p class="notice-title">City Council Approval</p>
+						<p>
+							All new business license applications require approval from the
+							Wellsville City Council. You will be scheduled to appear before
+							the council for review.
+						</p>
+					</div>
+				</div>
+
+				<div class="notice-item">
+					<i class="pi pi-home" aria-hidden="true"></i>
+					<div>
+						<p class="notice-title">Home-Based Businesses</p>
+						<p>
+							Home occupancy businesses require additional approval from the
+							Planning and Zoning Commission through a public hearing process.
+						</p>
+					</div>
+				</div>
+			</div>
+		</p-card>
+
+		<!-- FAQ Section -->
+		<p-card styleClass="faq-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-question-circle" aria-hidden="true"></i>
+					<h2>Frequently Asked Questions</h2>
+				</div>
+			</ng-template>
+
+			<div class="faq-content">
+				<div class="faq-list">
+					@for (faq of displayedFaqs(); track faq.id) {
+						<div class="faq-item">
+							<div class="faq-header">
+								<div class="faq-icon-wrapper">
+									<i [class]="'pi ' + faq.icon" aria-hidden="true"></i>
+								</div>
+								<div class="faq-question-wrapper">
+									<h3 class="faq-question">{{ faq.question }}</h3>
+									<p-tag
+										[value]="getCategoryLabel(faq.category)"
+										[severity]="getCategorySeverity(faq.category)"
+										styleClass="faq-tag"
+									></p-tag>
+								</div>
+							</div>
+							<div class="faq-answer">
+								<p>{{ faq.answer }}</p>
+							</div>
+						</div>
+					}
+				</div>
+
+				@if (hasMoreFaqs()) {
+					<div class="show-more-section">
+						<p-divider></p-divider>
+						<p-button
+							[label]="state.showAllFaqs() ? 'Show Less' : 'Show More FAQs'"
+							[icon]="
+								state.showAllFaqs() ? 'pi pi-chevron-up' : 'pi pi-chevron-down'
+							"
+							severity="secondary"
+							(onClick)="toggleShowAllFaqs()"
+							styleClass="show-more-button"
+							[outlined]="true"
+						/>
+					</div>
+				}
+			</div>
+		</p-card>
+
+		<!-- Contact Information Card -->
+		<p-card styleClass="contact-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-phone" aria-hidden="true"></i>
+					<h2>Contact Us</h2>
+				</div>
+			</ng-template>
+
+			<div class="contact-content">
+				<p class="contact-intro">
+					Have questions about business licensing? Our team is here to help.
+				</p>
+
+				<div class="contact-methods">
+					<!-- Email Contact -->
+					<div class="contact-method">
+						<div class="contact-icon email">
+							<i class="pi pi-envelope" aria-hidden="true"></i>
+						</div>
+						<div class="contact-details">
+							<h3>Email</h3>
+							<a
+								[href]="'mailto:' + state.contactInfo().email"
+								class="contact-link"
+							>
+								<i class="pi pi-envelope" aria-hidden="true"></i>
+								{{ state.contactInfo().email }}
+							</a>
+						</div>
+					</div>
+
+					<!-- Phone Contact -->
+					<div class="contact-method">
+						<div class="contact-icon phone">
+							<i class="pi pi-phone" aria-hidden="true"></i>
+						</div>
+						<div class="contact-details">
+							<h3>Phone</h3>
+							<a
+								[href]="'tel:' + state.contactInfo().phone"
+								class="contact-link"
+							>
+								<i class="pi pi-phone" aria-hidden="true"></i>
+								{{ state.contactInfo().phone }}
+							</a>
+						</div>
+					</div>
+
+					<!-- Location -->
+					<div class="contact-method">
+						<div class="contact-icon location">
+							<i class="pi pi-map-marker" aria-hidden="true"></i>
+						</div>
+						<div class="contact-details">
+							<h3>Visit Us</h3>
+							<address class="contact-address">
+								@for (line of state.contactInfo().address; track $index) {
+									<span>{{ line }}</span>
+								}
+							</address>
+						</div>
+					</div>
+
+					<!-- Office Hours -->
+					<div class="contact-method">
+						<div class="contact-icon hours">
+							<i class="pi pi-clock" aria-hidden="true"></i>
+						</div>
+						<div class="contact-details">
+							<h3>Office Hours</h3>
+							<div class="office-hours">
+								@for (
+									hours of state.contactInfo().officeHours;
+									track $index
+								) {
+									<span>{{ hours }}</span>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<p-divider></p-divider>
+
+				<div class="help-section">
+					<i class="pi pi-info-circle" aria-hidden="true"></i>
+					<p>
+						<strong>Note:</strong> It is the responsibility of the licensee to
+						be familiar with all ordinances under which the license is applied,
+						and to conduct business strictly in accordance with all applicable
+						laws and ordinances.
+					</p>
+				</div>
+			</div>
+		</p-card>
+	</div>
+</div>

@@ -1,0 +1,466 @@
+le fr<div class="page-container">
+	<div class="page-header">
+		<h1>
+			<i class="pi pi-calendar" aria-hidden="true"></i>
+			Meeting Management
+		</h1>
+		<p class="page-description">
+			Create, schedule, and manage city meetings with documents and agendas
+		</p>
+	</div>
+
+	<div class="content-section">
+		<!-- Action Bar -->
+		<div class="action-bar">
+			<p-button
+				label="Create New Meeting"
+				icon="pi pi-plus"
+				severity="primary"
+				(onClick)="onShowCreateDialog()"
+				styleClass="create-button"
+			/>
+		</div>
+
+		<!-- Meetings Table -->
+		<p-card styleClass="meetings-card">
+			<ng-template pTemplate="header">
+				<div class="card-header-content">
+					<i class="pi pi-list" aria-hidden="true"></i>
+					<h2>Scheduled Meetings</h2>
+				</div>
+			</ng-template>
+
+			<p-table
+				[value]="meetings"
+				[loading]="isLoading"
+				dataKey="id"
+				responsiveLayout="scroll"
+				[paginator]="true"
+				[rows]="10"
+				[rowsPerPageOptions]="[10, 25, 50]"
+				styleClass="meetings-table"
+			>
+				<ng-template pTemplate="header">
+					<tr>
+						<th pSortableColumn="meetingDate">
+							Date <p-sortIcon field="meetingDate"></p-sortIcon>
+						</th>
+						<th pSortableColumn="meetingTime">
+							Time <p-sortIcon field="meetingTime"></p-sortIcon>
+						</th>
+						<th pSortableColumn="title">
+							Title <p-sortIcon field="title"></p-sortIcon>
+						</th>
+						<th pSortableColumn="meetingType">
+							Type <p-sortIcon field="meetingType"></p-sortIcon>
+						</th>
+						<th pSortableColumn="location">Location</th>
+						<th pSortableColumn="status">
+							Status <p-sortIcon field="status"></p-sortIcon>
+						</th>
+						<th>Files</th>
+						<th>Actions</th>
+					</tr>
+				</ng-template>
+
+				<ng-template pTemplate="body" let-meeting>
+					<tr>
+						<td>
+							<span class="table-cell-content">
+								{{ formatDate(meeting.meetingDate) }}
+							</span>
+						</td>
+						<td>
+							<span class="table-cell-content">
+								{{ meeting.meetingTime }}
+							</span>
+						</td>
+						<td>
+							<span class="table-cell-content meeting-title">
+								{{ meeting.title }}
+							</span>
+						</td>
+						<td>
+							<span class="table-cell-content">
+								{{ getMeetingTypeLabel(meeting.meetingType) }}
+							</span>
+						</td>
+						<td>
+							<span class="table-cell-content location">
+								<i class="pi pi-map-marker" aria-hidden="true"></i>
+								{{ meeting.location }}
+							</span>
+						</td>
+						<td>
+							<p-tag
+								[value]="meeting.status"
+								[severity]="getStatusSeverity(meeting.status)"
+								styleClass="status-tag"
+							></p-tag>
+						</td>
+						<td>
+							<span class="files-count">
+								<i class="pi pi-file" aria-hidden="true"></i>
+								{{ meeting.files?.length || 0 }}
+							</span>
+						</td>
+						<td>
+							<div class="table-actions">
+								<p-button
+									icon="pi pi-pencil"
+									severity="secondary"
+									(onClick)="onShowEditDialog(meeting)"
+									[text]="true"
+									[rounded]="true"
+									pTooltip="Edit Meeting"
+									tooltipPosition="top"
+								/>
+								<p-button
+									icon="pi pi-trash"
+									severity="danger"
+									(onClick)="onDelete(meeting)"
+									[text]="true"
+									[rounded]="true"
+									pTooltip="Delete Meeting"
+									tooltipPosition="top"
+								/>
+							</div>
+						</td>
+					</tr>
+				</ng-template>
+
+				<ng-template pTemplate="emptymessage">
+					<tr>
+						<td colspan="8" class="empty-message">
+							<div class="empty-state">
+								<i class="pi pi-calendar-times" aria-hidden="true"></i>
+								<h3>No meetings scheduled</h3>
+								<p>Create your first meeting to get started</p>
+								<p-button
+									label="Create Meeting"
+									icon="pi pi-plus"
+									severity="primary"
+									(onClick)="onShowCreateDialog()"
+								/>
+							</div>
+						</td>
+					</tr>
+				</ng-template>
+			</p-table>
+		</p-card>
+	</div>
+</div>
+
+<!-- Create/Edit Meeting Dialog -->
+<p-dialog
+	[visible]="state.displayDialog()"
+	(onHide)="onCloseDialog()"
+	[modal]="true"
+	[dismissableMask]="false"
+	[draggable]="false"
+	[resizable]="false"
+	styleClass="meeting-dialog"
+	[breakpoints]="{ '960px': '90vw' }"
+	[style]="{ width: '800px', maxWidth: '95vw' }"
+>
+	<ng-template pTemplate="header">
+		<div class="dialog-header">
+			<i
+				[class]="
+					state.dialogMode() === 'create'
+						? 'pi pi-plus-circle'
+						: 'pi pi-pencil'
+				"
+				aria-hidden="true"
+			></i>
+			<span>{{
+				state.dialogMode() === 'create' ? 'Create New Meeting' : 'Edit Meeting'
+			}}</span>
+		</div>
+	</ng-template>
+
+	<div class="dialog-content">
+		<form [formGroup]="state.meetingForm()" class="meeting-form">
+			<!-- Meeting Title -->
+			<div class="form-group">
+				<label for="title" class="form-label required">Meeting Title</label>
+				<input
+					pInputText
+					id="title"
+					formControlName="title"
+					placeholder="Enter meeting title"
+					class="form-input"
+				/>
+				@if (
+					state.meetingForm().get('title')?.invalid &&
+					state.meetingForm().get('title')?.touched
+				) {
+					<small class="form-error">
+						Title is required (minimum 3 characters)
+					</small>
+				}
+			</div>
+
+			<!-- Meeting Description -->
+			<div class="form-group">
+				<label for="description" class="form-label required">Description</label>
+				<textarea
+					pTextarea
+					id="description"
+					formControlName="description"
+					placeholder="Enter meeting description and purpose"
+					rows="4"
+					class="form-input"
+				></textarea>
+				@if (
+					state.meetingForm().get('description')?.invalid &&
+					state.meetingForm().get('description')?.touched
+				) {
+					<small class="form-error">Description is required</small>
+				}
+			</div>
+
+			<!-- Date and Time Row -->
+			<div class="form-row">
+				<div class="form-group">
+					<label for="meetingDate" class="form-label required">Date</label>
+					<p-datepicker
+						inputId="meetingDate"
+						formControlName="meetingDate"
+						[showIcon]="true"
+						iconDisplay="input"
+						placeholder="Select date"
+						dateFormat="mm/dd/yy"
+						styleClass="form-input"
+					></p-datepicker>
+					@if (
+						state.meetingForm().get('meetingDate')?.invalid &&
+						state.meetingForm().get('meetingDate')?.touched
+					) {
+						<small class="form-error">Date is required</small>
+					}
+				</div>
+
+				<div class="form-group">
+					<label for="meetingTime" class="form-label required">Time</label>
+					<input
+						pInputText
+						id="meetingTime"
+						formControlName="meetingTime"
+						placeholder="e.g., 7:00 PM"
+						class="form-input"
+					/>
+					@if (
+						state.meetingForm().get('meetingTime')?.invalid &&
+						state.meetingForm().get('meetingTime')?.touched
+					) {
+						<small class="form-error">Time is required</small>
+					}
+				</div>
+			</div>
+
+			<!-- Location -->
+			<div class="form-group">
+				<label for="location" class="form-label required">Location</label>
+				<input
+					pInputText
+					id="location"
+					formControlName="location"
+					placeholder="Enter meeting location"
+					class="form-input"
+				/>
+				@if (
+					state.meetingForm().get('location')?.invalid &&
+					state.meetingForm().get('location')?.touched
+				) {
+					<small class="form-error">Location is required</small>
+				}
+			</div>
+
+			<!-- Meeting Type and Status Row -->
+			<div class="form-row">
+				<div class="form-group">
+					<label for="meetingType" class="form-label required"
+						>Meeting Type</label
+					>
+					<p-select
+						inputId="meetingType"
+						formControlName="meetingType"
+						[options]="state.meetingTypes()"
+						optionLabel="label"
+						optionValue="value"
+						placeholder="Select type"
+						styleClass="form-input"
+					></p-select>
+					@if (
+						state.meetingForm().get('meetingType')?.invalid &&
+						state.meetingForm().get('meetingType')?.touched
+					) {
+						<small class="form-error">Meeting type is required</small>
+					}
+				</div>
+
+				<div class="form-group">
+					<label for="status" class="form-label required">Status</label>
+					<p-select
+						inputId="status"
+						formControlName="status"
+						[options]="state.meetingStatuses()"
+						optionLabel="label"
+						optionValue="value"
+						placeholder="Select status"
+						styleClass="form-input"
+					></p-select>
+					@if (
+						state.meetingForm().get('status')?.invalid &&
+						state.meetingForm().get('status')?.touched
+					) {
+						<small class="form-error">Status is required</small>
+					}
+				</div>
+			</div>
+
+			<!-- Files Section -->
+			<p-divider></p-divider>
+
+			<div class="files-section">
+				<div class="section-header">
+					<h3>
+						<i class="pi pi-paperclip" aria-hidden="true"></i>
+						Meeting Documents
+					</h3>
+					<p class="section-description">
+						Add agendas, minutes, and supporting documents for this meeting
+					</p>
+				</div>
+
+				<div formArrayName="files" class="files-list">
+					@for (fileControl of filesFormArray.controls; track $index) {
+						<div [formGroupName]="$index" class="file-item">
+							<div class="file-item-header">
+								<span class="file-number">Document {{ $index + 1 }}</span>
+								<p-button
+									icon="pi pi-times"
+									severity="danger"
+									(onClick)="onRemoveFile($index)"
+									[text]="true"
+									[rounded]="true"
+									styleClass="remove-file-btn"
+									pTooltip="Remove document"
+								/>
+							</div>
+
+							<div class="file-form-grid">
+								<div class="form-group">
+									<label [for]="'fileTitle-' + $index" class="form-label required"
+										>Title</label
+									>
+									<input
+										pInputText
+										[id]="'fileTitle-' + $index"
+										formControlName="title"
+										placeholder="Document title"
+										class="form-input"
+									/>
+								</div>
+
+								<div class="form-group">
+									<label [for]="'fileCategory-' + $index" class="form-label required"
+										>Category</label
+									>
+									<p-select
+										[inputId]="'fileCategory-' + $index"
+										formControlName="category"
+										[options]="state.fileCategories()"
+										optionLabel="label"
+										optionValue="value"
+										placeholder="Select category"
+										styleClass="form-input"
+									></p-select>
+								</div>
+
+								<div class="form-group full-width">
+									<label [for]="'fileDescription-' + $index" class="form-label"
+										>Description (Optional)</label
+									>
+									<input
+										pInputText
+										[id]="'fileDescription-' + $index"
+										formControlName="description"
+										placeholder="Brief description"
+										class="form-input"
+									/>
+								</div>
+
+								<div class="form-group full-width">
+									<label class="form-label">File Upload</label>
+									<p-fileUpload
+										mode="basic"
+										chooseLabel="Choose File"
+										[auto]="true"
+										[customUpload]="true"
+										(uploadHandler)="onFileSelect($event, $index)"
+										accept=".pdf,.doc,.docx,.xls,.xlsx"
+										[maxFileSize]="10000000"
+										chooseIcon="pi pi-upload"
+										styleClass="file-upload"
+									></p-fileUpload>
+									@if (fileControl.get('file')?.value) {
+										<div class="file-selected">
+											<i class="pi pi-check-circle" aria-hidden="true"></i>
+											<span>{{ fileControl.get('file')?.value?.name }}</span>
+										</div>
+									}
+									@if (fileControl.get('s3Url')?.value && !fileControl.get('file')?.value) {
+										<div class="file-existing">
+											<i class="pi pi-file" aria-hidden="true"></i>
+											<span>Existing file uploaded</span>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+
+				<p-button
+					label="Add Document"
+					icon="pi pi-plus"
+					severity="secondary"
+					(onClick)="onAddFile()"
+					[outlined]="true"
+					styleClass="add-file-btn"
+				/>
+			</div>
+		</form>
+	</div>
+
+	<ng-template pTemplate="footer">
+		<div class="dialog-footer">
+			<p-button
+				label="Cancel"
+				icon="pi pi-times"
+				severity="secondary"
+				(onClick)="onCloseDialog()"
+				[outlined]="true"
+				[disabled]="state.isSubmitting()"
+			/>
+			<p-button
+				[label]="
+					state.dialogMode() === 'create' ? 'Create Meeting' : 'Update Meeting'
+				"
+				icon="pi pi-check"
+				severity="primary"
+				(onClick)="onSubmit()"
+				[loading]="state.isSubmitting()"
+				[disabled]="state.meetingForm().invalid"
+			/>
+		</div>
+	</ng-template>
+</p-dialog>
+
+<!-- Toast Messages -->
+<p-toast position="top-right"></p-toast>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog styleClass="confirm-dialog"></p-confirmDialog>
