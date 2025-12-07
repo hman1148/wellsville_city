@@ -31,7 +31,13 @@ export type DisclosureCategory =
   | 'audit'
   | 'other';
 
-export const disclosureCategories: { label: string; value: DisclosureCategory }[] = [
+
+export type DisclosureCategoryItem = {
+  label: string;
+  value: DisclosureCategory;
+};
+
+export const disclosureCategories: DisclosureCategoryItem[] = [
   { label: 'Campaign Finance Reports', value: 'campaign-finance' },
   { label: 'Conflict of Interest Forms', value: 'conflict-of-interest' },
   { label: 'Financial Reports', value: 'financial-report' },

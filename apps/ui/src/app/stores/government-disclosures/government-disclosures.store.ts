@@ -184,6 +184,33 @@ export const GovernmentDisclosuresStore = signalStore(
           selectedYear: null,
         });
       },
+
+      downloadDisclosure: async (disclosure: GovernmentDisclosure) => {
+        try {
+          const { url } = await firstValueFrom(
+            disclosuresService.getDownloadPresignedUrl(disclosure.fileUrl)
+          );
+
+          if (url) {
+            window.open(url, '_blank');
+          } else {
+            messageService.add({
+              severity: 'error',
+              summary: 'Download Failed',
+              detail: 'Unable to generate download link. Please try again.',
+              life: 5000,
+            });
+          }
+        } catch (error) {
+          console.error('Error downloading document:', error);
+          messageService.add({
+            severity: 'error',
+            summary: 'Download Failed',
+            detail: 'An error occurred while downloading the document. Please try again.',
+            life: 5000,
+          });
+        }
+      },
     })
   )
 );

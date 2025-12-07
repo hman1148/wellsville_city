@@ -1,7 +1,6 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { firstValueFrom } from 'rxjs';
 
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -14,9 +13,9 @@ import { TooltipModule } from 'primeng/tooltip';
 import { GovernmentDisclosuresStore } from '../../../stores';
 import {
   GovernmentDisclosure,
-  disclosureCategories,
 } from '../../../models';
-import { GovernmentDisclosuresService } from '../../../services/government-disclosures.service';
+import { patchState, signalState } from '@ngrx/signals';
+import { initialDisclousreComponentState } from './disclosures.state';
 
 @Component({
   selector: 'app-disclosures',
@@ -36,15 +35,8 @@ import { GovernmentDisclosuresService } from '../../../services/government-discl
   styleUrl: './disclosures.component.scss',
 })
 export class DisclosuresComponent implements OnInit {
+  readonly state = signalState(initialDisclousreComponentState());
   readonly disclosuresStore = inject(GovernmentDisclosuresStore);
-  readonly disclosuresService = inject(GovernmentDisclosuresService);
-
-  searchText = signal<string>('');
-  selectedCategory = signal<string>('');
-  selectedYear = signal<number | null>(null);
-
-  categories = disclosureCategories;
-  availableYears = signal<{ label: string; value: number }[]>([]);
 
   ngOnInit(): void {
     this.disclosuresStore.resolveDisclosures();
@@ -62,7 +54,7 @@ export class DisclosuresComponent implements OnInit {
   filteredDisclosures = computed(() => {
     let items = this.disclosures();
 
-    const search = this.searchText().toLowerCase();
+    const search = this.state.searchText().toLowerCase();
     if (search) {
       items = items.filter(
         (d) =>
@@ -73,12 +65,12 @@ export class DisclosuresComponent implements OnInit {
       );
     }
 
-    const category = this.selectedCategory();
+    const category = this.state.selectedCategory();
     if (category) {
       items = items.filter((d) => d.category === category);
     }
 
-    const year = this.selectedYear();
+    const year = this.state.selectedYear();
     if (year !== null) {
       items = items.filter((d) => d.year === year);
     }
@@ -96,46 +88,49 @@ export class DisclosuresComponent implements OnInit {
     const years = [...new Set(disclosures.map((d) => d.year))].sort(
       (a: number, b: number) => b - a
     );
-    this.availableYears.set(
-      years.map((year: number) => ({ label: year.toString(), value: year }))
-    );
+
+    patchState(this.state, {
+      availabileYears: years.map(year => ({
+        label: year.toString(),
+        value: year
+      }))
+    });
   }
 
   onCategoryChange(category: string): void {
-    this.selectedCategory.set(category);
+    patchState(this.state, {
+      selectedCategory: category
+    });
   }
 
   onYearChange(year: number | null): void {
-    this.selectedYear.set(year);
+    patchState(this.state, {
+      selectedYear: year,
+    })
   }
 
   onSearchChange(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.searchText.set(value);
+    patchState(this.state, {
+      searchText: value
+    });
   }
 
   onClearFilters(): void {
-    this.searchText.set('');
-    this.selectedCategory.set('');
-    this.selectedYear.set(null);
+    patchState(this.state, {
+      searchText: '',
+      selectedCategory: undefined,
+      selectedYear: null,
+    });
   }
 
-  async onDownload(disclosure: GovernmentDisclosure): Promise<void> {
-    try {
-      const { url } = await firstValueFrom(
-        this.disclosuresService.getDownloadPresignedUrl(disclosure.fileUrl)
-      );
-
-      if (url) {
-        window.open(url, '_blank');
-      }
-    } catch (error) {
-      console.error('Error downloading document:', error);
-    }
+  onDownload(disclosure: GovernmentDisclosure): void {
+    // Use the store to handle the download
+    this.disclosuresStore.downloadDisclosure(disclosure);
   }
 
   getCategoryLabel(category: string): string {
-    const cat = this.categories.find((c) => c.value === category);
+    const cat = this.state.disclosureCategories().find((c) => c.value === category);
     return cat ? cat.label : category;
   }
 

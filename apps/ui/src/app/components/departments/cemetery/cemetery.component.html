@@ -1,0 +1,241 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1><i class="pi pi-map-marker"></i>Cemetery</h1>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Welcome Section -->
+    <p-card styleClass="welcome-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2>Welcome to Wellsville Cemetery</h2>
+        </div>
+      </ng-template>
+      <p class="welcome-text">
+        The Wellsville Cemetery contains approximately ten acres and has about 7,700 plots.
+        It is owned and maintained by Wellsville City. The grounds are located on Center Street
+        between 200 South and 300 South.
+      </p>
+    </p-card>
+
+    <!-- Cemetery Hours -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-clock"></i>Cemetery Hours</h2>
+        </div>
+      </ng-template>
+      <p class="info-text">
+        The cemetery is open <strong>from daybreak to dusk</strong>.
+      </p>
+    </p-card>
+
+    <!-- Decoration Policy -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-book"></i>Decoration Policy</h2>
+        </div>
+      </ng-template>
+      <div class="policy-content">
+        <p>
+          Decorations are allowed to remain on graves through the following periods,
+          after which they will be removed by cemetery staff:
+        </p>
+        <ul class="policy-list">
+          <li><strong>Easter:</strong> Two weeks after Easter Sunday</li>
+          <li><strong>Memorial Day:</strong> Two weeks after Memorial Day</li>
+          <li><strong>Independence Day:</strong> Two weeks after July 4th</li>
+          <li><strong>Christmas:</strong> First Thursday after New Year's Day</li>
+        </ul>
+        <p class="policy-note">
+          <i class="pi pi-info-circle"></i>
+          <strong>Note:</strong> The cemetery is mowed and trimmed every Thursday.
+          All decorations will be removed from graves on Thursday to facilitate proper maintenance.
+        </p>
+      </div>
+    </p-card>
+
+    <!-- Additional Policies -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-shield"></i>Additional Policies</h2>
+        </div>
+      </ng-template>
+      <ul class="policy-list">
+        <li>
+          <i class="pi pi-car"></i>
+          <strong>Vehicles:</strong> Motor vehicles are not allowed in the cemetery except
+          for burial services and official business.
+        </li>
+        <li>
+          <i class="pi pi-ban"></i>
+          <strong>Animals:</strong> Animals, except service animals, are not permitted in the cemetery.
+        </li>
+        <li>
+          <i class="pi pi-users"></i>
+          <strong>Children:</strong> Children must be supervised by an adult at all times.
+        </li>
+        <li>
+          <i class="pi pi-calendar"></i>
+          <strong>Burial Restrictions:</strong> Burials are not conducted on Sundays or legal holidays.
+        </li>
+      </ul>
+    </p-card>
+
+    <!-- Cemetery Fees -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-dollar"></i>Cemetery Fees</h2>
+        </div>
+      </ng-template>
+      <p class="info-text">
+        For information about cemetery fees and plot costs, please visit:
+      </p>
+      <div class="button-group">
+        <p-button
+          label="View Fee Schedule"
+          icon="pi pi-external-link"
+          severity="primary"
+          [outlined]="true"
+          (onClick)="openFeesPage()"
+        />
+      </div>
+      <p class="external-link-note">
+        <i class="pi pi-info-circle"></i>
+        This will open the city fee schedule in a new tab.
+      </p>
+    </p-card>
+
+    <!-- Cemetery Search -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-search"></i>Cemetery Search</h2>
+        </div>
+      </ng-template>
+      <p class="info-text">
+        You can search for burial records and locate graves using the Names in Stone database:
+      </p>
+      <div class="button-group">
+        <p-button
+          label="Search Cemetery Records"
+          icon="pi pi-external-link"
+          severity="primary"
+          (onClick)="openNamesInStone()"
+        />
+      </div>
+      <p class="external-link-note">
+        <i class="pi pi-info-circle"></i>
+        This will open namesinstone.com in a new tab.
+      </p>
+    </p-card>
+
+    <!-- External Burial Records -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-file"></i>External Burial Records</h2>
+        </div>
+      </ng-template>
+      <p class="info-text">
+        Additional historical burial records can be found at:
+      </p>
+      <div class="button-group">
+        <p-button
+          label="USGenWeb Archives"
+          icon="pi pi-external-link"
+          severity="secondary"
+          [outlined]="true"
+          (onClick)="openUSGenWeb()"
+        />
+      </div>
+      <p class="external-link-note">
+        <i class="pi pi-info-circle"></i>
+        This will open the USGenWeb archives in a new tab.
+      </p>
+    </p-card>
+
+    <!-- Veterans Interred -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-star"></i>Veterans Interred</h2>
+        </div>
+      </ng-template>
+      <p class="info-text">
+        View a list of veterans buried in Wellsville Cemetery:
+      </p>
+      <div class="button-group">
+        <p-button
+          label="View Veterans List"
+          icon="pi pi-external-link"
+          severity="info"
+          [outlined]="true"
+          (onClick)="openVeteransList()"
+        />
+      </div>
+    </p-card>
+
+    <!-- Monument Regulations -->
+    <p-card styleClass="info-card">
+      <ng-template pTemplate="header">
+        <div class="card-header">
+          <h2><i class="pi pi-building"></i>Regulations for Markers and Monuments</h2>
+        </div>
+      </ng-template>
+      <div class="regulations-content">
+        <div class="regulation-section">
+          <h3><i class="pi pi-angle-right"></i>Upright Monuments</h3>
+          <p>
+            Upright monuments must be set on concrete foundations. The foundation must extend
+            at least 6 inches below ground level and be at least 4 inches thick. The monument
+            must be set back at least 12 inches from the front of the plot.
+          </p>
+        </div>
+
+        <p-divider />
+
+        <div class="regulation-section">
+          <h3><i class="pi pi-angle-right"></i>Ground-Level Flush Markers</h3>
+          <p>
+            Ground-level flush markers must be made of granite, bronze, or other approved
+            materials. They must be set flush with the ground surface to allow for proper
+            maintenance and mowing.
+          </p>
+        </div>
+
+        <p-divider />
+
+        <div class="regulation-section">
+          <h3><i class="pi pi-angle-right"></i>Concrete Borders</h3>
+          <p>
+            Concrete borders around plots are permitted but must be installed flush with
+            the ground. Raised borders are not allowed as they interfere with maintenance equipment.
+          </p>
+        </div>
+
+        <p-divider />
+
+        <div class="regulation-section">
+          <h3><i class="pi pi-angle-right"></i>Material Recommendations</h3>
+          <p>
+            Due to weather conditions and longevity, granite is the recommended material
+            for monuments and markers. Marble and softer stones may deteriorate over time
+            and are not recommended for outdoor use.
+          </p>
+        </div>
+
+        <div class="contact-note">
+          <i class="pi pi-phone"></i>
+          <p>
+            For specific questions about monument installation or to schedule monument placement,
+            please contact the Wellsville City office.
+          </p>
+        </div>
+      </div>
+    </p-card>
+  </div>
+</div>

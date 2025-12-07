@@ -1,4 +1,4 @@
-import { Component, HostListener, inject, signal, OnInit } from '@angular/core';
+import { Component, HostListener, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -15,7 +15,7 @@ import { ReportsStore } from '../../../stores/reports/reports.store';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   private readonly reportsStore = inject(ReportsStore);
 
   isScrolled = signal(false);
@@ -55,6 +55,11 @@ export class HeaderComponent implements OnInit {
     this.reportsStore.loadReports();
   }
 
+  ngOnDestroy(): void {
+    // Clean up body overflow style when component is destroyed
+    document.body.style.overflow = '';
+  }
+
   @HostListener('window:scroll', [])
   onWindowScroll() {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
@@ -62,10 +67,19 @@ export class HeaderComponent implements OnInit {
   }
 
   toggleMobileMenu() {
-    this.mobileMenuOpen.set(!this.mobileMenuOpen());
+    const newState = !this.mobileMenuOpen();
+    this.mobileMenuOpen.set(newState);
+
+    // Prevent body scroll when menu is open
+    if (newState) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
   }
 
   closeMobileMenu() {
     this.mobileMenuOpen.set(false);
+    document.body.style.overflow = '';
   }
 }

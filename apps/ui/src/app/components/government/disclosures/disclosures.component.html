@@ -21,7 +21,7 @@
 							id="search"
 							type="text"
 							pInputText
-							[value]="searchText()"
+							[value]="state.searchText()"
 							(input)="onSearchChange($event)"
 							placeholder="Search by title, description, or category..."
 							class="search-input"
@@ -34,8 +34,8 @@
 					<label for="category" class="filter-label">Category</label>
 					<p-select
 						id="category"
-						[options]="categories"
-						[(ngModel)]="selectedCategory"
+						[options]="state.disclosureCategories()"
+						[ngModel]="state.selectedCategory()"
 						(onChange)="onCategoryChange($event.value)"
 						optionLabel="label"
 						optionValue="value"
@@ -51,8 +51,8 @@
 					<label for="year" class="filter-label">Year</label>
 					<p-select
 						id="year"
-						[options]="availableYears()"
-						[(ngModel)]="selectedYear"
+						[options]="state.availabileYears()"
+						[ngModel]="state.selectedYear()"
 						(onChange)="onYearChange($event.value)"
 						optionLabel="label"
 						optionValue="value"
@@ -158,7 +158,7 @@
 							<div class="empty-state">
 								<i class="pi pi-inbox" style="font-size: 3rem; color: var(--surface-400)"></i>
 								<p>No disclosure documents found.</p>
-								@if (searchText() || selectedCategory() || selectedYear()) {
+								@if (state.searchText() || state.selectedCategory() || state.selectedYear()) {
 									<p-button
 										label="Clear Filters"
 										icon="pi pi-filter-slash"
@@ -177,7 +177,7 @@
 
 		<!-- Mobile Card View -->
 		<div class="mobile-cards">
-			@if (isLoading) {
+			@if (isLoading()) {
 				<div class="loading-container">
 					<i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
 					<p>Loading documents...</p>
@@ -186,7 +186,7 @@
 				<div class="empty-state">
 					<i class="pi pi-inbox" style="font-size: 3rem; color: var(--surface-400)"></i>
 					<p>No disclosure documents found.</p>
-					@if (searchText() || selectedCategory() || selectedYear()) {
+					@if (state.searchText() || state.selectedCategory() || state.selectedYear()) {
 						<p-button
 							label="Clear Filters"
 							icon="pi pi-filter-slash"

@@ -31,7 +31,7 @@ export const BusinessLicenseStore = signalStore(
       submitApplication: async (
         formData: Partial<BusinessLicenseFormData>,
         uploadedFiles: File[],
-        vestResult: SuiteResult
+        vestResult: SuiteResult<string, string>
       ): Promise<boolean> => {
         // Validate form data using Vest
         if (!vestResult.isValid()) {
